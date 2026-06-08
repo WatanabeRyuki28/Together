@@ -707,7 +707,7 @@ MonoBehaviour:
   myPlayerIndex: 0
   myCharaIndex: 0
   myRealSelectedChar: -1
-  IPtextAsset: {fileID: 0}
+  IPtextAsset: {fileID: 4900000, guid: 101300502c8f366468abdd6817bcd3ed, type: 3}
   targetIp: 
   targetPort: 0
 --- !u!1 &484080674

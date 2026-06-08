@@ -30,24 +30,31 @@ public class NetworkManager : MonoBehaviour
 
     void LoadConfig()
     {
-        string filePath = Path.Combine(Application.streamingAssetsPath, "IP.txt");
+       
+        string filePath = Path.Combine(Directory.GetParent(Application.dataPath).FullName, "IP.txt");
 
+        // ファイルが存在するかチェック
         if (File.Exists(filePath))
         {
-            string jsonText = File.ReadAllText(filePath);
+            try
+            {
+                string jsonText = File.ReadAllText(filePath);
+                ServerConfig config = JsonUtility.FromJson<ServerConfig>(jsonText);
 
-            // JSONをクラスに変換
-            ServerConfig config = JsonUtility.FromJson<ServerConfig>(jsonText);
-
-            targetIp = config.serverIp;
-            targetPort = config.port;
-            Debug.Log($"接続先IPを読み込みました: {targetIp}:{targetPort}");
+                targetIp = config.serverIp;
+                targetPort = config.port;
+                Debug.Log($"接続先IPをexe真横のファイルから読み込みました: {targetIp}:{targetPort}");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"ファイルの読み込みに失敗: {e.Message}");
+                targetIp = "localhost";
+            }
         }
         else
         {
-            // ファイルがない場合のデフォルト設定
             targetIp = "localhost";
-            Debug.LogWarning("設定ファイルがないのでlocalhostに接続します");
+            Debug.LogWarning($"設定ファイルがないためlocalhostにします。探した場所: {filePath}");
         }
     }
 
