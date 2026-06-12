@@ -125,6 +125,10 @@ public class StageManager : MonoBehaviour
         {
             SceneManager.LoadScene("Stage1Scene");
         }
+        else if (stageIndex == 1)
+        {
+            SceneManager.LoadScene("Stage2Scene");
+        }
     }
 
    
