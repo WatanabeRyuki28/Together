@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
+using System;
 
 public class StageMenuManager : MonoBehaviour
 {
@@ -45,8 +46,12 @@ public class StageMenuManager : MonoBehaviour
     private KeyCode menuRightKey = KeyCode.D;
 
     private int readyPlayersCount = 0;
-    private bool isMenuOpen = false;
 
+    private bool player0Ready = false; 
+    private bool player1Ready = false;
+    public bool isMenuOpen { get; private set; } = false;
+
+    private bool hasPressedYes = false;
     private void Awake()
     {
         if (Instance == null)
@@ -71,7 +76,7 @@ public class StageMenuManager : MonoBehaviour
     private void Update()
     {
         // Escapeキーが押されたとき（ここは変更なし：いつでも開閉可能）
-        if (Input.GetKeyDown(KeyCode.Escape))
+        /*if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (confirmationPanel.activeSelf) CancelExit();
             else ToggleMenu();
@@ -90,6 +95,53 @@ public class StageMenuManager : MonoBehaviour
         }
 
         // メニューが開いている時だけ入力を受け付ける
+        if (isMenuOpen)
+        {
+            if (confirmationPanel.activeSelf)
+            {
+                if (confirmationButtons != null && confirmationButtons.Length > 0)
+                {
+                    HandleConfirmationNavigation();
+                }
+            }
+            else
+            {
+                if (menuButtons != null && menuButtons.Length > 0)
+                {
+                    HandleMenuNavigation();
+                }
+            }
+        }*/
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (confirmationPanel.activeSelf)
+            {
+                CancelExit();
+                // 確認画面のキャンセルも同期させる
+                SendMenuToggleAction("cancel");
+            }
+            else
+            {
+                ToggleMenu();
+                // 通常メニューの開閉
+                SendMenuToggleAction("toggle");
+            }
+            return;
+        }
+
+        // Yキーが押されたとき
+        if (Input.GetKeyDown(KeyCode.Y))
+        {
+            if (!isMenuOpen)
+            {
+                ToggleMenu();
+                SendMenuToggleAction("toggle");
+            }
+            return;
+        }
+
+        // メニューが開いている時だけ入力を受け付ける（ここは変更なし）
         if (isMenuOpen)
         {
             if (confirmationPanel.activeSelf)
@@ -216,46 +268,143 @@ public class StageMenuManager : MonoBehaviour
         }
     }
 
+    private void ToggleMenuLocal(bool open)
+    {
+        isMenuOpen = open;
+        if (menuPanel != null) menuPanel.SetActive(isMenuOpen);
+
+        if (isMenuOpen)
+        {
+            if (menuOpenButton != null) menuOpenButton.interactable = false;
+            currentSelectedIndex = 0;
+            ApplyMenuButtonFocus();
+        }
+        else
+        {
+            if (menuOpenButton != null) menuOpenButton.interactable = true;
+            if (confirmationPanel != null) confirmationPanel.SetActive(false);
+        }
+    }
+
     public void OpenConfirmation()
     {
         confirmationPanel.SetActive(true);
-        readyPlayersCount = 0;
+        
+
         UpdateYesButtonText();
 
-        // 開いた瞬間は確実に「はい（左・0番）」を選択
         currentConfirmationIndex = 0;
         ApplyConfirmationButtonFocus();
     }
 
-    public void PressYesByClick()
+    public async void PressYesByClick()
     {
-        readyPlayersCount++;
+        // すでに一度押しているなら、処理を完全にブロックする 
+        if (hasPressedYes) return;
+
+        // ロックをかける 
+        hasPressedYes = true;
+
+        // 連打防止
+        if (exitButton != null) exitButton.interactable = false;
+
+        int myIndex = (NetworkManager.Instance != null) ? NetworkManager.Instance.myCharaIndex : 0;
+
+        SetPlayerReady(myIndex);
+
+        if (NetworkManager.Instance != null)
+        {
+            InGameMoveData exitMsg = new InGameMoveData();
+            exitMsg.type = "menu_exit_ready";
+            exitMsg.dataType = "";
+            exitMsg.room_id = NetworkManager.Instance.myRoomID;
+            exitMsg.char_index = myIndex; 
+
+            string json = JsonUtility.ToJson(exitMsg);
+            await NetworkManager.Instance.SendMessageAsync(json);
+
+            Debug.Log(" 退出同意を送信しました。");
+        }
+    }
+
+   
+
+    public void ReceiveExitReady(int senderIndex)
+    {
+        Debug.Log($"【同期】インデックス {senderIndex} のプレイヤーから退出同意を受信しました。");
+        //  届いたインデックスの同意フラグをONにする
+        SetPlayerReady(senderIndex);
+    }
+
+    private void SetPlayerReady(int index)
+    {
+        if (index == 0) player0Ready = true;
+        if (index == 1) player1Ready = true;
+
         UpdateYesButtonText();
 
-        if (readyPlayersCount >= 2)
+        if (player0Ready && player1Ready)
         {
-            Debug.Log("2回のクリックを確認。ステージ変更します。");
+            Debug.Log("両プレイヤーの同意を確認。ステージ選択に戻ります。");
+
+            player0Ready = false;
+            player1Ready = false;
+
             Time.timeScale = 1f;
             SceneManager.LoadScene(stageSelectSceneName);
         }
     }
 
-    public void CancelExit()
+
+    private async void SendMenuToggleAction(string actionType)
     {
-        // 1. 確認画面を即座に消す
-        confirmationPanel.SetActive(false);
-        readyPlayersCount = 0;
-        currentConfirmationIndex = 0;
-
-        // 2. 競合防止のためにUIフォーカスを一度リセットする
-        if (EventSystem.current != null)
+        if (NetworkManager.Instance != null)
         {
-            EventSystem.current.SetSelectedGameObject(null);
-        }
+            InGameMoveData menuMsg = new InGameMoveData();
+            menuMsg.type = "menu_toggle"; 
+            menuMsg.dataType = "";
 
-        // 3. 通常メニュー側のフォーカス（退出ボタン等）に主導権を戻す
-        ApplyMenuButtonFocus();
+            menuMsg.room_id = NetworkManager.Instance.myRoomID;
+
+            int myRealChara = NetworkManager.Instance.myRealSelectedChar;
+            if (myRealChara == -1) myRealChara = NetworkManager.Instance.myCharaIndex;
+            menuMsg.char_index = myRealChara; // 誰が操作したかを乗せる
+
+            menuMsg.position_x = (actionType == "toggle") ? 1f : 2f;
+
+            string json = JsonUtility.ToJson(menuMsg);
+            await NetworkManager.Instance.SendMessageAsync(json);
+        }
     }
+
+    // サーバーから戻ってきたパケットを元に、実際に画面を切り替える関数
+    public void ReceiveMenuToggle(float actionCode, int senderCharIndex)
+    {
+        Debug.Log($"【同期受信】ReceiveMenuToggle: Code={actionCode}, Sender={senderCharIndex}");
+
+        if (actionCode == 1f) // メニューを開く
+        {
+            ToggleMenuLocal(true);
+
+            // 相手が開いたことによるリセット処理
+            hasPressedYes = false;
+            if (exitButton != null) exitButton.interactable = true;
+        }
+        else if (actionCode == 2f) // メメインメニューを閉じる
+        {
+            ToggleMenuLocal(false);
+        }
+        else if (actionCode == 3f) // 確認画面のみキャンセル
+        {
+            if (confirmationPanel != null) confirmationPanel.SetActive(false);
+            hasPressedYes = false;
+            if (exitButton != null) exitButton.interactable = true;
+            ApplyMenuButtonFocus();
+        }
+    }
+
+ 
+   
 
     public void AddStar()
     {
@@ -268,10 +417,33 @@ public class StageMenuManager : MonoBehaviour
     {
         if (yesButtonText != null)
         {
-            yesButtonText.text = $"はい {readyPlayersCount}/2";
+            // 同意している人数を数える
+            int count = 0;
+            if (player0Ready) count++;
+            if (player1Ready) count++;
+
+            yesButtonText.text = $"はい {count}/2";
         }
     }
 
+   
+    public void CancelExit()
+    {
+        confirmationPanel.SetActive(false);
+        currentConfirmationIndex = 0;
+        hasPressedYes = false;
+
+       
+        int myIndex = (NetworkManager.Instance != null) ? NetworkManager.Instance.myCharaIndex : 0;
+        if (myIndex == 0) player0Ready = false;
+        if (myIndex == 1) player1Ready = false;
+        UpdateYesButtonText();
+
+        if (exitButton != null) exitButton.interactable = true;
+        if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
+
+        ApplyMenuButtonFocus();
+    }
     private void OnDestroy()
     {
         Time.timeScale = 1f;

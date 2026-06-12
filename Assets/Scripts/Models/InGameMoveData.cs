@@ -34,7 +34,14 @@ public class InGameMoveData : InitResponse
     public float position_x;   // X座標
     public float position_y;   // Y座標
 
-   
+    public bool is_flip_x;  // プレイヤーの向き
+
+
+}
+
+public class ClearSelectData : InitResponse
+{
+    public int select_index;
 }
 
 
