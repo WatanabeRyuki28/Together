@@ -28,8 +28,8 @@ Transform:
   m_GameObject: {fileID: 8169354557305756586}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.2535, y: 20.4476, z: 0}
-  m_LocalScale: {x: 38.573307, y: 37.85452, z: 1}
+  m_LocalPosition: {x: 8.2535, y: 36.821, z: 0}
+  m_LocalScale: {x: 38.573307, y: 89.02248, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 424650489, guid: 1241a20938df35c4486e83b7faf9095b, type: 3}
+  m_Sprite: {fileID: -1075604216, guid: 1241a20938df35c4486e83b7faf9095b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -129,7 +129,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.73262703, y: 0.71741146}
+  m_Size: {x: 0.73262703, y: 0.6674126}
   m_EdgeRadius: 0
 --- !u!114 &3256463612475948759
 MonoBehaviour:
@@ -145,3 +145,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   breakableBy: 0
   needsBoth: 0
+  breakSound: {fileID: 0}
+  layerHitSound: {fileID: 0}
+  failSound: {fileID: 0}

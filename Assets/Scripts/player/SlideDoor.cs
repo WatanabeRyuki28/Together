@@ -2,6 +2,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(BoxCollider2D))] // 壁判定（および将来のワープ検知）に必須
+[RequireComponent(typeof(AudioSource))]   // ★効果音再生に必須
 public class WarpDoor : MonoBehaviour
 {
     // --- 【ワープ機能用】将来使う場合はコメントアウトを外してください ---
@@ -17,8 +18,14 @@ public class WarpDoor : MonoBehaviour
     // private static float nextWarpAvailableTime = 0f;
     // -----------------------------------------------------------------
 
+    [Header("Audio Settings (効果音)")]
+    [SerializeField] private AudioClip openSound;   // 扉が開いた時の音
+    //[SerializeField] private AudioClip closeSound;  // 扉が閉じた時の音
+    //[SerializeField] private AudioClip warpSound;   // ワープした時の音
+
     private Animator animator;
     private BoxCollider2D doorCollider; // 扉のコライダー
+    private AudioSource audioSource;    // 効果音再生用
     private bool isOpen = false;
 
     // アニメーターのパラメーター名（IsOpen）のハッシュ値
@@ -28,14 +35,22 @@ public class WarpDoor : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         doorCollider = GetComponent<BoxCollider2D>();
+        audioSource = GetComponent<AudioSource>();
+
+        // AudioSourceの初期設定
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 0f; // 2Dサウンドとしてハッキリ鳴らす
 
         // ゲーム開始時の初期化（最初は閉じているので壁にする）
         UpdateColliderState();
     }
 
-    // スイッチから呼ばれる、扉の開閉状態を設定するメソッド
+    // スッチから呼ばれる、扉の開閉状態を設定するメソッド
     public void SetDoorState(bool open)
     {
+        // 状態に変化がない場合は音を鳴らさない（毎フレーム呼ばれた際のエラー・音の重複防止）
+        if (isOpen == open) return;
+
         isOpen = open;
 
         // アニメーターの「IsOpen」パラメーターを更新してアニメーションを切り替える
@@ -43,6 +58,16 @@ public class WarpDoor : MonoBehaviour
 
         // 扉の状態に合わせて、当たり判定の性質（壁か、通り抜け可能か）を切り替える
         UpdateColliderState();
+
+        // ★開閉音の再生
+        if (isOpen)
+        {
+            PlaySound(openSound);
+        }
+        else
+        {
+            //PlaySound(closeSound);
+        }
     }
 
     // 扉の開閉状態に応じてコライダーの性質を切り替える処理
@@ -61,6 +86,15 @@ public class WarpDoor : MonoBehaviour
             // 扉が閉じている：物理的な壁にする（Is Trigger を OFF にする）
             doorCollider.isTrigger = false;
             Debug.Log($"{gameObject.name} が閉じたため、通行不可の壁になりました。");
+        }
+    }
+
+    // 効果音を鳴らす共通メソッド
+    private void PlaySound(AudioClip clip)
+    {
+        if (clip != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(clip);
         }
     }
 
@@ -92,6 +126,9 @@ public class WarpDoor : MonoBehaviour
     //     }
 
     //     playerObj.transform.position = warpTargetPosition;
+
+    //     // ★ワープ音を再生
+    //     PlaySound(warpSound);
 
     //     Debug.Log($"{playerObj.name} がワープしました。");
     // }
