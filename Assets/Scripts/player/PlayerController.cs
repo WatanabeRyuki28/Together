@@ -354,6 +354,8 @@ public class PlayerController : MonoBehaviour
         playerData.position_x = pos.x;
         playerData.position_y = pos.y;
 
+        playerData.is_flip_x = spriteRenderer.flipX;
+
         var jsonMsg = JsonUtility.ToJson(playerData);
         await networkManager.SendMessageAsync(jsonMsg);
     }
