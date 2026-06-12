@@ -1,12 +1,17 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(AudioSource))] // ★効果音再生に必須
 public class JumpPad : MonoBehaviour
 {
     [Header("ジャンプの設定")]
     [SerializeField] private float jumpForce = 12.0f; // 跳ね上げる強さ（通常のジャンプより高め）
 
+    [Header("Audio Settings (効果音)")]
+    [SerializeField] private AudioClip launchSound; // ★跳ね上がった瞬間の音
+
     private Animator animator;
+    private AudioSource audioSource; // ★効果音再生用
 
     // アニメーターのトリガー名（インスペクターでのスペルミス防止）
     private static readonly int LaunchTrigger = Animator.StringToHash("Launch");
@@ -14,6 +19,11 @@ public class JumpPad : MonoBehaviour
     private void Awake()
     {
         animator = GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
+
+        // AudioSourceの初期設定
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 0f; // 2Dサウンドとしてハッキリ鳴らす
     }
 
     // トリガー判定（プレイヤーが上に乗った瞬間の検知）
@@ -39,6 +49,12 @@ public class JumpPad : MonoBehaviour
 
             // ジャンプ台がビヨーンと動くアニメーションを再生
             animator.SetTrigger(LaunchTrigger);
+
+            // ★跳ね上げ音を再生
+            if (launchSound != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(launchSound);
+            }
 
             Debug.Log($"{playerObj.name} がジャンプ台で大ジャンプしました！強さ: {jumpForce}");
         }

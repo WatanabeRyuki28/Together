@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))] // ★効果音再生に必須
 public class FloorSwitch : MonoBehaviour
 {
     [Header("連動させるワープ扉（ペア）")]
@@ -9,12 +10,21 @@ public class FloorSwitch : MonoBehaviour
     [Header("踏まれた時のスイッチの色")]
     [SerializeField] private Color pressedColor = Color.gray;
 
+    [Header("Audio Settings (効果音)")]
+    [SerializeField] private AudioClip switchOnSound; // ★スイッチが押された時の音
+
     private SpriteRenderer spriteRenderer;
+    private AudioSource audioSource; // ★効果音再生用
     private bool isPressed = false; // 一度押されたら true になり、固定される
 
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        audioSource = GetComponent<AudioSource>();
+
+        // AudioSourceの初期設定
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 0f; // 2Dサウンドとしてハッキリ鳴らす
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -38,6 +48,12 @@ public class FloorSwitch : MonoBehaviour
         if (spriteRenderer != null)
         {
             spriteRenderer.color = pressedColor;
+        }
+
+        // ★スイッチが押された音を鳴らす
+        if (switchOnSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(switchOnSound);
         }
 
         // 両方の扉を「開く（true）」にする（以降、閉じる命令は送られない）
