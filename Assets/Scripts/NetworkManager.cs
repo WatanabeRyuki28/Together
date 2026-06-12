@@ -74,12 +74,7 @@ public class NetworkManager : MonoBehaviour
 
     void Update()
     {
-        waitIp += Time.deltaTime;
-        if(waitIp >= 3.0f)
-        {
-            LoadConfig();
-            waitIp = 0f;
-        }
+        
       
 
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -149,6 +144,15 @@ public class NetworkManager : MonoBehaviour
                 else
                 {
                     Debug.LogWarning("ObjectOnlineCommunication が現在のシーンに見つかりません！");
+                }
+            }
+
+            else if(currentSceneName == "ClearScene")
+            {
+                var ClearManager = FindObjectOfType<StageClearManager>();
+                if (ClearManager != null)
+                {
+                    ClearManager.HandleClearMessage(msg);
                 }
             }
         };

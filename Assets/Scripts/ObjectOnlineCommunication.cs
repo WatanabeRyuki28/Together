@@ -90,7 +90,36 @@ public class ObjectOnlineCommunication : MonoBehaviour
 
     public void HandleWebSocketMessage(string msg)
     {
+
+        if (msg.Contains("\"type\":\"menu_toggle\"") || msg.Contains("\"type\":\"menu_exit_ready\""))
+        {
+            try
+            {
+                // いったん共通のデータ型に変換して中身を取り出す
+                InGameMoveData menuData = JsonUtility.FromJson<InGameMoveData>(msg);
+
+                if (menuData.type == "menu_toggle" && StageMenuManager.Instance != null)
+                {
+                    // メニューの開閉状態を同期
+                    StageMenuManager.Instance.ReceiveMenuToggle(menuData.position_x, menuData.char_index);
+                    return; // ここで処理終了（位置同期の処理には行かせない）
+                }
+                else if (menuData.type == "menu_exit_ready" && StageMenuManager.Instance != null)
+                {
+                    // 退出同意のカウント（実名チェック）を同期
+                    StageMenuManager.Instance.ReceiveExitReady(menuData.char_index);
+                    return; // ここで処理終了
+                }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"メニューデータの振り分けでエラーが発生: {e.Message}");
+            }
+        }
+
         var data = JsonUtility.FromJson<InGameMoveData>(msg);
+
+        
 
         if (data.dataType == "player")
         {
@@ -98,9 +127,9 @@ public class ObjectOnlineCommunication : MonoBehaviour
         }
         else if (data.dataType == "object" || data.dataType == "spawn_projectile")
         {
-            // ★弾生成イベント(spawn_projectile)も位置同期(object)も、同じオブジェクト同期関数で処理する
             HandleObjectSync(data);
         }
+        
     }
 
     private void HandlePlayerSync(InGameMoveData data)
@@ -119,24 +148,34 @@ public class ObjectOnlineCommunication : MonoBehaviour
 
         Vector3 targetPos = new Vector3(data.position_x, data.position_y, 0);
 
-        // 1. まず届いた生データ（ゴーストオブジェクト）をその座標に「瞬間移動」させて可視化する
+        // まず届いた生データ（ゴーストオブジェクト）をその座標に「瞬間移動」させて可視化する
         if (ghostObjects.ContainsKey(data.char_index))
         {
             ghostObjects[data.char_index].transform.position = targetPos;
         }
 
-        // 2. 本物のキャラクターには、そのゴーストを追尾させるために座標を教える
+        // 本物のキャラクターには、そのゴーストを追尾させるために座標を教える
         if (players.ContainsKey(data.char_index))
         {
-            var controller = players[data.char_index].GetComponent<PlayerController>();
+            GameObject remotePlayerObj = players[data.char_index];
+
+            // 1. 座標追尾のための設定
+            var controller = remotePlayerObj.GetComponent<PlayerController>();
             if (controller != null)
             {
-               
-
                 // ゴーストの座標を目標地点として設定
                 controller.TargetPosition = targetPos;
             }
+
+            // 相手のスプライトの向きを同期する
+            var remoteSprite = remotePlayerObj.GetComponent<SpriteRenderer>();
+            if (remoteSprite != null)
+            {
+                // 届いたパケットデータ(data.is_flip_x)をそのまま相手のSpriteRendererに適用
+                remoteSprite.flipX = data.is_flip_x;
+            }
         }
+
     }
 
     private void HandleObjectSync(InGameMoveData data)

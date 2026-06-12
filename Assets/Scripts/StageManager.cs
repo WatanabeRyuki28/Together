@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI; // ƒ{ƒ^ƒ“‚Ì§Œä—p
 
+
 public class StageManager : MonoBehaviour
 {
 
