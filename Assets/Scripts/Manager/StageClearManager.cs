@@ -16,7 +16,7 @@ public class StageClearManager : MonoBehaviour
     [SerializeField] private Button retryButton;         // ⑥ リトライ
 
     [Header("各アクションの遷移先シーン名")]
-    [SerializeField] private string nextStageSceneName = "Stage2";
+    // [SerializeField] private string nextStageSceneName = "Stage2";
     [SerializeField] private string stageSelectSceneName = "Title";
 
     private int currentSelectedIndex = 0;
@@ -168,7 +168,22 @@ public class StageClearManager : MonoBehaviour
 
     void LoadScene(int clearIndex)
     {
-        if (clearIndex == 0) SceneManager.LoadScene(nextStageSceneName);
+        if (clearIndex == 0)
+        {
+            int nextSceneIndex = PlayerPrefs.GetInt("NextStageIndex", 3);
+
+            // 次のインデックスが、ビルド設定されている総シーン数より少なければロード
+            if (nextSceneIndex < SceneManager.sceneCountInBuildSettings)
+            {
+                Debug.Log($"【シーン遷移】保存された次のステージ（BuildIndex: {nextSceneIndex}）をロードします。");
+                SceneManager.LoadScene(nextSceneIndex);
+            }
+            else
+            {
+                Debug.LogWarning("【警告】すべてのステージをクリアしました！ステージ選択に戻ります。");
+                SceneManager.LoadScene(stageSelectSceneName);
+            }
+        }
         else if (clearIndex == 1) SceneManager.LoadScene(stageSelectSceneName);
         else if (clearIndex == 2)
         {

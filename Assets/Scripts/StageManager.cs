@@ -1,77 +1,131 @@
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI; // ƒ{ƒ^ƒ“‚Ì§Œä—p
-
+using UnityEngine.UI;
 
 public class StageManager : MonoBehaviour
 {
+  
+    [SerializeField] private RectTransform[] stageButtons;
 
-    public GameObject confirmButton; // Å‰‚Í”ñ•\¦‚©AƒzƒXƒg‚Ì‚¾‚¯o‚µ‚½‚¢ƒ{ƒ^ƒ“
+    [Header("ãƒ›ã‚¹ãƒˆã®é¸æŠæ ï¼ˆã‚«ãƒ¼ã‚½ãƒ«ç”»åƒã‚„å¤ªæ ï¼‰")]
+    [SerializeField] private RectTransform selectionCursor;
 
-    private int currentStageIndex = -1; // Œ»İ‘I‚ñ‚Å‚¢‚éƒXƒe[ƒW”Ô†i-1‚Í–¢‘I‘ğj
+    public GameObject confirmButton; // ãƒ›ã‚¹ãƒˆã®ç”»é¢ã«ã ã‘å‡ºã‚‹ã€Œé–‹å§‹ã€ãƒœã‚¿ãƒ³
+
+    private int currentStageIndex = 0; // ç¾åœ¨é¸ã‚“ã§ã„ã‚‹ã‚¹ãƒ†ãƒ¼ã‚¸ç•ªå·
 
     void Start()
     {
         CheckHost();
 
-        // ‹N“®‚Í‚Ü‚¾ƒXƒe[ƒW‚ğ‘I‚ñ‚Å‚¢‚È‚¢‚Ì‚ÅAŒˆ’èƒ{ƒ^ƒ“‚ğ”ñ•\¦‚É‚·‚é
+        // èµ·å‹•æ™‚ã¯é–‹å§‹ãƒœã‚¿ãƒ³ã‚’éè¡¨ç¤ºã«ã™ã‚‹
         if (confirmButton != null)
         {
             confirmButton.SetActive(false);
+        }
+
+        // åˆæœŸã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã®æ›´æ–°
+        UpdateCursorPosition();
+
+        // ãƒ›ã‚¹ãƒˆãªã‚‰åˆæœŸä½ç½®ã‚’ã‚²ã‚¹ãƒˆã«å…±æœ‰
+        if (IsHost())
+        {
+            SendStageSelectNotification(currentStageIndex, false);
         }
     }
 
     void Update()
     {
+        // ãƒ›ã‚¹ãƒˆä»¥å¤–ã¯ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰æ“ä½œã‚’å—ã‘ä»˜ã‘ãªã„ï¼
+        if (!IsHost()) return;
 
+        bool isMoved = false;
+
+        // ã‚°ãƒªãƒƒãƒ‰çŠ¶ï¼ˆ2è¡ŒÃ—5åˆ—ï¼‰ã®ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ç§»å‹•å‡¦ç†
+        // æ¨ªç§»å‹•ï¼ˆå³ï¼‰
+        if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
+        {
+            currentStageIndex++;
+            if (currentStageIndex >= stageButtons.Length) currentStageIndex = 0;
+            isMoved = true;
+        }
+        // æ¨ªç§»å‹•ï¼ˆå·¦ï¼‰
+        else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
+        {
+            currentStageIndex--;
+            if (currentStageIndex < 0) currentStageIndex = stageButtons.Length - 1;
+            isMoved = true;
+        }
+        // ç¸¦ç§»å‹•
+        else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
+        {
+            if (currentStageIndex < 5) // ä¸Šã®æ®µï¼ˆ0ã€œ4ï¼‰ã«ã„ã‚‹ã¨ã
+            {
+                currentStageIndex += 5;
+                if (currentStageIndex >= stageButtons.Length) currentStageIndex = stageButtons.Length - 1;
+                isMoved = true;
+            }
+        }
+        // ç¸¦ç§»å‹•
+        else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
+        {
+            if (currentStageIndex >= 5) // ä¸‹ã®æ®µï¼ˆ5ã€œ9ï¼‰ã«ã„ã‚‹ã¨ã
+            {
+                currentStageIndex -= 5;
+                isMoved = true;
+            }
+        }
+
+        // ã‚«ãƒ¼ã‚½ãƒ«ãŒå‹•ã„ãŸã‚‰ã€ä½ç½®ã‚’æ›´æ–°ã—ã¦ã‚²ã‚¹ãƒˆã«ã‚‚å³åº§ã«ãƒ‘ã‚±ãƒƒãƒˆã‚’é€ä¿¡ã™ã‚‹
+        if (isMoved)
+        {
+            UpdateCursorPosition();
+
+            // ãƒ›ã‚¹ãƒˆã®ç”»é¢ã«ã‚‚ã€Œé–‹å§‹ã€ãƒœã‚¿ãƒ³ã‚’å‡ºã—ã¦ã‚ã’ã‚‹
+            if (confirmButton != null) confirmButton.SetActive(true);
+
+            // ã‚²ã‚¹ãƒˆã¸åŒæœŸé€ä¿¡
+            SendStageSelectNotification(currentStageIndex, false);
+        }
+
+        // æ±ºå®šã‚­ãƒ¼ã§æœ¬æ±ºå®š
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Z))
+        {
+            ConfirmStageSelection();
+        }
     }
 
-   
-    public void SelectStage(int stageIndex)
+    // è‡ªç”»é¢ã®ã‚«ãƒ¼ã‚½ãƒ«ã®ä½ç½®ã‚’æ›´æ–°ã™ã‚‹
+    void UpdateCursorPosition()
     {
-        // ƒzƒXƒgi1PjˆÈŠO‚Íƒ{ƒ^ƒ“‚ğ‰Ÿ‚³‚ê‚Ä‚à–³‹‚·‚é
-        if (NetworkManager.Instance == null || NetworkManager.Instance.myPlayerIndex != 0)
+        if (stageButtons == null || stageButtons.Length == 0 || selectionCursor == null) return;
+
+        if (currentStageIndex >= 0 && currentStageIndex < stageButtons.Length)
         {
-            Debug.LogWarning("ƒzƒXƒgˆÈŠO‚ÌƒvƒŒƒCƒ„[‚ÍƒXƒe[ƒW‚ğ‘I‘ğ‚Å‚«‚Ü‚¹‚ñB");
-            return;
+            selectionCursor.gameObject.SetActive(true);
+            selectionCursor.position = stageButtons[currentStageIndex].position;
         }
-
-        currentStageIndex = stageIndex;
-        Debug.Log($"ƒzƒXƒg‚ªƒXƒe[ƒW {currentStageIndex} ‚ğ‘I‘ğ‚µ‚Ü‚µ‚½i‰¼Œˆ’èjB");
-
-        // yƒzƒXƒg‘¤zƒXƒe[ƒW‚ª‘I‚Î‚ê‚½‚Ì‚ÅA‰æ–Ê‚ÉuŒˆ’èƒ{ƒ^ƒ“v‚ğoŒ»‚³‚¹‚éI
-        if (confirmButton != null)
-        {
-            confirmButton.SetActive(true);
-        }
-
-       
-        SendStageSelectNotification(currentStageIndex, false);
-
-
     }
 
-    
-    // Œˆ’èƒ{ƒ^ƒ“—p
+    // æ±ºå®šãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚ŒãŸï¼ˆã¾ãŸã¯æ±ºå®šã‚­ãƒ¼ãŒå©ã‹ã‚ŒãŸï¼‰æ™‚ã®æœ¬æ±ºå®šå‡¦ç†
     public void ConfirmStageSelection()
     {
-        if (NetworkManager.Instance == null || NetworkManager.Instance.myPlayerIndex != 0) return;
-
-        // ‰½‚à‘I‚ñ‚Å‚È‚¢‚Ì‚É‰Ÿ‚³‚ê‚½‚ç–h‚®
+        if (!IsHost()) return;
         if (currentStageIndex == -1) return;
 
-        Debug.Log($"ƒzƒXƒg‚ªƒXƒe[ƒW {currentStageIndex} ‚Å–{Œˆ’è‚µ‚Ü‚µ‚½IƒQ[ƒ€‚ğŠJn‚µ‚Ü‚·B");
+        Debug.Log($"ã€ãƒ›ã‚¹ãƒˆã€‘ã‚¹ãƒ†ãƒ¼ã‚¸ {currentStageIndex + 1} ã§æœ¬æ±ºå®šã—ã¾ã—ãŸï¼ã‚²ãƒ¼ãƒ ã‚’é–‹å§‹ã—ã¾ã™ã€‚");
 
-        // ‘Šè‚ÉuŠm’è‚µ‚½v‚Æ’Ê’m‚ğ‘—‚é
+        // ç›¸æ‰‹ã«ã€Œæœ¬æ±ºå®šï¼ˆstage_ready = trueï¼‰ã€ã¨ã—ã¦é€šçŸ¥ã‚’é€ã‚‹
         SendStageSelectNotification(currentStageIndex, true);
 
-        // ƒzƒXƒg‚Ì‰æ–Ê‚ğ‘¦‘JˆÚ‚³‚¹‚é
+        // ãƒ›ã‚¹ãƒˆè‡ªèº«ã®ç”»é¢ã‚’é·ç§»ã•ã›ã‚‹
         LoadTargetScene(currentStageIndex);
     }
 
-    // ƒT[ƒo[‘—Mˆ—i‹¤’Êj
+    // ã‚µãƒ¼ãƒãƒ¼ã¸ã®é€ä¿¡å‡¦ç†ï¼ˆã‚­ãƒ£ãƒ©é¸æŠã®ãƒ­ã‚¸ãƒƒã‚¯ã¨å®Œå…¨ã«çµ±ä¸€ï¼‰
     private async void SendStageSelectNotification(int stageIndex, bool isReady)
     {
         if (NetworkManager.Instance == null) return;
@@ -81,16 +135,16 @@ public class StageManager : MonoBehaviour
         msgData.name_id = NetworkManager.Instance.myPlayerId;
         msgData.room_id = NetworkManager.Instance.myRoomID;
         msgData.index = NetworkManager.Instance.myPlayerIndex;
-        msgData.IsStarted = isReady; 
+        msgData.IsStarted = isReady;
 
         msgData.stage_index = stageIndex;
-        msgData.stage_ready = isReady; // Œˆ’èƒtƒ‰ƒO
+        msgData.stage_ready = isReady;
 
         string jsonMsg = JsonUtility.ToJson(msgData);
         await NetworkManager.Instance.SendMessageAsync(jsonMsg);
     }
 
-    // 2PiƒQƒXƒgj‘¤‚ÌƒƒbƒZ[ƒWóMˆ—
+    // ã‚²ã‚¹ãƒˆå´ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å—ä¿¡å‡¦ç†
     public void HandleRemoteStageMessage(string msg)
     {
         var stageData = JsonUtility.FromJson<StageSelectData>(msg);
@@ -98,61 +152,50 @@ public class StageManager : MonoBehaviour
 
         if (stageData.type == "stage_select")
         {
-            // ƒzƒXƒg‚ª‘I‚ñ‚Å‚¢‚éÅ’†‚Ì‚Æ‚«
-            if (!stageData.stage_ready)
+            // ãƒ›ã‚¹ãƒˆã‹ã‚‰ã®ãƒ‡ãƒ¼ã‚¿ã§ã‚ã‚‹å ´åˆã®ã¿å‡¦ç†ã™ã‚‹
+            if (stageData.name_id != NetworkManager.Instance.myPlayerId)
             {
-                Debug.Log($"y“¯ŠúzƒzƒXƒg‚ªƒXƒe[ƒW {stageData.stage_index} ‚ğ‘I‘ğ’†i‰¼j...");
+                // ãƒ›ã‚¹ãƒˆãŒé¸æŠä¸­ã®å ´åˆã€ã‚²ã‚¹ãƒˆå´ã®ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã‚’ãƒªã‚¢ãƒ«ã‚¿ã‚¤ãƒ åŒæœŸ
+                if (!stageData.stage_ready)
+                {
+                    Debug.Log($"ã€åŒæœŸã€‘ãƒ›ã‚¹ãƒˆãŒã‚¹ãƒ†ãƒ¼ã‚¸ {stageData.stage_index + 1} ã‚’é¸æŠä¸­...");
 
-                
-            }
-            // ƒzƒXƒg‚ªŒˆ’èƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚Æ‚«
-            else
-            {
-                Debug.Log($"y“¯ŠúzƒzƒXƒg‚ªƒXƒe[ƒW {stageData.stage_index} ‚ÅŠm’è‚µ‚Ü‚µ‚½B‘JˆÚ‚µ‚Ü‚·B");
-                LoadTargetScene(stageData.stage_index);
+                    currentStageIndex = stageData.stage_index;
+                    UpdateCursorPosition(); // ã‚²ã‚¹ãƒˆç”»é¢ã®ã‚«ãƒ¼ã‚½ãƒ«ã‚’ãƒ›ã‚¹ãƒˆã¨åŒã˜ä½ç½®ã«å‹•ã‹ã™
+                }
+                // ãƒ›ã‚¹ãƒˆãŒæœ¬æ±ºå®šã®ãƒ‘ã‚±ãƒƒãƒˆã‚’é€ã£ã¦ããŸå ´åˆã€ã‚²ã‚¹ãƒˆã‚‚é“é€£ã‚Œã§ã‚·ãƒ¼ãƒ³é·ç§»
+                else
+                {
+                    Debug.Log($"ã€åŒæœŸã€‘ãƒ›ã‚¹ãƒˆãŒã‚¹ãƒ†ãƒ¼ã‚¸ {stageData.stage_index + 1} ã§ç¢ºå®šã—ã¾ã—ãŸã€‚é·ç§»ã—ã¾ã™ã€‚");
+                    LoadTargetScene(stageData.stage_index);
+                }
             }
         }
     }
 
-    // ƒV[ƒ“‘JˆÚ—p‚Ì‹¤’ÊŠÖ”
+    // ã‚·ãƒ¼ãƒ³é·ç§»ç”¨ã®é–¢æ•°
     private void LoadTargetScene(int stageIndex)
     {
-        if (stageIndex == 0)
-        {
-            SceneManager.LoadScene("TutorialStageScene_Backup");
-        }
-        else if (stageIndex == 1)
-        {
-            SceneManager.LoadScene("Stage1Scene");
-        }
-        else if (stageIndex == 1)
-        {
-            SceneManager.LoadScene("Stage2Scene");
-        }
+        if (stageIndex == -1) SceneManager.LoadScene("TutorialStageScene_Backup"); 
+        else if (stageIndex == 0) SceneManager.LoadScene("Stage1");               
+        else if (stageIndex == 1) SceneManager.LoadScene("Stage2");               
+        else if (stageIndex == 2) SceneManager.LoadScene("Stage3");              
+       
     }
 
-   
+    private bool IsHost() => NetworkManager.Instance != null && NetworkManager.Instance.myPlayerIndex == 0;
 
-
-    private void CheckHost() 
+    private void CheckHost()
     {
         if (NetworkManager.Instance == null) return;
 
-
-        if (NetworkManager.Instance.myPlayerIndex == 0)
-
+        if (IsHost())
         {
-
-            Debug.Log("‚ ‚È‚½‚ÍƒzƒXƒg‚Å‚·BƒXƒe[ƒW‘I‘ğ‚ª‰Â”\‚Å‚·B");
-
+            Debug.Log("ã‚ãªãŸã¯ãƒ›ã‚¹ãƒˆã§ã™ã€‚ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã§ã‚¹ãƒ†ãƒ¼ã‚¸é¸æŠãŒå¯èƒ½ã§ã™ã€‚");
         }
-
         else
-
         {
-
-            Debug.Log("‚ ‚È‚½‚ÍƒQƒXƒg‚Å‚·BƒzƒXƒg‚ªƒXƒe[ƒW‚ğ‘I‚Ô‚Ì‚ğ‘Ò‚Á‚Ä‚¢‚Ü‚·B");
-
+            Debug.Log("ã‚ãªãŸã¯ã‚²ã‚¹ãƒˆã§ã™ã€‚ãƒ›ã‚¹ãƒˆã®ã‚«ãƒ¼ã‚½ãƒ«åŒæœŸã‚’å¾…æ©Ÿã—ã¦ã„ã¾ã™ã€‚");
         }
     }
 }

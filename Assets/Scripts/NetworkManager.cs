@@ -23,6 +23,8 @@ public class NetworkManager : MonoBehaviour
     public int targetPort;
     private float waitIp = 0f;
 
+    private int stageIndex = 0;
+
     void Awake()
     {
         LoadConfig();
@@ -106,6 +108,8 @@ public class NetworkManager : MonoBehaviour
             //  現在アクティブなシーンの名前を取得する
             string currentSceneName = SceneManager.GetActiveScene().name;
 
+           
+
             //  シーン名に応じて、届いたデータの届け先を完全に仕分ける！
             if (currentSceneName == "SecondScene" || currentSceneName == "TopViewScene")
             {
@@ -144,6 +148,18 @@ public class NetworkManager : MonoBehaviour
                 else
                 {
                     Debug.LogWarning("ObjectOnlineCommunication が現在のシーンに見つかりません！");
+                }
+            }
+            else if (currentSceneName == "Stage1" || currentSceneName == "Stage2")
+            {
+                var onlineComm = FindObjectOfType<ObjectOnlineCommunication>();
+                if (onlineComm != null)
+                {
+                    onlineComm.HandleWebSocketMessage(msg);
+                }
+                else
+                {
+                   
                 }
             }
 
