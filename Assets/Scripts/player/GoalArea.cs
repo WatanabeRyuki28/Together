@@ -51,6 +51,9 @@ public class GoalArea : MonoBehaviour
         // シーンが切り替わる前に、現在のステージ名（"Stage1"など）を「RetrySceneName」という名前でメモリにセーブします
         string currentStageName = SceneManager.GetActiveScene().name;
         PlayerPrefs.SetString("RetrySceneName", currentStageName);
+
+        int nextStageIndex = SceneManager.GetActiveScene().buildIndex + 1;
+        PlayerPrefs.SetInt("NextStageIndex", nextStageIndex);
         PlayerPrefs.Save(); // 確実に保存
 
         // 満を持してクリアシーン（ClearScene）へ遷移
