@@ -30,11 +30,11 @@ public class ObjectOnlineCommunication : MonoBehaviour
             if (myColorIndex == 0)
             {
                 myStartPos = Vector3.zero;                  // 赤は中央
-                opponentStartPos = new Vector3(2f, 0f, 0f);  // 青は右
+                opponentStartPos = new Vector3(2f, -1.5f, 0f);  // 青は右
             }
             else
             {
-                myStartPos = new Vector3(2f, 0f, 0f);       // 青は右
+                myStartPos = new Vector3(2f, -1.5f, 0f);       // 青は右
                 opponentStartPos = Vector3.zero;            // 赤は中央
             }
 
