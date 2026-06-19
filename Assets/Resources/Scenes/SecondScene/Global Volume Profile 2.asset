@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-7472601005688533001
+--- !u!114 &-8016633792148004926
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -32,10 +32,10 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: 0.1
   aperture:
-    m_OverrideState: 1
-    m_Value: 4.9
+    m_OverrideState: 0
+    m_Value: 5.6
   focalLength:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 50
   bladeCount:
     m_OverrideState: 0
@@ -56,7 +56,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d7fd9488000d3734a9e00ee676215985, type: 3}
-  m_Name: Global Volume Profile
+  m_Name: Global Volume Profile 2
   m_EditorClassIdentifier: 
   components:
-  - {fileID: -7472601005688533001}
+  - {fileID: -8016633792148004926}
