@@ -20,8 +20,8 @@ TagManager:
   - Wall
   - Projectile_Fire
   - Projectile_Ice
-  - 
-  - 
+  - UI_Blurred
+  - UI_Clear
   - 
   - 
   - 
