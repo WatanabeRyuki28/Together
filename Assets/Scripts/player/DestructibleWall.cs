@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class DestructibleWall : MonoBehaviour, IInteractable
 {
@@ -8,23 +9,86 @@ public class DestructibleWall : MonoBehaviour, IInteractable
 
     [Header("Audio Settings (効果音)")]
     [SerializeField] private AudioClip breakSound;       // 壁が壊れた時の音
-    [SerializeField] private AudioClip layerHitSound;    // 【協力用】片方当たった時の音（ピキーンなど）
-    [SerializeField] private AudioClip failSound;        // 属性が違って効かなかった時の音（カンッなど）
+    [SerializeField] private AudioClip layerHitSound;    // 【協力用】片方当たった時の音
+    [SerializeField] private AudioClip failSound;        // 属性が違って効かなかった時の音
 
     [Header("Effect Settings (演出)")]
-    [SerializeField] private GameObject breakEffectPrefab; // ★作成したパーティクルのプレハブ
+    [SerializeField] private GameObject breakEffectPrefab; // 共通のパーティクルプレハブ
 
+    private SpriteRenderer spriteRenderer;
     private bool hitByFire = false;
     private bool hitByIce = false;
+    private bool isBreaking = false;
 
-    // ========================================================
-    // ★【エラー解消】省略せずにすべて記述した OnInteract メソッド
-    // ========================================================
-    public void OnInteract(ElementType type)
+    // 待機アニメーションのループ制御用
+    private Coroutine idleCoroutine;
+    private Vector3 basePosition;
+    private Color baseColor;
+
+    private void Awake()
     {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    private void Start()
+    {
+        basePosition = transform.position;
+        if (spriteRenderer != null)
+        {
+            baseColor = spriteRenderer.color;
+        }
+
+        // 待機中の動き（どちらも異なる振動）
         if (needsBoth)
         {
-            // すでに両方当たっている、または同じ属性に連続で当たった場合は無視
+            idleCoroutine = StartCoroutine(IdleIceShiver());
+        }
+        else if (breakableBy == ElementType.Fire)
+        {
+            idleCoroutine = StartCoroutine(IdleFireShiver()); // 炎：超高速振動
+        }
+        else
+        {
+            idleCoroutine = StartCoroutine(IdleIceShiver());  // 氷：小刻みな硬質振動
+        }
+    }
+
+    // 🔥 待機中（炎）：激しい微振動
+    private IEnumerator IdleFireShiver()
+    {
+        while (!isBreaking)
+        {
+            float shiverAmount = 0.025f;
+            transform.position = basePosition + new Vector3(
+                Random.Range(-shiverAmount, shiverAmount),
+                Random.Range(-shiverAmount, shiverAmount),
+                0f
+            );
+            yield return null;
+        }
+    }
+
+    // ❄️ 待機中（氷）：小刻みな振動
+    private IEnumerator IdleIceShiver()
+    {
+        while (!isBreaking)
+        {
+            float shiverAmount = 0.015f;
+            transform.position = basePosition + new Vector3(
+                Random.Range(-shiverAmount, shiverAmount),
+                Random.Range(-shiverAmount, shiverAmount),
+                0f
+            );
+            yield return new WaitForSeconds(0.05f);
+        }
+    }
+
+    public void OnInteract(ElementType type)
+    {
+        if (isBreaking) return;
+
+        if (needsBoth)
+        {
             if (hitByFire && hitByIce) return;
             if (type == ElementType.Fire && hitByFire) return;
             if (type == ElementType.Ice && hitByIce) return;
@@ -32,29 +96,25 @@ public class DestructibleWall : MonoBehaviour, IInteractable
             if (type == ElementType.Fire) hitByFire = true;
             if (type == ElementType.Ice) hitByIce = true;
 
-            // 見た目で「あと一歩」感を出す（片方当たったら半透明にする等）
             UpdateVisuals();
 
             if (hitByFire && hitByIce)
             {
-                BreakWall();
+                StartBreakSequence(ElementType.Fire);
             }
             else
             {
-                // まだ片方だけしか当たっていないなら、受付音を鳴らす
                 PlaySound(layerHitSound);
             }
         }
         else
         {
-            // 特定の属性だけで壊れる場合
             if (type == breakableBy)
             {
-                BreakWall();
+                StartBreakSequence(type);
             }
             else
             {
-                // 属性が間違っているなら、弾かれ音を鳴らす
                 PlaySound(failSound);
             }
         }
@@ -62,64 +122,121 @@ public class DestructibleWall : MonoBehaviour, IInteractable
 
     private void UpdateVisuals()
     {
-        SpriteRenderer sr = GetComponent<SpriteRenderer>();
-        if (sr != null)
+        if (spriteRenderer != null)
         {
-            // 片方当たったら少し暗くするなど
-            sr.color = new Color(0.5f, 0.5f, 0.5f, 1.0f);
+            baseColor = new Color(baseColor.r * 0.5f, baseColor.g * 0.5f, baseColor.b * 0.5f, 1.0f);
+            spriteRenderer.color = baseColor;
         }
     }
 
-    private void BreakWall()
+    private void StartBreakSequence(ElementType targetType)
     {
-        Debug.Log($"{gameObject.name} を破壊しました！");
+        isBreaking = true;
+
+        if (idleCoroutine != null)
+        {
+            StopCoroutine(idleCoroutine);
+        }
+
+        transform.position = basePosition;
+        if (spriteRenderer != null) spriteRenderer.color = baseColor;
 
         if (breakSound != null)
         {
             AudioSource.PlayClipAtPoint(breakSound, transform.position);
         }
 
-        // 壁の位置に破片パーティクルを生成する
-        if (breakEffectPrefab != null)
+        if (targetType == ElementType.Fire)
         {
-            GameObject effect = Instantiate(breakEffectPrefab, transform.position, Quaternion.identity);
+            StartCoroutine(AnimateFireShatter()); // 炎：木っ端微塵に砕け散る
+        }
+        else if (targetType == ElementType.Ice)
+        {
+            StartCoroutine(AnimateIceShatterGlassEffect()); // 氷：パリーン！とガラスのように割れる
+        }
+    }
 
-            // ========================================================
-            // ★【追加】壁の色をパーティクルにコピーする処理
-            // ========================================================
-            SpriteRenderer wallSr = GetComponent<SpriteRenderer>();
-            ParticleSystem ps = effect.GetComponent<ParticleSystem>();
+    // 🔥 破壊時（炎）：木っ端微塵に砕け散る
+    private IEnumerator AnimateFireShatter()
+    {
+        if (TryGetComponent<Collider2D>(out Collider2D col)) col.enabled = false;
 
-            if (wallSr != null && ps != null)
-            {
-                // パーティクルの「メイン設定（色や寿命など）」にアクセス
-                var mainModule = ps.main;
+        float elapsed = 0f;
+        float shakeDuration = 0.25f;
 
-                // 壁のSpriteRendererの色を、破片の初期色（Start Color）にそっくりそのまま代入
-                mainModule.startColor = wallSr.color;
-            }
-            // ========================================================
-
-            // 1秒後に自動でヒエラルキーから削除する
-            Destroy(effect, 1.0f);
+        while (elapsed < shakeDuration)
+        {
+            elapsed += Time.deltaTime;
+            float shakeAmount = 0.08f;
+            transform.position = basePosition + new Vector3(
+                Random.Range(-shakeAmount, shakeAmount),
+                Random.Range(-shakeAmount, shakeAmount),
+                0f
+            );
+            yield return null;
         }
 
-        // 最後に壁本体を消去
+        // 炎：速度 5.0f、寿命 0.25秒（小さく激しく散る）
+        SpawnPrefabEffect(baseColor, 40, 5.0f, 0.25f);
         Destroy(gameObject);
     }
 
-    // 壁がまだ存在している間に鳴らす通常SE用メソッド
+    // ❄️ 破壊時（氷）：パリーン！と一瞬でヒビが入り、鋭く弾け飛ぶ演出
+    private IEnumerator AnimateIceShatterGlassEffect()
+    {
+        if (TryGetComponent<Collider2D>(out Collider2D col)) col.enabled = false;
+        Vector3 originalScale = transform.localScale;
+
+        float elapsed = 0f;
+        float glassStiffDuration = 0.1f;
+
+        transform.localScale = new Vector3(originalScale.x * 1.1f, originalScale.y * 0.9f, originalScale.z);
+
+        while (elapsed < glassStiffDuration)
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        // ★【調整】氷：速度 7.0f（鋭さ維持）に対し、寿命を「0.15秒」と超短縮！
+        // これにより、勢いよく弾け出た瞬間にパッと消えるため、広がりすぎず小気味良いサイズになります。
+        SpawnPrefabEffect(baseColor, 45, 7.0f, 0.15f);
+
+        Destroy(gameObject);
+    }
+
+    // エフェクト生成（速度と寿命をコントロール）
+    private void SpawnPrefabEffect(Color particleColor, int count, float speed, float lifetime)
+    {
+        if (breakEffectPrefab == null) return;
+
+        GameObject effect = Instantiate(breakEffectPrefab, basePosition, Quaternion.identity);
+        effect.transform.localScale = transform.localScale;
+
+        ParticleSystem ps = effect.GetComponent<ParticleSystem>();
+        if (ps != null)
+        {
+            var mainModule = ps.main;
+            mainModule.startColor = particleColor;
+            mainModule.startSpeed = speed;       // 吹き飛ぶ速さ
+            mainModule.startLifetime = lifetime; // ★【追加】飛び散る距離を抑えるために寿命を制限
+
+            var emission = ps.emission;
+            ParticleSystem.Burst burst = emission.GetBurst(0);
+            float wallSizeFactor = transform.localScale.x * transform.localScale.y;
+            burst.count = new ParticleSystem.MinMaxCurve(count * wallSizeFactor);
+            emission.SetBurst(0, burst);
+        }
+
+        Destroy(effect, 1.0f);
+    }
+
     private void PlaySound(AudioClip clip)
     {
         if (clip == null) return;
-
         AudioSource source = GetComponent<AudioSource>();
-        if (source == null)
-        {
-            source = gameObject.AddComponent<AudioSource>();
-        }
-
-        source.spatialBlend = 0f; // 2Dサウンドとして綺麗に鳴らす
+        if (source == null) source = gameObject.AddComponent<AudioSource>();
+        source.spatialBlend = 0f;
         source.PlayOneShot(clip);
     }
 }
