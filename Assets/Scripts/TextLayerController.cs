@@ -11,7 +11,7 @@ public class TextLayerController : MonoBehaviour
     void Start()
     {
         //Order in Layer‚Ì”’l
-        this.GetComponent & lt; MeshRenderer > ().sortingOrder = SortingOrder;
+       // this.GetComponent & lt; MeshRenderer > ().sortingOrder = SortingOrder;
     }
 
     // Update is called once per frame
