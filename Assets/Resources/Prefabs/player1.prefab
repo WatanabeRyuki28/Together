@@ -140,7 +140,7 @@ MonoBehaviour:
   firePoint: {fileID: 7035981683803161156}
   groundLayer:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 130935
   pushableLayer:
     serializedVersion: 2
     m_Bits: 1024

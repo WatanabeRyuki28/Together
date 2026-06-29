@@ -21,13 +21,13 @@ EditorBuildSettings:
     path: Assets/Resources/Scenes/TutorialStageScene_Backup.unity
     guid: 576d3e88bb4593d45a646edd01de427a
   - enabled: 1
-    path: Assets/Resources/Scenes/Stage1.unity
+    path: Assets/Resources/Scenes/Stage/Stage1.unity
     guid: 657ddf5dea0c43f448377ef8e8ca68dc
   - enabled: 1
-    path: Assets/Resources/Scenes/Stage2.unity
+    path: Assets/Resources/Scenes/Stage/Stage2.unity
     guid: 6a3d0de48d016b9488f719c34b00b809
   - enabled: 1
-    path: Assets/Resources/Scenes/Stage3.unity
+    path: Assets/Resources/Scenes/Stage/Stage3.unity
     guid: dbd62f0482494aa4c8632f5233f38d14
   - enabled: 1
     path: Assets/Resources/Scenes/ClearScene.unity

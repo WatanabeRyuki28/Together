@@ -7537,10 +7537,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec203bddf541b6e4389a0c7ce030d6e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NameInputField: {fileID: 530461064}
-  RoomInputField: {fileID: 1468616238}
-  NameText: {fileID: 728005152}
-  RoomText: {fileID: 484080675}
 --- !u!4 &1020977956
 Transform:
   m_ObjectHideFlags: 0
