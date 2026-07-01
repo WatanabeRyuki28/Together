@@ -1,186 +1,354 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.Rendering;
+using System.Collections.Generic;
+using UnityEngine.InputSystem;
 
-public class KeyboardManager : MonoBehaviour
+public class InputFieldFocus : MonoBehaviour
 {
-    
+    [Header("ç”»é¢ã¼ã‚„ã‘ã‚‹ç”¨ã®ã‚‚")]
     [SerializeField] Volume globalVolume;
-    [SerializeField] GameObject playCavas;
-    [SerializeField] GameObject menuCanvas;
+    [Header("Canvas")]
+    [SerializeField] GameObject playCavas;       // é€šä¿¡æ™‚ã®UI 
+    [SerializeField] GameObject menuCanvas;     // ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ç”¨ã®UI     
     private DepthOfField depthOfField;
-
 
     public InputField NameInputField;
     public InputField RoomInputField;
+    private InputField currentTargetInputField;
+
     public Text NameText;
     public Text RoomText;
 
     public Text KeyboardNameText;
     public Text KeyboardRoomText;
 
-    
-    public InputField Name;
+    public InputField finalNameInputField;
+    public InputField finalRoomInputField;
 
     const int limit = 10;
 
     public GameObject Hiragana;
     public GameObject Katakana;
+    public GameObject englishS;
+    public GameObject englishB;
 
-    [Header("ƒL[ƒ{[ƒh‚Ìƒ{ƒ^ƒ“İ’è")]
-    [SerializeField] private int gridCols = 13; // ‰¡13—ñ
-    [SerializeField] private int gridRows = 5;  // c5s
+    [Header("ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã®ãƒœã‚¿ãƒ³è¨­å®š")]
+    [SerializeField] private int gridCols = 13; // æ¨ª13åˆ—
+    [SerializeField] private int gridRows = 5;  // ç¸¦5è¡Œ
     private Button[,] keyGrid;
 
-    private int currentX = 11; // ‰ŠúˆÊ’u‚Íu‚ v‚Ì—ñ 
-    private int currentY = 0;  // ‰ŠúˆÊ’u‚Í1s–Ú
+    private int currentX = 11; // åˆæœŸä½ç½®ã¯ã€Œã‚ã€ã®åˆ— 
+    private int currentY = 0;  // åˆæœŸä½ç½®ã¯1è¡Œç›®
 
-    [SerializeField] private Transform rightFixedColumn;  // ¶‘¤‚Ìu‚ /ƒA/a/Av‚ª“ü‚Á‚Ä‚¢‚é—ñƒIƒuƒWƒFƒNƒg
+    [SerializeField] private Transform rightFixedColumn;
     [SerializeField] private Transform leftFixedColumn;
 
-    [Header("©“®”z’u‚Ìİ’è")]
-    [SerializeField] private Transform hiraganaPanel; // ‚Ğ‚ç‚ª‚È‚ÌPanel
-    [SerializeField] private Transform katakanaPanel; // ƒJƒ^ƒJƒi‚ÌPanel
+    [Header("è‡ªå‹•é…ç½®ã®è¨­å®š")]
+    [SerializeField] private Transform hiraganaPanel;
+    [SerializeField] private Transform katakanaPanel;
+    [SerializeField] private Transform englishSmallPanel;
+    [SerializeField] private Transform englishBigPanel;
 
     [SerializeField] private RectTransform selectionCursor;
 
-    public 
+    [Header("å¸¸ã«è¡¨ç¤ºã™ã‚‹å…¥åŠ›ãƒãƒ¼ã®è¨­å®š")]
+    [SerializeField] private Text displayedNameText;
+    [SerializeField] private Text displayedRoomText;
+    [SerializeField] private RectTransform inputCaret;
+    [SerializeField] private float blinkInterval = 0.5f;
+
+    CommunicationUI controls;
+
+    private bool isKeyboardInputReset = true;
+
+    [Header("é•·æŠ¼ã—ã®è¨­å®š")]
+    [SerializeField] private float holdDelay = 0.4f;
+    [SerializeField] private float repeatRate = 0.12f;
+
+    [SerializeField] private float charHoldDelay = 0.5f;
+    [SerializeField] private float charRepeatRate = 0.1f;
+
+    private float charHoldTimer = 0f;
+    private bool isCharHolding = false;
+    private bool wasSubmitPressedLastFrame = false;
+
+    private Coroutine keyboardMoveCoroutine;
+    private Vector2 currentKeyboardInput;
+
+    private float moveTimer = 0f;
+    private bool isKeyboardHolding = false;
+
+    [SerializeField] private GameObject N;
+    [SerializeField] private GameObject R;
 
     void Start()
     {
-        if (NameInputField != null)
-        {
-            StartCoroutine(RefocusInputField());
-        }
-
         globalVolume.profile.TryGet(out depthOfField);
         if (depthOfField == null)
             Debug.LogError("DepthOfField is not found in the global volume");
 
         InitializeKeyboardGrid();
-    }
+        StartCoroutine(BlinkCaret());
 
+        currentX = 11;
+        currentY = 0;
+    }
 
     void Update()
     {
         NameCheck();
         RoomCheck();
 
-        if (menuCanvas.activeSelf) // ƒL[ƒ{[ƒh‚ªŠJ‚¢‚Ä‚¢‚é‚¾‚¯“ü—Í‚ğó‚¯•t‚¯‚é
+        if (menuCanvas.activeSelf)
         {
-            HandleHardwareInput();
+            UpdateCaretPosition();
+
+           
+
+            
+            HandleButtonHoldInput();
+        }
+    }
+    private void HandleButtonHoldInput()
+    {
+        if (controls == null) return;
+
+        bool isSubmitPressed = controls.Keyboard.Submit.IsPressed();
+
+        if (isSubmitPressed)
+        {
+            Button currentButton = keyGrid[currentX, currentY];
+            if (currentButton == null || !currentButton.interactable) return;
+
+            if (!wasSubmitPressedLastFrame)
+            {
+                TriggerCurrentButtonOnClick(currentButton);
+                isCharHolding = true;
+                charHoldTimer = charHoldDelay;
+            }
+            else
+            {
+                charHoldTimer -= Time.deltaTime;
+                if (charHoldTimer <= 0f)
+                {
+                    TriggerCurrentButtonOnClick(currentButton);
+                    charHoldTimer = charRepeatRate;
+                }
+            }
+        }
+        else
+        {
+            isCharHolding = false;
+            charHoldTimer = 0f;
+        }
+
+        wasSubmitPressedLastFrame = isSubmitPressed;
+    }
+
+    private void TriggerCurrentButtonOnClick(Button button)
+    {
+        if (button != null && button.onClick != null)
+        {
+            button.onClick.Invoke();
         }
     }
 
+    private void OnKeyboardMove(InputAction.CallbackContext context)
+    {
+        currentKeyboardInput = context.ReadValue<Vector2>();
+
+        if (keyboardMoveCoroutine == null)
+        {
+            keyboardMoveCoroutine = StartCoroutine(KeepKeyboardMovingRoutine());
+        }
+    }
+
+    private void OnKeyboardMoveCancel(InputAction.CallbackContext context)
+    {
+        currentKeyboardInput = Vector2.zero;
+        if (keyboardMoveCoroutine != null)
+        {
+            StopCoroutine(keyboardMoveCoroutine);
+            keyboardMoveCoroutine = null;
+        }
+    }
+
+    private IEnumerator KeepKeyboardMovingRoutine()
+    {
+        // æœ€åˆã®1å›ç›®ã®ç§»å‹•
+        int moveX = 0;
+        int moveY = 0;
+        float kand = 0.3f;
+
+        if (Mathf.Abs(currentKeyboardInput.x) > Mathf.Abs(currentKeyboardInput.y))
+        {
+            if (currentKeyboardInput.x > kand) moveX = 1;
+            else if (currentKeyboardInput.x < -kand) moveX = -1;
+        }
+        else
+        {
+            if (currentKeyboardInput.y > kand) moveY = -1;
+            else if (currentKeyboardInput.y < -kand) moveY = 1;
+        }
+
+        if (moveX != 0 || moveY != 0)
+        {
+            MoveCursor(moveX, moveY);
+        }
+
+        // 1å›ç›®ã«å…¥åŠ›ã—ãŸå¾Œã®ã€Œé•·æŠ¼ã—åˆ¤å®šã€ã¾ã§ã®ã‚¿ãƒ¡ï¼ˆ0.4ç§’å¾…æ©Ÿï¼‰
+        yield return new WaitForSeconds(holdDelay);
+
+        // ä»¥é™ã€ãƒœã‚¿ãƒ³ãŒé›¢ã•ã‚Œã‚‹ï¼ˆcurrentKeyboardInputãŒã‚¼ãƒ­ã«ãªã‚‹ï¼‰ã¾ã§é€£ç¶šç§»å‹•
+        while (currentKeyboardInput != Vector2.zero)
+        {
+            if (!menuCanvas.activeSelf) yield break;
+
+            moveX = 0;
+            moveY = 0;
+
+            if (Mathf.Abs(currentKeyboardInput.x) > Mathf.Abs(currentKeyboardInput.y))
+            {
+                if (currentKeyboardInput.x > kand) moveX = 1;
+                else if (currentKeyboardInput.x < -kand) moveX = -1;
+            }
+            else
+            {
+                if (currentKeyboardInput.y > kand) moveY = -1;
+                else if (currentKeyboardInput.y < -kand) moveY = 1;
+            }
+
+            if (moveX != 0 || moveY != 0)
+            {
+                MoveCursor(moveX, moveY);
+            }
+
+            // é€£ç¶šç§»å‹•ã®é–“éš”ï¼ˆ0.12ç§’å¾…è¨˜ï¼‰
+            yield return new WaitForSeconds(repeatRate);
+        }
+
+        // å…¥åŠ›ãŒå®Œå…¨ã«ãªããªã£ãŸã‚‰ã‚³ãƒ«ãƒ¼ãƒãƒ³å‚ç…§ã‚’ã‚¯ãƒªã‚¢
+        keyboardMoveCoroutine = null;
+    }
 
     private void InitializeKeyboardGrid()
     {
-        // c5s ~ ‰¡12—ñ ‚Ì”z—ñ‚ğŠm•Û
         keyGrid = new Button[gridCols, gridRows];
 
-        // ‰E‘¤‚ÌŒÅ’èƒL[‚ğ“o˜^
         RegisterColumn(12, rightFixedColumn);
+        Transform currentCenterPanel = null;
+        if (Hiragana != null && Hiragana.activeSelf) currentCenterPanel = hiraganaPanel;
+        else if (Katakana != null && Katakana.activeSelf) currentCenterPanel = katakanaPanel;
+        else if (englishS != null && englishS.activeSelf) currentCenterPanel = englishSmallPanel;
+        else if (englishB != null && englishB.activeSelf) currentCenterPanel = englishBigPanel;
 
-        // Œ»İƒAƒNƒeƒBƒu‚È50‰¹‚ğ’†‰›‚É“o˜^
-        Transform currentCenterPanel = Hiragana.activeSelf ? hiraganaPanel : katakanaPanel;
         if (currentCenterPanel != null)
         {
-            int colOffset = 11; // 50‰¹‚Í2—ñ–Ú‚©‚çƒXƒ^[ƒg
+            int colOffset = 11;
             foreach (Transform rowTransform in currentCenterPanel)
             {
                 if (!rowTransform.gameObject.activeSelf) continue;
-
                 RegisterColumn(colOffset, rowTransform);
                 colOffset--;
             }
         }
 
-        // ‰E‘¤‚ÌŒÅ’èƒL[‚ğ“o˜^ 
         RegisterColumn(0, leftFixedColumn);
-
-        if (keyGrid[12, 3] != null)
-        {
-            keyGrid[12, 2] = keyGrid[12, 3]; // ‹ó—“‚ÉŒˆ’èƒ{ƒ^ƒ“‚ğƒZƒbƒg
-            keyGrid[12, 4] = keyGrid[12, 3]; // Œˆ’è‚Ì‰º”¼•ª‚É‚àƒZƒbƒg
-        }
-
-        currentX = 11;
-        currentY = 0;
         UpdateCursorSelection();
+        UpdateTargetPanelVisibility();
     }
 
-    // 1‚Â‚Ì—ñ‚Ì’†‚É‚ ‚éƒ{ƒ^ƒ“‚ğAw’è‚µ‚½XÀ•W‚Éc‚É•À‚×‚é‹¤’Êƒƒ\ƒbƒhb
     private void RegisterColumn(int targetX, Transform columnTransform)
     {
         if (columnTransform == null) return;
 
-        int rowIndex = 0;
+        List<Button> buttonsInCol = new List<Button>();
         foreach (Transform buttonTransform in columnTransform)
         {
             Button btn = buttonTransform.GetComponent<Button>();
-            if (btn != null)
-            {
+            if (btn != null) buttonsInCol.Add(btn);
+        }
 
-                if (targetX >= 0 && targetX < gridCols && rowIndex < gridRows)
-                {
-                    keyGrid[targetX, rowIndex] = btn;
-                }
+        if (buttonsInCol.Count == 0) return;
+
+        for (int rowIndex = 0; rowIndex < gridRows; rowIndex++)
+        {
+            int buttonIndex = rowIndex;
+            if (buttonIndex >= buttonsInCol.Count)
+            {
+                buttonIndex = buttonsInCol.Count - 1;
             }
-            rowIndex++;
+
+            if (targetX >= 0 && targetX < gridCols)
+            {
+                keyGrid[targetX, rowIndex] = buttonsInCol[buttonIndex];
+            }
         }
     }
 
-    // \šƒL[EŒˆ’èƒL[‚Ì“ü—ÍŠÄ‹
-    private void HandleHardwareInput()
-    {
-        if (Input.GetKeyDown(KeyCode.UpArrow)) MoveCursor(0, -1);
-        if (Input.GetKeyDown(KeyCode.DownArrow)) MoveCursor(0, 1);
-        if (Input.GetKeyDown(KeyCode.LeftArrow)) MoveCursor(-1, 0);
-        if (Input.GetKeyDown(KeyCode.RightArrow)) MoveCursor(1, 0);
+   
 
-        // Œˆ’èƒL[
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return))
+    private void UpdateCaretPosition()
+    {
+        if (inputCaret == null) return;
+
+        if (currentTargetInputField == NameInputField && displayedNameText != null)
         {
-            Button currentButton = keyGrid[currentX, currentY];
-            if (currentButton != null && currentButton.interactable)
+            float textWidthN = displayedNameText.preferredWidth;
+            Vector3 caretPosN = displayedNameText.rectTransform.localPosition;
+            caretPosN.x += textWidthN;
+            inputCaret.localPosition = caretPosN;
+        }
+        else if (currentTargetInputField == RoomInputField && displayedRoomText != null)
+        {
+            float textWidthR = displayedRoomText.preferredWidth;
+            Vector3 caretPosR = displayedRoomText.rectTransform.localPosition;
+            caretPosR.x += textWidthR;
+            inputCaret.localPosition = caretPosR;
+        }
+    }
+
+    private IEnumerator BlinkCaret()
+    {
+        while (true)
+        {
+            if (inputCaret != null)
             {
-                currentButton.onClick.Invoke(); // ƒ{ƒ^ƒ“‚ÌƒNƒŠƒbƒNƒCƒxƒ“ƒg‚ğ”­‰Î
+                inputCaret.gameObject.SetActive(!inputCaret.gameObject.activeSelf);
             }
+            yield return new WaitForSeconds(blinkInterval);
         }
     }
 
     private void MoveCursor(int moveX, int moveY)
     {
-        int startX = currentX;
-        int startY = currentY;
+        Button startButton = keyGrid[currentX, currentY];
 
         int nextX = currentX;
         int nextY = currentY;
 
-        // ƒ{ƒ^ƒ“‚ª‚ ‚éƒ}ƒXA‚Ü‚½‚Í‰æ–Ê’[‚É“’B‚·‚é‚Ü‚Åƒ‹[ƒv
         while (true)
         {
             nextX += moveX;
             nextY += moveY;
 
-            // ‰æ–ÊŠO‚Éo‚»‚¤‚È‚çƒXƒgƒbƒv
             if (nextX < 0 || nextX >= gridCols || nextY < 0 || nextY >= gridRows)
             {
-                // ’[‚Ås‚«~‚Ü‚Á‚½ê‡‚ÍˆÚ“®‘O‚ÌˆÊ’u‚ğˆÛA‚Ü‚½‚Íƒ‹[ƒv‚³‚¹‚é
                 nextX = Mathf.Clamp(nextX, 0, gridCols - 1);
                 nextY = Mathf.Clamp(nextY, 0, gridRows - 1);
                 break;
             }
 
-            // ˆÚ“®æ‚Éƒ{ƒ^ƒ“‚ª‘¶İ‚·‚ê‚Î‚»‚±‚ÅƒXƒgƒbƒv
             if (keyGrid[nextX, nextY] != null)
             {
-                break;
+                if (keyGrid[nextX, nextY] != startButton)
+                {
+                    break;
+                }
             }
-
-            // ‹ó—“i‚âs‚Ì‹ó”’‚È‚Çj‚È‚çAwhileƒ‹[ƒv‚Å‚»‚Ì‚Ü‚Ü“¯‚¶•ûŒü‚É‚à‚¤1ƒ}ƒXi‚Ş
         }
 
         currentX = nextX;
@@ -189,36 +357,24 @@ public class KeyboardManager : MonoBehaviour
         UpdateCursorSelection();
     }
 
-    // Œ»İ‚Ì‘I‘ğƒ{ƒ^ƒ“‚ğ‹Šo“I‚É‘I‘ğó‘Ô‚É‚·‚é 
     private void UpdateCursorSelection()
     {
         Button currentButton = keyGrid[currentX, currentY];
 
         if (currentButton != null)
         {
-            // 1. Unity•W€‚Ì‘I‘ğó‘Ô‚É‚·‚éi‚±‚ê‚Åƒ{ƒ^ƒ“©‘Ì‚ÌF•Ï‰»‚È‚Ç‚à‹¤‘¶‰Â”\j
             currentButton.Select();
 
-            // 2. ƒJ[ƒ\ƒ‹‰æ‘œ‚ğ‘I‘ğ‚³‚ê‚½ƒ{ƒ^ƒ“‚ÌêŠ‚ÉˆÚ“®‚³‚¹‚é
             if (selectionCursor != null)
             {
-                // ƒAƒNƒeƒBƒui•\¦j‚É‚·‚é
                 selectionCursor.gameObject.SetActive(true);
-
-                // yƒƒWƒbƒN‚ÌŠÌz‘I‘ğ‚³‚ê‚½ƒ{ƒ^ƒ“‚Ì RectTransform ‚ğæ“¾
                 RectTransform buttonRect = currentButton.GetComponent<RectTransform>();
-
-                // ƒ{ƒ^ƒ“‚Ì¢ŠEÀ•Wi‚Ü‚½‚ÍeŠî€‚ÌÀ•Wj‚ğƒJ[ƒ\ƒ‹‚É‚»‚Ì‚Ü‚ÜƒRƒs[‚·‚é
                 selectionCursor.position = buttonRect.position;
-
-                // i‚¨‚Ü‚¯j‚à‚µƒ{ƒ^ƒ“‚ÌƒTƒCƒY‚É‡‚í‚¹‚ÄƒJ[ƒ\ƒ‹‚ÌƒTƒCƒY‚à©“®‚Å•Ï‚¦‚½‚¢ê‡
-                // Œˆ’èƒ{ƒ^ƒ“‚È‚Ç‚Ì‘å‚«‚¢ƒ{ƒ^ƒ“‚É‚àãY—í‚É˜g‚ªƒtƒBƒbƒg‚·‚é‚æ‚¤‚É‚È‚è‚Ü‚·
                 selectionCursor.sizeDelta = buttonRect.sizeDelta;
             }
         }
         else
         {
-            // ‚à‚µ‘I‘ğ‚³‚ê‚½êŠ‚ª nulli‹ó—“j‚È‚çAƒJ[ƒ\ƒ‹‚ğ”ñ•\¦‚É‚·‚é
             if (selectionCursor != null)
             {
                 selectionCursor.gameObject.SetActive(false);
@@ -231,115 +387,227 @@ public class KeyboardManager : MonoBehaviour
         if (NameInputField.text.Length > limit)
         {
             NameInputField.text = NameInputField.text[..10];
-
         }
         else
         {
-
             int leftNum = NameInputField.text.Length;
-
             NameText.text = leftNum.ToString() + "/10";
             KeyboardNameText.text = leftNum.ToString() + "/10";
-
         }
     }
+
     private void RoomCheck()
     {
         if (RoomInputField.text.Length > limit)
         {
             RoomInputField.text = RoomInputField.text[..10];
-
         }
         else
         {
-
             int leftNum = RoomInputField.text.Length;
-
             RoomText.text = leftNum.ToString() + "/10";
             KeyboardRoomText.text = leftNum.ToString() + "/10";
-
-
         }
-
     }
-  
-
 
     public void InputCharacter(string character)
     {
-        if (NameInputField == null) return;
+        if (currentTargetInputField == null) return;
 
-        // •¶š‚Ì’Ç‰ÁEíœ
         if (character == "Delete")
         {
-            if (NameInputField.text.Length > 0)
+            if (currentTargetInputField.text.Length > 0)
             {
-                NameInputField.text = NameInputField.text.Substring(0, NameInputField.text.Length - 1);
+                currentTargetInputField.text = currentTargetInputField.text.Substring(0, currentTargetInputField.text.Length - 1);
+            }
+        }
+        else if (character == "Transform")
+        {
+            if (currentTargetInputField.text.Length > 0)
+            {
+                string currentText = currentTargetInputField.text;
+                char lastChar = currentText[currentText.Length - 1];
+
+                if (textTransformTable.ContainsKey(lastChar))
+                {
+                    string baseText = currentText.Substring(0, currentText.Length - 1);
+                    currentTargetInputField.text = baseText + textTransformTable[lastChar];
+                }
             }
         }
         else
         {
-            NameInputField.text += character;
+            if (currentTargetInputField.text.Length < limit)
+            {
+                currentTargetInputField.text += character;
+            }
         }
 
-        // ƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½uŠÔ‚ÉA‘¦À‚ÉƒtƒH[ƒJƒX‚ğ’D‚¢•Ô‚·
-        NameInputField.ActivateInputField();
-
-        // ‚³‚ç‚ÉA”O‚Ì‚½‚ßŸ‚ÌƒtƒŒ[ƒ€‚Å‚àƒtƒH[ƒJƒX‚ğŒÅ’è‚·‚éi2’i\‚¦j
-        StartCoroutine(RefocusInputField());
-    }
-
-    private IEnumerator RefocusInputField()
-    {
-        // 2ƒtƒŒ[ƒ€‘Ò‚Á‚ÄUnity‚Ì‘I‘ğˆ—‚ªŠ®‘S‚É—‚¿’…‚­‚Ì‚ğ‘Ò‚Â
-        yield return null;
-        yield return null;
-
-        if (NameInputField != null)
+        if (currentTargetInputField == NameInputField && displayedNameText != null)
         {
-            NameInputField.ActivateInputField();
-            NameInputField.MoveTextEnd(false);
+            displayedNameText.text = currentTargetInputField.text;
         }
+        else if (currentTargetInputField == RoomInputField && displayedRoomText != null)
+        {
+            displayedRoomText.text = currentTargetInputField.text;
+        }
+
+        UpdateCursorSelection();
     }
+
+    private readonly Dictionary<char, char> textTransformTable = new Dictionary<char, char>()
+{
+// --- ã²ã‚‰ãŒãª ---
+// ã‹è¡Œ
+{'ã‹', 'ãŒ'}, {'ãŒ', 'ã‹'}, // ã€Œã‹ã€ã¯å°æ–‡å­—ãŒãªã„ã®ã§é€šå¸¸ã¨æ¿ç‚¹ã‚’å¾€å¾©
+{'ã', 'ã'}, {'ã', 'ã'}, {'ã', 'ã'}, {'ã', 'ã'},
+{'ã‘', 'ã’'}, {'ã’', 'ã‘'}, {'ã“', 'ã”'}, {'ã”', 'ã“'},
+// ã•è¡Œãƒ»ãŸè¡Œã‚‚åŒæ§˜ã«å¾€å¾©
+{'ã•', 'ã–'}, {'ã–', 'ã•'}, {'ã—', 'ã˜'}, {'ã˜', 'ã—'}, {'ã™', 'ãš'}, {'ãš', 'ã™'}, {'ã›', 'ãœ'}, {'ãœ', 'ã›'}, {'ã', 'ã'}, {'ã', 'ã'},
+{'ãŸ', 'ã '}, {'ã ', 'ãŸ'}, {'ã¡', 'ã¢'}, {'ã¢', 'ã¡'}, {'ã¤', 'ã¥'}, {'ã¥', 'ã£'}, {'ã£', 'ã¤'}, // ã€Œã¤ã€ã¯å°æ–‡å­—ï¼ˆã£ï¼‰ã‚‚å«ã‚ã¦ã‚µã‚¤ã‚¯ãƒ«
+{'ã¦', 'ã§'}, {'ã§', 'ã¦'}, {'ã¨', 'ã©'}, {'ã©', 'ã¨'},
+// ã¯è¡Œ
+{'ã¯', 'ã°'}, {'ã°', 'ã±'}, {'ã±', 'ã¯'},
+{'ã²', 'ã³'}, {'ã³', 'ã´'}, {'ã´', 'ã²'},
+{'ãµ', 'ã¶'}, {'ã¶', 'ã·'}, {'ã·', 'ãµ'},
+{'ã¸', 'ã¹'}, {'ã¹', 'ãº'}, {'ãº', 'ã¸'},
+{'ã»', 'ã¼'}, {'ã¼', 'ã½'}, {'ã½', 'ã»'},
+// å°æ–‡å­—ãŒã‚ã‚‹æ–‡å­—
+{'ã‚', 'ã'}, {'ã', 'ã‚'},
+{'ã„', 'ãƒ'}, {'ãƒ', 'ã„'},
+{'ã†', 'ã…'}, {'ã…', 'ã†'},
+{'ãˆ', 'ã‡'}, {'ã‡', 'ãˆ'},
+{'ãŠ', 'ã‰'}, {'ã‰', 'ãŠ'},
+{'ã‚„', 'ã‚ƒ'}, {'ã‚ƒ', 'ã‚„'},
+{'ã‚†', 'ã‚…'}, {'ã‚…', 'ã‚†'},
+{'ã‚ˆ', 'ã‚‡'}, {'ã‚‡', 'ã‚ˆ'},
+{'ã‚', 'ã‚'}, {'ã‚', 'ã‚'},
+
+// --- ã‚«ã‚¿ã‚«ãƒŠ
+{'ã‚«', 'ã‚¬'}, {'ã‚¬', 'ã‚«'},
+{'ã‚­', 'ã‚®'}, {'ã‚®', 'ã‚­'}, {'ã‚¯', 'ã‚°'}, {'ã‚°', 'ã‚¯'},
+{'ã‚±', 'ã‚²'}, {'ã‚²', 'ã‚±'}, {'ã‚³', 'ã‚´'}, {'ã‚´', 'ã‚³'},
+{'ã‚µ', 'ã‚¶'}, {'ã‚¶', 'ã‚µ'},
+{'ã‚·', 'ã‚¸'}, {'ã‚¸', 'ã‚·'}, {'ã‚¹', 'ã‚º'}, {'ã‚º', 'ã‚¹'},
+{'ã‚»', 'ã‚¼'}, {'ã‚¼', 'ã‚»'}, {'ã‚½', 'ã‚¾'}, {'ã‚¾', 'ã‚½'},
+{'ã‚¿', 'ãƒ€'}, {'ãƒ€', 'ã‚¿'},
+{'ãƒ', 'ãƒ‚'}, {'ãƒ‚', 'ãƒ'}, {'ãƒ„', 'ãƒ…'}, {'ãƒ…', 'ãƒƒ'},{'ãƒƒ', 'ãƒ„'},
+{'ãƒ†', 'ãƒ‡'}, {'ãƒ‡', 'ãƒ†'}, {'ãƒˆ', 'ãƒ‰'}, {'ãƒ‰', 'ãƒˆ'},
+{'ãƒ', 'ãƒ'}, {'ãƒ', 'ãƒ‘'}, {'ãƒ‘', 'ãƒ'},
+{'ãƒ’', 'ãƒ“'}, {'ãƒ“', 'ãƒ”'}, {'ãƒ”', 'ãƒ’'},
+{'ãƒ•', 'ãƒ–'}, {'ãƒ–', 'ãƒ—'}, {'ãƒ—', 'ãƒ•'},
+{'ãƒ˜', 'ãƒ™'}, {'ãƒ™', 'ãƒš'}, {'ãƒš', 'ãƒ˜'},
+{'ãƒ›', 'ãƒœ'}, {'ãƒœ', 'ãƒ'}, {'ãƒ', 'ãƒ›'},
+{'ã‚¢', 'ã‚¡'}, {'ã‚¡', 'ã‚¢'}, {'ã‚¤', 'ã‚£'}, {'ã‚£', 'ã‚¤'},
+{'ã‚¦', 'ã‚¥'}, {'ã‚¥', 'ã‚¦'}, {'ã‚¨', 'ã‚§'}, {'ã‚§', 'ã‚¨'},
+{'ã‚ª', 'ã‚©'}, {'ã‚©', 'ã‚ª'},
+{'ãƒ¤', 'ãƒ£'}, {'ãƒ£', 'ãƒ¤'},
+{'ãƒ¦', 'ãƒ¥'}, {'ãƒ¥', 'ãƒ¦'},
+{'ãƒ¨', 'ãƒ§'}, {'ãƒ§', 'ãƒ¨'},
+{'ãƒ¯', 'ãƒ®'}, {'ãƒ®', 'ãƒ¯'},
+
+// å°æ–‡å­—ã‹ã‚‰å¤§æ–‡å­—ã¸
+{'a', 'A'}, {'b', 'B'}, {'c', 'C'}, {'d', 'D'}, {'e', 'E'},
+{'f', 'F'}, {'g', 'G'}, {'h', 'H'}, {'i', 'I'}, {'j', 'J'},
+{'k', 'K'}, {'l', 'L'}, {'m', 'M'}, {'n', 'N'}, {'o', 'O'},
+{'p', 'P'}, {'q', 'Q'}, {'r', 'R'}, {'s', 'S'}, {'t', 'T'},
+{'u', 'U'}, {'v', 'V'}, {'w', 'W'}, {'x', 'X'}, {'y', 'Y'}, {'z', 'Z'},
+
+// å¤§æ–‡å­—ã‹ã‚‰å°æ–‡å­—ã¸
+{'A', 'a'}, {'B', 'b'}, {'C', 'c'}, {'D', 'd'}, {'E', 'e'},
+{'F', 'f'}, {'G', 'g'}, {'H', 'h'}, {'I', 'i'}, {'J', 'j'},
+{'K', 'k'}, {'L', 'l'}, {'M', 'm'}, {'N', 'n'}, {'O', 'o'},
+{'P', 'p'}, {'Q', 'q'}, {'R', 'r'}, {'S', 's'}, {'T', 't'},
+{'U', 'u'}, {'V', 'v'}, {'W', 'w'}, {'X', 'x'}, {'Y', 'y'}, {'Z', 'z'}
+
+};
+
 
     public void InputTextEnter()
     {
-        menuCanvas.SetActive(false);
+        if (menuCanvas != null) menuCanvas.SetActive(false);
         SwitchDepthOfField(false);
 
-        Name.text = NameInputField.text;
+        if (currentTargetInputField == NameInputField && finalNameInputField != null)
+        {
+            finalNameInputField.text = NameInputField.text;
+            finalNameInputField.ForceLabelUpdate();
+        }
+        else if (currentTargetInputField == RoomInputField && finalRoomInputField != null)
+        {
+            finalRoomInputField.text = RoomInputField.text;
+            finalRoomInputField.ForceLabelUpdate();
+        }
+
+        if (N != null) N.SetActive(false);
+        if (R != null) R.SetActive(false);
+
+        if (controls != null)
+        {
+            controls.Keyboard.Move.started -= OnKeyboardMove;
+            controls.Keyboard.Move.canceled -= OnKeyboardMoveCancel;
+            controls.Keyboard.Disable();
+            controls = null;
+        }
+
+        
+        currentKeyboardInput = Vector2.zero;
+        if (keyboardMoveCoroutine != null)
+        {
+            StopCoroutine(keyboardMoveCoroutine);
+            keyboardMoveCoroutine = null;
+        }
     }
 
-   
-
-
-
-    public void OpenKeyboard()
+    public void OpenNameKeyboard()
     {
         if (menuCanvas)
         {
-
-            menuCanvas.SetActive(true);
-            SwitchDepthOfField(true);
+            currentTargetInputField = NameInputField;
+            KeyboardPadStart();
         }
+    }
+
+    public void OpenRoomKeyboard()
+    {
+        if (menuCanvas)
+        {
+            currentTargetInputField = RoomInputField;
+            KeyboardPadStart();
+        }
+    }
+
+    public void KeyboardPadStart()
+    {
+        isKeyboardInputReset = true;
+        menuCanvas.SetActive(true);
+
+        
+
+        InitializeKeyboardGrid();
+
+        controls = new CommunicationUI();
+        controls.Keyboard.Enable();
+
+        controls.UI.Disable();
+        controls.Keyboard.Move.started += OnKeyboardMove;
+        controls.Keyboard.Move.canceled += OnKeyboardMoveCancel;
+
+        SwitchDepthOfField(true);
     }
 
     public void SwitchDepthOfField(bool _switch)
     {
-        if (_switch)
-        {
-            depthOfField.active = true;
-        }
-        else
-        {
-            depthOfField.active = false;
-        }
+        if (depthOfField == null) return;
+        depthOfField.active = _switch;
     }
 
     public void HiraganaCall()
     {
         Hiragana.SetActive(true);
         Katakana.SetActive(false);
+        if (englishS != null) englishS.SetActive(false);
+        if (englishB != null) englishB.SetActive(false);
         InitializeKeyboardGrid();
     }
 
@@ -347,6 +615,50 @@ public class KeyboardManager : MonoBehaviour
     {
         Katakana.SetActive(true);
         Hiragana.SetActive(false);
+        if (englishS != null) englishS.SetActive(false);
+        if (englishB != null) englishB.SetActive(false);
         InitializeKeyboardGrid();
+    }
+    public void EnglishSmallCall()
+    {
+        if (englishS == null) return;
+        Hiragana.SetActive(false);
+        Katakana.SetActive(false);
+        englishS.SetActive(true);
+        if (englishB != null) englishB.SetActive(false);
+        InitializeKeyboardGrid();
+    }
+
+    public void EnglishBigCall()
+    {
+        if (englishB == null) return;
+        Hiragana.SetActive(false);
+        Katakana.SetActive(false);
+        if (englishS != null) englishS.SetActive(false);
+        englishB.SetActive(true);
+        InitializeKeyboardGrid();
+    }
+
+    private void UpdateTargetPanelVisibility()
+    {
+        if (currentTargetInputField == NameInputField)
+        {
+            if (N != null) N.SetActive(true);
+            if (R != null) R.SetActive(false);
+        }
+        else if (currentTargetInputField == RoomInputField)
+        {
+            if (R != null) R.SetActive(true);
+            if (N != null) N.SetActive(false);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (controls != null)
+        {
+            controls.Keyboard.Disable();
+            controls = null;
+        }
     }
 }
