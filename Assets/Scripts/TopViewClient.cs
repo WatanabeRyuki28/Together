@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using UnityEngine.InputSystem;
 
 public class TopViewClient : MonoBehaviour
 {
@@ -17,17 +18,35 @@ public class TopViewClient : MonoBehaviour
 
     private string remotePlayer;
 
+    private CommunicationUI controls;
+
     void Start()
     {
         Init(true, false);
         StartButton.SetActive(false);
 
-   
+        controls = new CommunicationUI();
+        controls.UI.Enable();
     }
+    void Update()
+    {
 
+        if (controls != null && controls.UI.Match.triggered)
+        {
+            if (InputPanel != null && InputPanel.activeSelf)
+            {
+                Debug.Log("【通信UI】Match（North）ボタン検知：Joinを実行します");
+                PushJoinButton();
+            }
+        }
+    }
     private void OnDestroy()
     {
-       
+        if (controls != null)
+        {
+            controls.UI.Disable();
+            controls = null;
+        }
     }
 
     public void HandleMessage(string msg)
