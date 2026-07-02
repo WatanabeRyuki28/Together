@@ -62,13 +62,22 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""GameStart"",
+                    ""type"": ""Button"",
+                    ""id"": ""2fd5bb16-6194-41de-9891-aad40208d2f3"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
                 {
                     ""name"": """",
                     ""id"": ""612fe12b-d4e0-4256-8092-7e86e79ffbf1"",
-                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -110,31 +119,9 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""left"",
-                    ""id"": ""49d1461e-8d0c-41a5-9eb8-44ea635adb2c"",
-                    ""path"": ""<Gamepad>/dpad/left"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Move"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""05865cc1-b095-489b-8d22-40b4979194d2"",
-                    ""path"": ""<Gamepad>/dpad/right"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Move"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
                     ""name"": """",
                     ""id"": ""ff525e66-6c53-47f9-9389-f1c80d574217"",
-                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""path"": ""<Gamepad>/buttonEast"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -150,6 +137,17 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Match"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5ddb09fd-ef01-4839-a125-8b92cecdc413"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""GameStart"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -172,6 +170,15 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
                     ""name"": ""Submit"",
                     ""type"": ""Button"",
                     ""id"": ""07bf4886-b273-4d38-a811-2b41e81d6faf"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Back"",
+                    ""type"": ""Button"",
+                    ""id"": ""5c33a0f6-0a2a-4e6c-a45b-34034b884d06"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -237,7 +244,108 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""078b2067-3f01-43e3-8cdb-40816601023c"",
-                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Submit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1ad80999-d9ea-4e06-8908-f36d57626faa"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Back"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""CharSelect"",
+            ""id"": ""30a2aba2-5ca5-4259-ba7e-e5c5d3938609"",
+            ""actions"": [
+                {
+                    ""name"": ""Right"",
+                    ""type"": ""Value"",
+                    ""id"": ""647196c3-db86-4a78-aced-d3cb2fdbb1bb"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Left"",
+                    ""type"": ""Value"",
+                    ""id"": ""64485418-f12f-478e-8593-378bbb7bce0c"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Submit"",
+                    ""type"": ""Button"",
+                    ""id"": ""d24a02f4-2f71-44be-af35-6b8b2e3acc86"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""0dcb8225-276b-4209-b2df-38153c4fa40c"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Right"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""ca056a47-f3d3-4374-aad6-de1316c1c540"",
+                    ""path"": ""<Gamepad>/dpad/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Right"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""304824aa-9454-476f-ae49-2b276df9690d"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Left"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""80668a1c-b2e4-4207-8fe1-0e956e7d8a7c"",
+                    ""path"": ""<Gamepad>/dpad/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4fbfa577-c979-4509-8193-9ecf9355e517"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -256,10 +364,17 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
         m_UI_Submit = m_UI.FindAction("Submit", throwIfNotFound: true);
         m_UI_Cansel = m_UI.FindAction("Cansel", throwIfNotFound: true);
         m_UI_Match = m_UI.FindAction("Match", throwIfNotFound: true);
+        m_UI_GameStart = m_UI.FindAction("GameStart", throwIfNotFound: true);
         // Keyboard
         m_Keyboard = asset.FindActionMap("Keyboard", throwIfNotFound: true);
         m_Keyboard_Move = m_Keyboard.FindAction("Move", throwIfNotFound: true);
         m_Keyboard_Submit = m_Keyboard.FindAction("Submit", throwIfNotFound: true);
+        m_Keyboard_Back = m_Keyboard.FindAction("Back", throwIfNotFound: true);
+        // CharSelect
+        m_CharSelect = asset.FindActionMap("CharSelect", throwIfNotFound: true);
+        m_CharSelect_Right = m_CharSelect.FindAction("Right", throwIfNotFound: true);
+        m_CharSelect_Left = m_CharSelect.FindAction("Left", throwIfNotFound: true);
+        m_CharSelect_Submit = m_CharSelect.FindAction("Submit", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -325,6 +440,7 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_Submit;
     private readonly InputAction m_UI_Cansel;
     private readonly InputAction m_UI_Match;
+    private readonly InputAction m_UI_GameStart;
     public struct UIActions
     {
         private @CommunicationUI m_Wrapper;
@@ -333,6 +449,7 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
         public InputAction @Submit => m_Wrapper.m_UI_Submit;
         public InputAction @Cansel => m_Wrapper.m_UI_Cansel;
         public InputAction @Match => m_Wrapper.m_UI_Match;
+        public InputAction @GameStart => m_Wrapper.m_UI_GameStart;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -354,6 +471,9 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
             @Match.started += instance.OnMatch;
             @Match.performed += instance.OnMatch;
             @Match.canceled += instance.OnMatch;
+            @GameStart.started += instance.OnGameStart;
+            @GameStart.performed += instance.OnGameStart;
+            @GameStart.canceled += instance.OnGameStart;
         }
 
         private void UnregisterCallbacks(IUIActions instance)
@@ -370,6 +490,9 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
             @Match.started -= instance.OnMatch;
             @Match.performed -= instance.OnMatch;
             @Match.canceled -= instance.OnMatch;
+            @GameStart.started -= instance.OnGameStart;
+            @GameStart.performed -= instance.OnGameStart;
+            @GameStart.canceled -= instance.OnGameStart;
         }
 
         public void RemoveCallbacks(IUIActions instance)
@@ -393,12 +516,14 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
     private List<IKeyboardActions> m_KeyboardActionsCallbackInterfaces = new List<IKeyboardActions>();
     private readonly InputAction m_Keyboard_Move;
     private readonly InputAction m_Keyboard_Submit;
+    private readonly InputAction m_Keyboard_Back;
     public struct KeyboardActions
     {
         private @CommunicationUI m_Wrapper;
         public KeyboardActions(@CommunicationUI wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_Keyboard_Move;
         public InputAction @Submit => m_Wrapper.m_Keyboard_Submit;
+        public InputAction @Back => m_Wrapper.m_Keyboard_Back;
         public InputActionMap Get() { return m_Wrapper.m_Keyboard; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -414,6 +539,9 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
             @Submit.started += instance.OnSubmit;
             @Submit.performed += instance.OnSubmit;
             @Submit.canceled += instance.OnSubmit;
+            @Back.started += instance.OnBack;
+            @Back.performed += instance.OnBack;
+            @Back.canceled += instance.OnBack;
         }
 
         private void UnregisterCallbacks(IKeyboardActions instance)
@@ -424,6 +552,9 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
             @Submit.started -= instance.OnSubmit;
             @Submit.performed -= instance.OnSubmit;
             @Submit.canceled -= instance.OnSubmit;
+            @Back.started -= instance.OnBack;
+            @Back.performed -= instance.OnBack;
+            @Back.canceled -= instance.OnBack;
         }
 
         public void RemoveCallbacks(IKeyboardActions instance)
@@ -441,16 +572,86 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
         }
     }
     public KeyboardActions @Keyboard => new KeyboardActions(this);
+
+    // CharSelect
+    private readonly InputActionMap m_CharSelect;
+    private List<ICharSelectActions> m_CharSelectActionsCallbackInterfaces = new List<ICharSelectActions>();
+    private readonly InputAction m_CharSelect_Right;
+    private readonly InputAction m_CharSelect_Left;
+    private readonly InputAction m_CharSelect_Submit;
+    public struct CharSelectActions
+    {
+        private @CommunicationUI m_Wrapper;
+        public CharSelectActions(@CommunicationUI wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Right => m_Wrapper.m_CharSelect_Right;
+        public InputAction @Left => m_Wrapper.m_CharSelect_Left;
+        public InputAction @Submit => m_Wrapper.m_CharSelect_Submit;
+        public InputActionMap Get() { return m_Wrapper.m_CharSelect; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(CharSelectActions set) { return set.Get(); }
+        public void AddCallbacks(ICharSelectActions instance)
+        {
+            if (instance == null || m_Wrapper.m_CharSelectActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_CharSelectActionsCallbackInterfaces.Add(instance);
+            @Right.started += instance.OnRight;
+            @Right.performed += instance.OnRight;
+            @Right.canceled += instance.OnRight;
+            @Left.started += instance.OnLeft;
+            @Left.performed += instance.OnLeft;
+            @Left.canceled += instance.OnLeft;
+            @Submit.started += instance.OnSubmit;
+            @Submit.performed += instance.OnSubmit;
+            @Submit.canceled += instance.OnSubmit;
+        }
+
+        private void UnregisterCallbacks(ICharSelectActions instance)
+        {
+            @Right.started -= instance.OnRight;
+            @Right.performed -= instance.OnRight;
+            @Right.canceled -= instance.OnRight;
+            @Left.started -= instance.OnLeft;
+            @Left.performed -= instance.OnLeft;
+            @Left.canceled -= instance.OnLeft;
+            @Submit.started -= instance.OnSubmit;
+            @Submit.performed -= instance.OnSubmit;
+            @Submit.canceled -= instance.OnSubmit;
+        }
+
+        public void RemoveCallbacks(ICharSelectActions instance)
+        {
+            if (m_Wrapper.m_CharSelectActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(ICharSelectActions instance)
+        {
+            foreach (var item in m_Wrapper.m_CharSelectActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_CharSelectActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public CharSelectActions @CharSelect => new CharSelectActions(this);
     public interface IUIActions
     {
         void OnMove(InputAction.CallbackContext context);
         void OnSubmit(InputAction.CallbackContext context);
         void OnCansel(InputAction.CallbackContext context);
         void OnMatch(InputAction.CallbackContext context);
+        void OnGameStart(InputAction.CallbackContext context);
     }
     public interface IKeyboardActions
     {
         void OnMove(InputAction.CallbackContext context);
+        void OnSubmit(InputAction.CallbackContext context);
+        void OnBack(InputAction.CallbackContext context);
+    }
+    public interface ICharSelectActions
+    {
+        void OnRight(InputAction.CallbackContext context);
+        void OnLeft(InputAction.CallbackContext context);
         void OnSubmit(InputAction.CallbackContext context);
     }
 }

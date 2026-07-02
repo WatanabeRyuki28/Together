@@ -84,6 +84,8 @@ public class InputFieldFocus : MonoBehaviour
     [SerializeField] private GameObject N;
     [SerializeField] private GameObject R;
 
+    public GameObject ChangeLaugauge;
+
     void Start()
     {
         globalVolume.profile.TryGet(out depthOfField);
@@ -146,6 +148,12 @@ public class InputFieldFocus : MonoBehaviour
         }
 
         wasSubmitPressedLastFrame = isSubmitPressed;
+
+        bool isBackPressed = controls.Keyboard.Back.IsPressed();
+        if (isBackPressed)
+        {
+            InputTextEnter();
+        }
     }
 
     private void TriggerCurrentButtonOnClick(Button button)
@@ -565,6 +573,11 @@ public class InputFieldFocus : MonoBehaviour
         {
             currentTargetInputField = NameInputField;
             KeyboardPadStart();
+
+            Hiragana.SetActive(true);
+            englishB.SetActive(false);
+            ChangeLaugauge.SetActive(true);
+
         }
     }
 
@@ -574,6 +587,10 @@ public class InputFieldFocus : MonoBehaviour
         {
             currentTargetInputField = RoomInputField;
             KeyboardPadStart();
+            Hiragana.SetActive(false);
+            englishB.SetActive(true);
+            ChangeLaugauge.SetActive(false);
+
         }
     }
 
