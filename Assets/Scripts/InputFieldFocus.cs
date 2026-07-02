@@ -86,6 +86,7 @@ public class InputFieldFocus : MonoBehaviour
 
     public GameObject ChangeLaugauge;
 
+
     void Start()
     {
         globalVolume.profile.TryGet(out depthOfField);
@@ -166,6 +167,8 @@ public class InputFieldFocus : MonoBehaviour
 
     private void OnKeyboardMove(InputAction.CallbackContext context)
     {
+        if (this == null) return;
+
         currentKeyboardInput = context.ReadValue<Vector2>();
 
         if (keyboardMoveCoroutine == null)
@@ -669,11 +672,37 @@ public class InputFieldFocus : MonoBehaviour
             if (N != null) N.SetActive(false);
         }
     }
-
-    private void OnDestroy()
+    private void OnDisable()
     {
+        // オブジェクトが非アクティブになったら、コルーチンとイベントを安全に解放する
+        if (keyboardMoveCoroutine != null)
+        {
+            StopCoroutine(keyboardMoveCoroutine);
+            keyboardMoveCoroutine = null;
+        }
+
         if (controls != null)
         {
+            controls.Keyboard.Move.started -= OnKeyboardMove;
+            controls.Keyboard.Move.canceled -= OnKeyboardMoveCancel;
+            controls.Keyboard.Disable();
+            controls = null;
+        }
+        currentKeyboardInput = Vector2.zero;
+    }
+    private void OnDestroy()
+    {
+        // 念のため OnDisable と同じ安全化処理を通す
+        if (keyboardMoveCoroutine != null)
+        {
+            StopCoroutine(keyboardMoveCoroutine);
+            keyboardMoveCoroutine = null;
+        }
+
+        if (controls != null)
+        {
+            controls.Keyboard.Move.started -= OnKeyboardMove;
+            controls.Keyboard.Move.canceled -= OnKeyboardMoveCancel;
             controls.Keyboard.Disable();
             controls = null;
         }

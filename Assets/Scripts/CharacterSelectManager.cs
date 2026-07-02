@@ -30,7 +30,7 @@ public class CharacterSelectManager : MonoBehaviour
 
     private string remoteplayer;
 
-    private CommunicationUI controls;
+    [SerializeField] private CommunicationUI controls;
 
     void Awake()
     {
