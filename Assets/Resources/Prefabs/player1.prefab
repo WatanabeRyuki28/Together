@@ -131,7 +131,7 @@ MonoBehaviour:
   element: 0
   moveSpeed: 5
   pushSpeedMultiplier: 0.5
-  jumpForce: 7.4
+  jumpForce: 8
   fireRate: 1
   jumpSound: {fileID: 0}
   shootSound: {fileID: 0}
