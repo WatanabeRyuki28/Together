@@ -5724,6 +5724,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1537158085}
   m_CullTransparentMesh: 1
+--- !u!1 &1578824660
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1578824662}
+  - component: {fileID: 1578824661}
+  m_Layer: 0
+  m_Name: SaveManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1578824661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1578824660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d53f5e8da61988f4f8a765d23f86eeac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1578824662
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1578824660}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.74261504, y: -0.549387, z: -30.366978}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1586126424
 GameObject:
   m_ObjectHideFlags: 0
@@ -6313,7 +6357,13 @@ MonoBehaviour:
   - {fileID: 658585943}
   selectionCursor: {fileID: 1353732646}
   confirmButton: {fileID: 1735284544}
+<<<<<<< HEAD
   gestPanel: {fileID: 491553758}
+=======
+  itemIcons: []
+  obtainedStarSprite: {fileID: 21300000, guid: ad3bcd06cc3d4144c87eab919bddc00f, type: 3}
+  missingStarSprite: {fileID: 21300000, guid: 92228887cd4362b4481ac605d890b3f2, type: 3}
+>>>>>>> origin/main
 --- !u!4 &1886058339
 Transform:
   m_ObjectHideFlags: 0
@@ -7080,3 +7130,4 @@ SceneRoots:
   - {fileID: 419704645}
   - {fileID: 2122086793}
   - {fileID: 1886058339}
+  - {fileID: 1578824662}
