@@ -62,13 +62,22 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""GameStart"",
+                    ""type"": ""Button"",
+                    ""id"": ""2fd5bb16-6194-41de-9891-aad40208d2f3"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
                 {
                     ""name"": """",
                     ""id"": ""612fe12b-d4e0-4256-8092-7e86e79ffbf1"",
-                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -110,31 +119,9 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""left"",
-                    ""id"": ""49d1461e-8d0c-41a5-9eb8-44ea635adb2c"",
-                    ""path"": ""<Gamepad>/dpad/left"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Move"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""05865cc1-b095-489b-8d22-40b4979194d2"",
-                    ""path"": ""<Gamepad>/dpad/right"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Move"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
                     ""name"": """",
                     ""id"": ""ff525e66-6c53-47f9-9389-f1c80d574217"",
-                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""path"": ""<Gamepad>/buttonEast"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -150,6 +137,17 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Match"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5ddb09fd-ef01-4839-a125-8b92cecdc413"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""GameStart"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -172,6 +170,15 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
                     ""name"": ""Submit"",
                     ""type"": ""Button"",
                     ""id"": ""07bf4886-b273-4d38-a811-2b41e81d6faf"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Back"",
+                    ""type"": ""Button"",
+                    ""id"": ""5c33a0f6-0a2a-4e6c-a45b-34034b884d06"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -237,11 +244,354 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""078b2067-3f01-43e3-8cdb-40816601023c"",
-                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Submit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1ad80999-d9ea-4e06-8908-f36d57626faa"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Back"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""CharSelect"",
+            ""id"": ""30a2aba2-5ca5-4259-ba7e-e5c5d3938609"",
+            ""actions"": [
+                {
+                    ""name"": ""Right"",
+                    ""type"": ""Value"",
+                    ""id"": ""647196c3-db86-4a78-aced-d3cb2fdbb1bb"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Left"",
+                    ""type"": ""Value"",
+                    ""id"": ""64485418-f12f-478e-8593-378bbb7bce0c"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Submit"",
+                    ""type"": ""Button"",
+                    ""id"": ""d24a02f4-2f71-44be-af35-6b8b2e3acc86"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""0dcb8225-276b-4209-b2df-38153c4fa40c"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Right"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""ca056a47-f3d3-4374-aad6-de1316c1c540"",
+                    ""path"": ""<Gamepad>/dpad/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Right"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""304824aa-9454-476f-ae49-2b276df9690d"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Left"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""80668a1c-b2e4-4207-8fe1-0e956e7d8a7c"",
+                    ""path"": ""<Gamepad>/dpad/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4fbfa577-c979-4509-8193-9ecf9355e517"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Submit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""StageSelect"",
+            ""id"": ""988fc3bf-5385-43df-9526-4256ed78e5c7"",
+            ""actions"": [
+                {
+                    ""name"": ""Up"",
+                    ""type"": ""Value"",
+                    ""id"": ""d29a8fd1-d27b-425b-b8f1-c43789e765f1"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Down"",
+                    ""type"": ""Value"",
+                    ""id"": ""3ad93c7f-b79d-4384-a5a1-844702f59b3e"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Left"",
+                    ""type"": ""Value"",
+                    ""id"": ""6eb1e988-69e1-4532-9db2-2ad880a28c6b"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Right"",
+                    ""type"": ""Value"",
+                    ""id"": ""4e307be3-9749-4251-91ff-c4e7b4521971"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Submit"",
+                    ""type"": ""Button"",
+                    ""id"": ""ec12d3ed-03ae-4090-bafc-9a88d4171e9d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""5fe6779d-5b69-48a0-8a01-c39431b7bc8f"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Up"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""8793bea2-c3ac-4ada-83b8-8c50928ad629"",
+                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Up"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""598e49f5-392c-4114-ad10-09ec2f4c183a"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Down"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""314ae6d7-597f-4752-9b7a-59654fbbacd1"",
+                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Down"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""52785579-f2c4-4493-ac49-c421a709ccac"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Left"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""4728fb25-868b-4a20-8f7c-5234fa87a16a"",
+                    ""path"": ""<Gamepad>/dpad/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""ee2c4809-fe05-45c7-aaf8-74cfb4f6d652"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Right"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""e26655b6-7ce2-47e0-92e2-e1544b335128"",
+                    ""path"": ""<Gamepad>/dpad/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Right"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""339bc616-b625-4b0d-8838-e1ca048c0e30"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Submit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""Player"",
+            ""id"": ""9c13ac6a-00cc-4db4-8373-40e9a536dfc6"",
+            ""actions"": [
+                {
+                    ""name"": ""Move"",
+                    ""type"": ""Value"",
+                    ""id"": ""2da852ce-1905-46ee-8a8b-b4f685cd97fd"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Jump"",
+                    ""type"": ""Button"",
+                    ""id"": ""b7a2535a-b5fc-41dc-b10e-606a7257c7d7"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Tama"",
+                    ""type"": ""Button"",
+                    ""id"": ""368ebb5e-5c3d-4497-8c9d-78598e2a50dc"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""9b578541-9dc6-4ff9-89c4-1641a6b30ffb"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""5afa2d67-12fa-4def-8c2b-290bd123e6b3"",
+                    ""path"": ""<Gamepad>/leftStick/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""dd48f219-9315-407c-a260-75d80e678347"",
+                    ""path"": ""<Gamepad>/leftStick/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d09d563f-7ea7-40ff-8def-dfbef8c0e465"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f56200e4-9674-4647-a1a9-f097c6b0ddde"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Tama"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -256,10 +606,29 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
         m_UI_Submit = m_UI.FindAction("Submit", throwIfNotFound: true);
         m_UI_Cansel = m_UI.FindAction("Cansel", throwIfNotFound: true);
         m_UI_Match = m_UI.FindAction("Match", throwIfNotFound: true);
+        m_UI_GameStart = m_UI.FindAction("GameStart", throwIfNotFound: true);
         // Keyboard
         m_Keyboard = asset.FindActionMap("Keyboard", throwIfNotFound: true);
         m_Keyboard_Move = m_Keyboard.FindAction("Move", throwIfNotFound: true);
         m_Keyboard_Submit = m_Keyboard.FindAction("Submit", throwIfNotFound: true);
+        m_Keyboard_Back = m_Keyboard.FindAction("Back", throwIfNotFound: true);
+        // CharSelect
+        m_CharSelect = asset.FindActionMap("CharSelect", throwIfNotFound: true);
+        m_CharSelect_Right = m_CharSelect.FindAction("Right", throwIfNotFound: true);
+        m_CharSelect_Left = m_CharSelect.FindAction("Left", throwIfNotFound: true);
+        m_CharSelect_Submit = m_CharSelect.FindAction("Submit", throwIfNotFound: true);
+        // StageSelect
+        m_StageSelect = asset.FindActionMap("StageSelect", throwIfNotFound: true);
+        m_StageSelect_Up = m_StageSelect.FindAction("Up", throwIfNotFound: true);
+        m_StageSelect_Down = m_StageSelect.FindAction("Down", throwIfNotFound: true);
+        m_StageSelect_Left = m_StageSelect.FindAction("Left", throwIfNotFound: true);
+        m_StageSelect_Right = m_StageSelect.FindAction("Right", throwIfNotFound: true);
+        m_StageSelect_Submit = m_StageSelect.FindAction("Submit", throwIfNotFound: true);
+        // Player
+        m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
+        m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
+        m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
+        m_Player_Tama = m_Player.FindAction("Tama", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -325,6 +694,7 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_Submit;
     private readonly InputAction m_UI_Cansel;
     private readonly InputAction m_UI_Match;
+    private readonly InputAction m_UI_GameStart;
     public struct UIActions
     {
         private @CommunicationUI m_Wrapper;
@@ -333,6 +703,7 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
         public InputAction @Submit => m_Wrapper.m_UI_Submit;
         public InputAction @Cansel => m_Wrapper.m_UI_Cansel;
         public InputAction @Match => m_Wrapper.m_UI_Match;
+        public InputAction @GameStart => m_Wrapper.m_UI_GameStart;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -354,6 +725,9 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
             @Match.started += instance.OnMatch;
             @Match.performed += instance.OnMatch;
             @Match.canceled += instance.OnMatch;
+            @GameStart.started += instance.OnGameStart;
+            @GameStart.performed += instance.OnGameStart;
+            @GameStart.canceled += instance.OnGameStart;
         }
 
         private void UnregisterCallbacks(IUIActions instance)
@@ -370,6 +744,9 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
             @Match.started -= instance.OnMatch;
             @Match.performed -= instance.OnMatch;
             @Match.canceled -= instance.OnMatch;
+            @GameStart.started -= instance.OnGameStart;
+            @GameStart.performed -= instance.OnGameStart;
+            @GameStart.canceled -= instance.OnGameStart;
         }
 
         public void RemoveCallbacks(IUIActions instance)
@@ -393,12 +770,14 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
     private List<IKeyboardActions> m_KeyboardActionsCallbackInterfaces = new List<IKeyboardActions>();
     private readonly InputAction m_Keyboard_Move;
     private readonly InputAction m_Keyboard_Submit;
+    private readonly InputAction m_Keyboard_Back;
     public struct KeyboardActions
     {
         private @CommunicationUI m_Wrapper;
         public KeyboardActions(@CommunicationUI wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_Keyboard_Move;
         public InputAction @Submit => m_Wrapper.m_Keyboard_Submit;
+        public InputAction @Back => m_Wrapper.m_Keyboard_Back;
         public InputActionMap Get() { return m_Wrapper.m_Keyboard; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -414,6 +793,9 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
             @Submit.started += instance.OnSubmit;
             @Submit.performed += instance.OnSubmit;
             @Submit.canceled += instance.OnSubmit;
+            @Back.started += instance.OnBack;
+            @Back.performed += instance.OnBack;
+            @Back.canceled += instance.OnBack;
         }
 
         private void UnregisterCallbacks(IKeyboardActions instance)
@@ -424,6 +806,9 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
             @Submit.started -= instance.OnSubmit;
             @Submit.performed -= instance.OnSubmit;
             @Submit.canceled -= instance.OnSubmit;
+            @Back.started -= instance.OnBack;
+            @Back.performed -= instance.OnBack;
+            @Back.canceled -= instance.OnBack;
         }
 
         public void RemoveCallbacks(IKeyboardActions instance)
@@ -441,16 +826,240 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
         }
     }
     public KeyboardActions @Keyboard => new KeyboardActions(this);
+
+    // CharSelect
+    private readonly InputActionMap m_CharSelect;
+    private List<ICharSelectActions> m_CharSelectActionsCallbackInterfaces = new List<ICharSelectActions>();
+    private readonly InputAction m_CharSelect_Right;
+    private readonly InputAction m_CharSelect_Left;
+    private readonly InputAction m_CharSelect_Submit;
+    public struct CharSelectActions
+    {
+        private @CommunicationUI m_Wrapper;
+        public CharSelectActions(@CommunicationUI wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Right => m_Wrapper.m_CharSelect_Right;
+        public InputAction @Left => m_Wrapper.m_CharSelect_Left;
+        public InputAction @Submit => m_Wrapper.m_CharSelect_Submit;
+        public InputActionMap Get() { return m_Wrapper.m_CharSelect; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(CharSelectActions set) { return set.Get(); }
+        public void AddCallbacks(ICharSelectActions instance)
+        {
+            if (instance == null || m_Wrapper.m_CharSelectActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_CharSelectActionsCallbackInterfaces.Add(instance);
+            @Right.started += instance.OnRight;
+            @Right.performed += instance.OnRight;
+            @Right.canceled += instance.OnRight;
+            @Left.started += instance.OnLeft;
+            @Left.performed += instance.OnLeft;
+            @Left.canceled += instance.OnLeft;
+            @Submit.started += instance.OnSubmit;
+            @Submit.performed += instance.OnSubmit;
+            @Submit.canceled += instance.OnSubmit;
+        }
+
+        private void UnregisterCallbacks(ICharSelectActions instance)
+        {
+            @Right.started -= instance.OnRight;
+            @Right.performed -= instance.OnRight;
+            @Right.canceled -= instance.OnRight;
+            @Left.started -= instance.OnLeft;
+            @Left.performed -= instance.OnLeft;
+            @Left.canceled -= instance.OnLeft;
+            @Submit.started -= instance.OnSubmit;
+            @Submit.performed -= instance.OnSubmit;
+            @Submit.canceled -= instance.OnSubmit;
+        }
+
+        public void RemoveCallbacks(ICharSelectActions instance)
+        {
+            if (m_Wrapper.m_CharSelectActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(ICharSelectActions instance)
+        {
+            foreach (var item in m_Wrapper.m_CharSelectActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_CharSelectActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public CharSelectActions @CharSelect => new CharSelectActions(this);
+
+    // StageSelect
+    private readonly InputActionMap m_StageSelect;
+    private List<IStageSelectActions> m_StageSelectActionsCallbackInterfaces = new List<IStageSelectActions>();
+    private readonly InputAction m_StageSelect_Up;
+    private readonly InputAction m_StageSelect_Down;
+    private readonly InputAction m_StageSelect_Left;
+    private readonly InputAction m_StageSelect_Right;
+    private readonly InputAction m_StageSelect_Submit;
+    public struct StageSelectActions
+    {
+        private @CommunicationUI m_Wrapper;
+        public StageSelectActions(@CommunicationUI wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Up => m_Wrapper.m_StageSelect_Up;
+        public InputAction @Down => m_Wrapper.m_StageSelect_Down;
+        public InputAction @Left => m_Wrapper.m_StageSelect_Left;
+        public InputAction @Right => m_Wrapper.m_StageSelect_Right;
+        public InputAction @Submit => m_Wrapper.m_StageSelect_Submit;
+        public InputActionMap Get() { return m_Wrapper.m_StageSelect; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(StageSelectActions set) { return set.Get(); }
+        public void AddCallbacks(IStageSelectActions instance)
+        {
+            if (instance == null || m_Wrapper.m_StageSelectActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_StageSelectActionsCallbackInterfaces.Add(instance);
+            @Up.started += instance.OnUp;
+            @Up.performed += instance.OnUp;
+            @Up.canceled += instance.OnUp;
+            @Down.started += instance.OnDown;
+            @Down.performed += instance.OnDown;
+            @Down.canceled += instance.OnDown;
+            @Left.started += instance.OnLeft;
+            @Left.performed += instance.OnLeft;
+            @Left.canceled += instance.OnLeft;
+            @Right.started += instance.OnRight;
+            @Right.performed += instance.OnRight;
+            @Right.canceled += instance.OnRight;
+            @Submit.started += instance.OnSubmit;
+            @Submit.performed += instance.OnSubmit;
+            @Submit.canceled += instance.OnSubmit;
+        }
+
+        private void UnregisterCallbacks(IStageSelectActions instance)
+        {
+            @Up.started -= instance.OnUp;
+            @Up.performed -= instance.OnUp;
+            @Up.canceled -= instance.OnUp;
+            @Down.started -= instance.OnDown;
+            @Down.performed -= instance.OnDown;
+            @Down.canceled -= instance.OnDown;
+            @Left.started -= instance.OnLeft;
+            @Left.performed -= instance.OnLeft;
+            @Left.canceled -= instance.OnLeft;
+            @Right.started -= instance.OnRight;
+            @Right.performed -= instance.OnRight;
+            @Right.canceled -= instance.OnRight;
+            @Submit.started -= instance.OnSubmit;
+            @Submit.performed -= instance.OnSubmit;
+            @Submit.canceled -= instance.OnSubmit;
+        }
+
+        public void RemoveCallbacks(IStageSelectActions instance)
+        {
+            if (m_Wrapper.m_StageSelectActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IStageSelectActions instance)
+        {
+            foreach (var item in m_Wrapper.m_StageSelectActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_StageSelectActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public StageSelectActions @StageSelect => new StageSelectActions(this);
+
+    // Player
+    private readonly InputActionMap m_Player;
+    private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
+    private readonly InputAction m_Player_Move;
+    private readonly InputAction m_Player_Jump;
+    private readonly InputAction m_Player_Tama;
+    public struct PlayerActions
+    {
+        private @CommunicationUI m_Wrapper;
+        public PlayerActions(@CommunicationUI wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Move => m_Wrapper.m_Player_Move;
+        public InputAction @Jump => m_Wrapper.m_Player_Jump;
+        public InputAction @Tama => m_Wrapper.m_Player_Tama;
+        public InputActionMap Get() { return m_Wrapper.m_Player; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(PlayerActions set) { return set.Get(); }
+        public void AddCallbacks(IPlayerActions instance)
+        {
+            if (instance == null || m_Wrapper.m_PlayerActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_PlayerActionsCallbackInterfaces.Add(instance);
+            @Move.started += instance.OnMove;
+            @Move.performed += instance.OnMove;
+            @Move.canceled += instance.OnMove;
+            @Jump.started += instance.OnJump;
+            @Jump.performed += instance.OnJump;
+            @Jump.canceled += instance.OnJump;
+            @Tama.started += instance.OnTama;
+            @Tama.performed += instance.OnTama;
+            @Tama.canceled += instance.OnTama;
+        }
+
+        private void UnregisterCallbacks(IPlayerActions instance)
+        {
+            @Move.started -= instance.OnMove;
+            @Move.performed -= instance.OnMove;
+            @Move.canceled -= instance.OnMove;
+            @Jump.started -= instance.OnJump;
+            @Jump.performed -= instance.OnJump;
+            @Jump.canceled -= instance.OnJump;
+            @Tama.started -= instance.OnTama;
+            @Tama.performed -= instance.OnTama;
+            @Tama.canceled -= instance.OnTama;
+        }
+
+        public void RemoveCallbacks(IPlayerActions instance)
+        {
+            if (m_Wrapper.m_PlayerActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IPlayerActions instance)
+        {
+            foreach (var item in m_Wrapper.m_PlayerActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_PlayerActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public PlayerActions @Player => new PlayerActions(this);
     public interface IUIActions
     {
         void OnMove(InputAction.CallbackContext context);
         void OnSubmit(InputAction.CallbackContext context);
         void OnCansel(InputAction.CallbackContext context);
         void OnMatch(InputAction.CallbackContext context);
+        void OnGameStart(InputAction.CallbackContext context);
     }
     public interface IKeyboardActions
     {
         void OnMove(InputAction.CallbackContext context);
         void OnSubmit(InputAction.CallbackContext context);
+        void OnBack(InputAction.CallbackContext context);
+    }
+    public interface ICharSelectActions
+    {
+        void OnRight(InputAction.CallbackContext context);
+        void OnLeft(InputAction.CallbackContext context);
+        void OnSubmit(InputAction.CallbackContext context);
+    }
+    public interface IStageSelectActions
+    {
+        void OnUp(InputAction.CallbackContext context);
+        void OnDown(InputAction.CallbackContext context);
+        void OnLeft(InputAction.CallbackContext context);
+        void OnRight(InputAction.CallbackContext context);
+        void OnSubmit(InputAction.CallbackContext context);
+    }
+    public interface IPlayerActions
+    {
+        void OnMove(InputAction.CallbackContext context);
+        void OnJump(InputAction.CallbackContext context);
+        void OnTama(InputAction.CallbackContext context);
     }
 }

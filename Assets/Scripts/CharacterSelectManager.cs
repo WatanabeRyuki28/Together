@@ -29,6 +29,33 @@ public class CharacterSelectManager : MonoBehaviour
     public Text otherInfoText;
 
     private string remoteplayer;
+
+    [SerializeField] private CommunicationUI controls;
+
+    void Awake()
+    {
+        // インスタンスの生成
+        controls = new CommunicationUI();
+    }
+
+    void OnEnable()
+    {
+        // このシーン用の操作マップ（例: CharSelect）だけをピンポイントで有効化
+        // ※InputActions画面で作成したマップ名に合わせて書き換えてください（例: controls.UI.Enable() などでも可）
+        if (controls != null)
+        {
+            controls.CharSelect.Enable();
+        }
+    }
+
+    void OnDisable()
+    {
+        // シーンを抜ける時は安全のために操作をオフにする
+        if (controls != null)
+        {
+            controls.CharSelect.Disable();
+        }
+    }
     void Start()
     {
         int myIndex = 0;
@@ -102,18 +129,20 @@ public class CharacterSelectManager : MonoBehaviour
     void Update()
     {
         // 既に決定しているなら、もうカーソル移動キーは受け付けない
-        if (isMySelectionConfirmed) return;
+        if (isMySelectionConfirmed || controls == null) return;
 
         bool isMoved = false;
 
-        if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
+        // if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
+        if (controls.CharSelect.Right.triggered)
         {
             currentSelectIndex++;
             if (currentSelectIndex >= characterIcons.Length) currentSelectIndex = 0;
             isMoved = true;
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
+        // if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
+        if (controls.CharSelect.Left.triggered)
         {
             currentSelectIndex--;
             if (currentSelectIndex < 0) currentSelectIndex = characterIcons.Length - 1;
@@ -127,7 +156,9 @@ public class CharacterSelectManager : MonoBehaviour
             SendCharacterState(currentSelectIndex, false); // is_ready = false (移動中)
         }
 
-        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Z))
+
+        //if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Z))
+        if (controls.CharSelect.Submit.triggered)
         {
             SelectCharacter(currentSelectIndex);
         }
