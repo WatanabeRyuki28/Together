@@ -31,6 +31,7 @@ public class CameraFollow2D : MonoBehaviour
     private Vector3 cameraTargetPos;
     private bool wasBothAlive = true;
 
+
     public void AssignPlayer(int playerIndex, Transform playerTransform)
     {
         if (playerIndex == 0)
@@ -52,6 +53,7 @@ public class CameraFollow2D : MonoBehaviour
         float startY = Mathf.Clamp(initialTarget.y, minY, maxY);
         cameraTargetPos = new Vector3(startX, startY, transform.position.z);
     }
+
     void Start()
     {
         RefreshRigidbodyReferences();

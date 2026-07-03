@@ -1,0 +1,811 @@
+fileFormatVersion: 2
+guid: dea708089c0fe9a44a850b6320472778
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 62a9f0aa5b59740cfbadc7e5f9823bb0, type: 3}
+  textureImporterSettings:
+    alphaSource: 1
+    mipMapMode: 0
+    enableMipMap: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+    convertToNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+    swizzle: 50462976
+    isReadable: 0
+    streamingMipmaps: 0
+    streamingMipmapsPriority: 0
+    vTOnly: 0
+    ignoreMipmapLimit: 0
+    nPOTScale: 1
+    sRGBTexture: 1
+    spriteMode: 2
+    spriteExtrude: 1
+    spriteMeshType: 1
+    alignment: 0
+    spritePivot: {x: 0.5, y: 0.5}
+    spritePixelsToUnits: 100
+    spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+    spriteGenerateFallbackPhysicsShape: 0
+    generateCubemap: 6
+    cubemapConvolution: 0
+    seamlessCubemap: 0
+    alphaIsTransparency: 1
+    spriteTessellationDetail: -1
+    textureType: 8
+    textureShape: 1
+    singleChannelComponent: 0
+    flipbookRows: 0
+    flipbookColumns: 0
+    ignorePngGamma: 0
+    cookieMode: 0
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+    normalMap: 0
+    textureFormat: 0
+    maxTextureSize: 0
+    lightmap: 0
+    compressionQuality: 0
+    linearTexture: 0
+    grayScaleToAlpha: 0
+    rGBM: 0
+    cubemapConvolutionSteps: 0
+    cubemapConvolutionExponent: 0
+    maxTextureSizeSet: 0
+    compressionQualitySet: 0
+    textureFormatSet: 0
+    applyGammaDecoding: 0
+  previousAsepriteImporterSettings:
+    fileImportMode: 1
+    importHiddenLayers: 0
+    layerImportMode: 1
+    defaultPivotSpace: 0
+    defaultPivotAlignment: 7
+    customPivotPosition: {x: 0.5, y: 0.5}
+    mosaicPadding: 4
+    spritePadding: 0
+    generateModelPrefab: 1
+    generateAnimationClips: 1
+    addSortingGroup: 1
+    addShadowCasters: 0
+  asepriteImporterSettings:
+    fileImportMode: 1
+    importHiddenLayers: 0
+    layerImportMode: 1
+    defaultPivotSpace: 0
+    defaultPivotAlignment: 7
+    customPivotPosition: {x: 0.5, y: 0.5}
+    mosaicPadding: 4
+    spritePadding: 0
+    generateModelPrefab: 1
+    generateAnimationClips: 1
+    addSortingGroup: 1
+    addShadowCasters: 0
+  importFileNodeState: 1
+  platformSettingsDirtyTick: 0
+  textureAssetName: 
+  singleSpriteImportData:
+  - name: 
+    originalName: 
+    pivot: {x: 0, y: 0}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    spriteID: 
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 0, y: 0}
+  animatedSpriteImportData:
+  - name: leaf_slime_Frame_0
+    originalName: 
+    pivot: {x: 0.5263158, y: -0.33333334}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 4
+      width: 19
+      height: 21
+    spriteID: 21e15f9669ca36442ac7e39c2e2aabe2
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 4}
+  - name: leaf_slime_Frame_1
+    originalName: 
+    pivot: {x: 0.5263158, y: -0.36842105}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 31
+      y: 110
+      width: 19
+      height: 19
+    spriteID: cf651843d5e75864e90ab8f6e3ea8fd3
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 31, y: 110}
+  - name: leaf_slime_Frame_2
+    originalName: 
+    pivot: {x: 0.5263158, y: -0.3888889}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 90
+      width: 19
+      height: 18
+    spriteID: dddbc54312ba45e4eab6e4059aedc94f
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 90}
+  - name: leaf_slime_Frame_3
+    originalName: 
+    pivot: {x: 0.5263158, y: -0.36842105}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 31
+      y: 137
+      width: 19
+      height: 19
+    spriteID: 47f1050301531ee4fa9148b7d706c301
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 31, y: 137}
+  - name: leaf_slime_Frame_4
+    originalName: 
+    pivot: {x: 0.5263158, y: -0.33333334}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 33
+      width: 19
+      height: 21
+    spriteID: f9a6832a5eba07b4eac22dc374098cc6
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 33}
+  - name: leaf_slime_Frame_5
+    originalName: 
+    pivot: {x: 0.52380955, y: -0.36842105}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 31
+      y: 4
+      width: 21
+      height: 19
+    spriteID: a639d1d9c7d3e41458a200471bff3281
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 31, y: 4}
+  - name: leaf_slime_Frame_6
+    originalName: 
+    pivot: {x: 0.52380955, y: -0.3888889}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 31
+      y: 58
+      width: 21
+      height: 18
+    spriteID: 07cbce5c6bd20bc45a84cc9e7db03cd2
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 31, y: 58}
+  - name: leaf_slime_Frame_7
+    originalName: 
+    pivot: {x: 0.52380955, y: -0.3888889}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 31
+      y: 84
+      width: 21
+      height: 18
+    spriteID: fcd1f59c9d7c0d3448b92fd533589547
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 31, y: 84}
+  - name: leaf_slime_Frame_8
+    originalName: 
+    pivot: {x: 0.53333336, y: -0.45000002}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 60
+      y: 52
+      width: 15
+      height: 20
+    spriteID: 11431d3202d6f6c43a21a42578a492c7
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 60, y: 52}
+  - name: leaf_slime_Frame_9
+    originalName: 
+    pivot: {x: 0.5263158, y: -0.45000002}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 62
+      width: 19
+      height: 20
+    spriteID: c4c9a78d2357ea845ad5486c13470b52
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 62}
+  - name: leaf_slime_Frame_10
+    originalName: 
+    pivot: {x: 0.5555556, y: -0.35}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 31
+      y: 191
+      width: 18
+      height: 20
+    spriteID: 2c97268f86a85424194440da1e316d3f
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 31, y: 191}
+  - name: leaf_slime_Frame_11
+    originalName: 
+    pivot: {x: 0.6315789, y: -0.4117647}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 170
+      width: 19
+      height: 17
+    spriteID: b2fc3aa9a67d34147b86a3f96e089e27
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 170}
+  - name: leaf_slime_Frame_12
+    originalName: 
+    pivot: {x: 0.6315789, y: -0.4117647}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 195
+      width: 19
+      height: 17
+    spriteID: 8df40da61d9429840a20dc6d8d70809a
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 195}
+  - name: leaf_slime_Frame_13
+    originalName: 
+    pivot: {x: 0.3809524, y: -0.4117647}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 60
+      y: 27
+      width: 21
+      height: 17
+    spriteID: ee6d24d362d3aa442afd959c3faaea70
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 60, y: 27}
+  - name: leaf_slime_Frame_14
+    originalName: 
+    pivot: {x: 0.47368422, y: -0.4117647}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 220
+      width: 19
+      height: 17
+    spriteID: 17f137e167906e34699241b91ba1cd59
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 220}
+  - name: leaf_slime_Frame_15
+    originalName: 
+    pivot: {x: 0.5263158, y: -0.36842105}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 31
+      y: 164
+      width: 19
+      height: 19
+    spriteID: 1498c57b1a8c5d74b9a7ae4f901bad52
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 31, y: 164}
+  - name: leaf_slime_Frame_16
+    originalName: 
+    pivot: {x: 0.5555556, y: -0.36842105}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 116
+      width: 18
+      height: 19
+    spriteID: 74e90343214762e4ba87260aca30cf1e
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 116}
+  - name: leaf_slime_Frame_17
+    originalName: 
+    pivot: {x: 0.5555556, y: -0.36842105}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 143
+      width: 18
+      height: 19
+    spriteID: bbb904a4aaad4d240a702de01847adfb
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 143}
+  - name: leaf_slime_Frame_18
+    originalName: 
+    pivot: {x: 0.5555556, y: -0.35}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 31
+      y: 219
+      width: 18
+      height: 20
+    spriteID: 0ec7551ab43299c429fda155c2969ffd
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 31, y: 219}
+  - name: leaf_slime_Frame_19
+    originalName: 
+    pivot: {x: 0.55, y: -0.36842105}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 31
+      y: 31
+      width: 20
+      height: 19
+    spriteID: 6decbffc13f5c9644aef9175a429b826
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 31, y: 31}
+  - name: leaf_slime_Frame_20
+    originalName: 
+    pivot: {x: 0.52, y: -0.4666667}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 60
+      y: 4
+      width: 25
+      height: 15
+    spriteID: 52bb5afbb6a35ce42bbb0fb2b4a73944
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 60, y: 4}
+  - name: leaf_slime_Frame_21
+    originalName: 
+    pivot: {x: 0.5185185, y: -0.6363636}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 93
+      y: 4
+      width: 27
+      height: 11
+    spriteID: 00045a91195b53c46b2fb95247810314
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 93, y: 4}
+  - name: leaf_slime_Frame_22
+    originalName: 
+    pivot: {x: 0.51724136, y: -0.875}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 93
+      y: 23
+      width: 29
+      height: 8
+    spriteID: a85a0c725956c254dae2117011a9a75f
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 93, y: 23}
+  - name: leaf_slime_Frame_23
+    originalName: 
+    pivot: {x: 0.51724136, y: -1}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 93
+      y: 39
+      width: 29
+      height: 7
+    spriteID: c928088edc32a68489fb3f83a4d10aaf
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 93, y: 39}
+  spriteSheetImportData: []
+  asepriteLayers:
+  - layerIndex: 0
+    guid: -990324169
+    name: leaf_slime
+    layerFlags: 0
+    layerType: 0
+    blendMode: 0
+    cells:
+    - name: leaf_slime_Frame_0
+      frameIndex: 0
+      cellRect:
+        x: 6
+        y: 7
+        width: 19
+        height: 21
+      spriteId: 21e15f9669ca36442ac7e39c2e2aabe2
+    - name: leaf_slime_Frame_1
+      frameIndex: 1
+      cellRect:
+        x: 6
+        y: 7
+        width: 19
+        height: 19
+      spriteId: cf651843d5e75864e90ab8f6e3ea8fd3
+    - name: leaf_slime_Frame_2
+      frameIndex: 2
+      cellRect:
+        x: 6
+        y: 7
+        width: 19
+        height: 18
+      spriteId: dddbc54312ba45e4eab6e4059aedc94f
+    - name: leaf_slime_Frame_3
+      frameIndex: 3
+      cellRect:
+        x: 6
+        y: 7
+        width: 19
+        height: 19
+      spriteId: 47f1050301531ee4fa9148b7d706c301
+    - name: leaf_slime_Frame_4
+      frameIndex: 4
+      cellRect:
+        x: 6
+        y: 7
+        width: 19
+        height: 21
+      spriteId: f9a6832a5eba07b4eac22dc374098cc6
+    - name: leaf_slime_Frame_5
+      frameIndex: 5
+      cellRect:
+        x: 5
+        y: 7
+        width: 21
+        height: 19
+      spriteId: a639d1d9c7d3e41458a200471bff3281
+    - name: leaf_slime_Frame_6
+      frameIndex: 6
+      cellRect:
+        x: 5
+        y: 7
+        width: 21
+        height: 18
+      spriteId: 07cbce5c6bd20bc45a84cc9e7db03cd2
+    - name: leaf_slime_Frame_7
+      frameIndex: 7
+      cellRect:
+        x: 5
+        y: 7
+        width: 21
+        height: 18
+      spriteId: fcd1f59c9d7c0d3448b92fd533589547
+    - name: leaf_slime_Frame_8
+      frameIndex: 8
+      cellRect:
+        x: 8
+        y: 9
+        width: 15
+        height: 20
+      spriteId: 11431d3202d6f6c43a21a42578a492c7
+    - name: leaf_slime_Frame_9
+      frameIndex: 9
+      cellRect:
+        x: 6
+        y: 9
+        width: 19
+        height: 20
+      spriteId: c4c9a78d2357ea845ad5486c13470b52
+    - name: leaf_slime_Frame_10
+      frameIndex: 10
+      cellRect:
+        x: 6
+        y: 7
+        width: 18
+        height: 20
+      spriteId: 2c97268f86a85424194440da1e316d3f
+    - name: leaf_slime_Frame_11
+      frameIndex: 11
+      cellRect:
+        x: 4
+        y: 7
+        width: 19
+        height: 17
+      spriteId: b2fc3aa9a67d34147b86a3f96e089e27
+    - name: leaf_slime_Frame_12
+      frameIndex: 12
+      cellRect:
+        x: 4
+        y: 7
+        width: 19
+        height: 17
+      spriteId: 8df40da61d9429840a20dc6d8d70809a
+    - name: leaf_slime_Frame_13
+      frameIndex: 13
+      cellRect:
+        x: 8
+        y: 7
+        width: 21
+        height: 17
+      spriteId: ee6d24d362d3aa442afd959c3faaea70
+    - name: leaf_slime_Frame_14
+      frameIndex: 14
+      cellRect:
+        x: 7
+        y: 7
+        width: 19
+        height: 17
+      spriteId: 17f137e167906e34699241b91ba1cd59
+    - name: leaf_slime_Frame_15
+      frameIndex: 15
+      cellRect:
+        x: 6
+        y: 7
+        width: 19
+        height: 19
+      spriteId: 1498c57b1a8c5d74b9a7ae4f901bad52
+    - name: leaf_slime_Frame_16
+      frameIndex: 16
+      cellRect:
+        x: 6
+        y: 7
+        width: 18
+        height: 19
+      spriteId: 74e90343214762e4ba87260aca30cf1e
+    - name: leaf_slime_Frame_17
+      frameIndex: 17
+      cellRect:
+        x: 6
+        y: 7
+        width: 18
+        height: 19
+      spriteId: bbb904a4aaad4d240a702de01847adfb
+    - name: leaf_slime_Frame_18
+      frameIndex: 18
+      cellRect:
+        x: 6
+        y: 7
+        width: 18
+        height: 20
+      spriteId: 0ec7551ab43299c429fda155c2969ffd
+    - name: leaf_slime_Frame_19
+      frameIndex: 19
+      cellRect:
+        x: 5
+        y: 7
+        width: 20
+        height: 19
+      spriteId: 6decbffc13f5c9644aef9175a429b826
+    - name: leaf_slime_Frame_20
+      frameIndex: 20
+      cellRect:
+        x: 3
+        y: 7
+        width: 25
+        height: 15
+      spriteId: 52bb5afbb6a35ce42bbb0fb2b4a73944
+    - name: leaf_slime_Frame_21
+      frameIndex: 21
+      cellRect:
+        x: 2
+        y: 7
+        width: 27
+        height: 11
+      spriteId: 00045a91195b53c46b2fb95247810314
+    - name: leaf_slime_Frame_22
+      frameIndex: 22
+      cellRect:
+        x: 1
+        y: 7
+        width: 29
+        height: 8
+      spriteId: a85a0c725956c254dae2117011a9a75f
+    - name: leaf_slime_Frame_23
+      frameIndex: 23
+      cellRect:
+        x: 1
+        y: 7
+        width: 29
+        height: 7
+      spriteId: c928088edc32a68489fb3f83a4d10aaf
+    linkedCells: []
+    parentIndex: -1
+  platformSettings: []
+  generatePhysicsShape: 0
+  secondarySpriteTextures: []
+  spritePackingTag: 
+  canvasSize: {x: 32, y: 32}

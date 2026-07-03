@@ -1,0 +1,811 @@
+fileFormatVersion: 2
+guid: b5f13be2ba0f59a4a845356051246d03
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 62a9f0aa5b59740cfbadc7e5f9823bb0, type: 3}
+  textureImporterSettings:
+    alphaSource: 1
+    mipMapMode: 0
+    enableMipMap: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+    convertToNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+    swizzle: 50462976
+    isReadable: 0
+    streamingMipmaps: 0
+    streamingMipmapsPriority: 0
+    vTOnly: 0
+    ignoreMipmapLimit: 0
+    nPOTScale: 1
+    sRGBTexture: 1
+    spriteMode: 2
+    spriteExtrude: 1
+    spriteMeshType: 1
+    alignment: 0
+    spritePivot: {x: 0.5, y: 0.5}
+    spritePixelsToUnits: 100
+    spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+    spriteGenerateFallbackPhysicsShape: 0
+    generateCubemap: 6
+    cubemapConvolution: 0
+    seamlessCubemap: 0
+    alphaIsTransparency: 1
+    spriteTessellationDetail: -1
+    textureType: 8
+    textureShape: 1
+    singleChannelComponent: 0
+    flipbookRows: 0
+    flipbookColumns: 0
+    ignorePngGamma: 0
+    cookieMode: 0
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+    normalMap: 0
+    textureFormat: 0
+    maxTextureSize: 0
+    lightmap: 0
+    compressionQuality: 0
+    linearTexture: 0
+    grayScaleToAlpha: 0
+    rGBM: 0
+    cubemapConvolutionSteps: 0
+    cubemapConvolutionExponent: 0
+    maxTextureSizeSet: 0
+    compressionQualitySet: 0
+    textureFormatSet: 0
+    applyGammaDecoding: 0
+  previousAsepriteImporterSettings:
+    fileImportMode: 1
+    importHiddenLayers: 0
+    layerImportMode: 1
+    defaultPivotSpace: 0
+    defaultPivotAlignment: 7
+    customPivotPosition: {x: 0.5, y: 0.5}
+    mosaicPadding: 4
+    spritePadding: 0
+    generateModelPrefab: 1
+    generateAnimationClips: 1
+    addSortingGroup: 1
+    addShadowCasters: 0
+  asepriteImporterSettings:
+    fileImportMode: 1
+    importHiddenLayers: 0
+    layerImportMode: 1
+    defaultPivotSpace: 0
+    defaultPivotAlignment: 7
+    customPivotPosition: {x: 0.5, y: 0.5}
+    mosaicPadding: 4
+    spritePadding: 0
+    generateModelPrefab: 1
+    generateAnimationClips: 1
+    addSortingGroup: 1
+    addShadowCasters: 0
+  importFileNodeState: 1
+  platformSettingsDirtyTick: 0
+  textureAssetName: 
+  singleSpriteImportData:
+  - name: 
+    originalName: 
+    pivot: {x: 0, y: 0}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    spriteID: 
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 0, y: 0}
+  animatedSpriteImportData:
+  - name: mud_slime_Frame_0
+    originalName: 
+    pivot: {x: 0.5263158, y: -0.4375}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 4
+      width: 19
+      height: 16
+    spriteID: f684f509eec4efe46b11ca67809a35c6
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 4}
+  - name: mud_slime_Frame_1
+    originalName: 
+    pivot: {x: 0.5263158, y: -0.5}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 192
+      width: 19
+      height: 14
+    spriteID: a0ff0dc38da20fe4a9d2308228874694
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 192}
+  - name: mud_slime_Frame_2
+    originalName: 
+    pivot: {x: 0.5263158, y: -0.53846157}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 239
+      width: 19
+      height: 13
+    spriteID: 492937ad859914b428ed0dc5d55e868f
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 239}
+  - name: mud_slime_Frame_3
+    originalName: 
+    pivot: {x: 0.5263158, y: -0.4666667}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 100
+      width: 19
+      height: 15
+    spriteID: 87dfd009876ef014083afa6ad34d5020
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 100}
+  - name: mud_slime_Frame_4
+    originalName: 
+    pivot: {x: 0.5263158, y: -0.4375}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 28
+      width: 19
+      height: 16
+    spriteID: 31409aaf4d3fe3b4fb7a694a1bc99b24
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 28}
+  - name: mud_slime_Frame_5
+    originalName: 
+    pivot: {x: 0.52380955, y: -0.5}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 31
+      y: 4
+      width: 21
+      height: 14
+    spriteID: d9b580575e1e8934f8596f4376fc5c63
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 31, y: 4}
+  - name: mud_slime_Frame_6
+    originalName: 
+    pivot: {x: 0.52380955, y: -0.53846157}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 31
+      y: 48
+      width: 21
+      height: 13
+    spriteID: 7999e8f3b79de4e42be39d10f1bd3970
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 31, y: 48}
+  - name: mud_slime_Frame_7
+    originalName: 
+    pivot: {x: 0.52380955, y: -0.53846157}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 31
+      y: 69
+      width: 21
+      height: 13
+    spriteID: 9cd33d51952fde441b08aebd5ea0c4e9
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 31, y: 69}
+  - name: mud_slime_Frame_8
+    originalName: 
+    pivot: {x: 0.53333336, y: -0.5294118}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 214
+      width: 15
+      height: 17
+    spriteID: 953fbdaa78a16814d8598a6af6dc149a
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 214}
+  - name: mud_slime_Frame_9
+    originalName: 
+    pivot: {x: 0.5263158, y: -0.5625}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 52
+      width: 19
+      height: 16
+    spriteID: 8b77782326737014bbba521ef076734b
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 52}
+  - name: mud_slime_Frame_10
+    originalName: 
+    pivot: {x: 0.5555556, y: -0.4666667}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 146
+      width: 18
+      height: 15
+    spriteID: a7e60c6187b4ba742af0e4180e02468a
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 146}
+  - name: mud_slime_Frame_11
+    originalName: 
+    pivot: {x: 0.6315789, y: -0.53846157}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 31
+      y: 133
+      width: 19
+      height: 13
+    spriteID: a0aae8789346754448f73f977f683783
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 31, y: 133}
+  - name: mud_slime_Frame_12
+    originalName: 
+    pivot: {x: 0.6315789, y: -0.53846157}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 31
+      y: 154
+      width: 19
+      height: 13
+    spriteID: fd6efa0aea87a3e4fb6f8ab48da7ff1d
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 31, y: 154}
+  - name: mud_slime_Frame_13
+    originalName: 
+    pivot: {x: 0.3809524, y: -0.53846157}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 31
+      y: 90
+      width: 21
+      height: 13
+    spriteID: 7c29eef20b5eea946bb56f82465c82cf
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 31, y: 90}
+  - name: mud_slime_Frame_14
+    originalName: 
+    pivot: {x: 0.47368422, y: -0.53846157}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 31
+      y: 175
+      width: 19
+      height: 13
+    spriteID: 644f91380660c2a4aa84c37dbd18e6d9
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 31, y: 175}
+  - name: mud_slime_Frame_15
+    originalName: 
+    pivot: {x: 0.5263158, y: -0.4666667}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 123
+      width: 19
+      height: 15
+    spriteID: 3d32d1a4f22f72543832c4e21ff25122
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 123}
+  - name: mud_slime_Frame_16
+    originalName: 
+    pivot: {x: 0.5555556, y: -0.5}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 31
+      y: 111
+      width: 18
+      height: 14
+    spriteID: 13b32a3100971b1488a39de3bf7fe818
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 31, y: 111}
+  - name: mud_slime_Frame_17
+    originalName: 
+    pivot: {x: 0.5555556, y: -0.4666667}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 169
+      width: 18
+      height: 15
+    spriteID: 9d7de50d8f0f43544932c2dd7971813d
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 169}
+  - name: mud_slime_Frame_18
+    originalName: 
+    pivot: {x: 0.5555556, y: -0.4375}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 76
+      width: 18
+      height: 16
+    spriteID: d22e25d08259a314b87e2410b22995bf
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 76}
+  - name: mud_slime_Frame_19
+    originalName: 
+    pivot: {x: 0.55, y: -0.5}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 31
+      y: 26
+      width: 20
+      height: 14
+    spriteID: a1d97d8228c2fec47bbeec8768e08f88
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 31, y: 26}
+  - name: mud_slime_Frame_20
+    originalName: 
+    pivot: {x: 0.52, y: -0.7}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 60
+      y: 4
+      width: 25
+      height: 10
+    spriteID: 7cb7fd196f288ca43abc9728440f95d9
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 60, y: 4}
+  - name: mud_slime_Frame_21
+    originalName: 
+    pivot: {x: 0.5185185, y: -1}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 93
+      y: 4
+      width: 27
+      height: 7
+    spriteID: aa0253f616cc20943bc92b7f3a7d7d88
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 93, y: 4}
+  - name: mud_slime_Frame_22
+    originalName: 
+    pivot: {x: 0.51724136, y: -1.75}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 93
+      y: 19
+      width: 29
+      height: 4
+    spriteID: f81ae5a62095b534aaacdf738a4a910d
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 93, y: 19}
+  - name: mud_slime_Frame_23
+    originalName: 
+    pivot: {x: 0.51724136, y: -2.3333335}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 93
+      y: 31
+      width: 29
+      height: 3
+    spriteID: 0ca7f24968e59c34f8024a955648ea6d
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 93, y: 31}
+  spriteSheetImportData: []
+  asepriteLayers:
+  - layerIndex: 0
+    guid: -1042623195
+    name: mud_slime
+    layerFlags: 0
+    layerType: 0
+    blendMode: 0
+    cells:
+    - name: mud_slime_Frame_0
+      frameIndex: 0
+      cellRect:
+        x: 6
+        y: 7
+        width: 19
+        height: 16
+      spriteId: f684f509eec4efe46b11ca67809a35c6
+    - name: mud_slime_Frame_1
+      frameIndex: 1
+      cellRect:
+        x: 6
+        y: 7
+        width: 19
+        height: 14
+      spriteId: a0ff0dc38da20fe4a9d2308228874694
+    - name: mud_slime_Frame_2
+      frameIndex: 2
+      cellRect:
+        x: 6
+        y: 7
+        width: 19
+        height: 13
+      spriteId: 492937ad859914b428ed0dc5d55e868f
+    - name: mud_slime_Frame_3
+      frameIndex: 3
+      cellRect:
+        x: 6
+        y: 7
+        width: 19
+        height: 15
+      spriteId: 87dfd009876ef014083afa6ad34d5020
+    - name: mud_slime_Frame_4
+      frameIndex: 4
+      cellRect:
+        x: 6
+        y: 7
+        width: 19
+        height: 16
+      spriteId: 31409aaf4d3fe3b4fb7a694a1bc99b24
+    - name: mud_slime_Frame_5
+      frameIndex: 5
+      cellRect:
+        x: 5
+        y: 7
+        width: 21
+        height: 14
+      spriteId: d9b580575e1e8934f8596f4376fc5c63
+    - name: mud_slime_Frame_6
+      frameIndex: 6
+      cellRect:
+        x: 5
+        y: 7
+        width: 21
+        height: 13
+      spriteId: 7999e8f3b79de4e42be39d10f1bd3970
+    - name: mud_slime_Frame_7
+      frameIndex: 7
+      cellRect:
+        x: 5
+        y: 7
+        width: 21
+        height: 13
+      spriteId: 9cd33d51952fde441b08aebd5ea0c4e9
+    - name: mud_slime_Frame_8
+      frameIndex: 8
+      cellRect:
+        x: 8
+        y: 9
+        width: 15
+        height: 17
+      spriteId: 953fbdaa78a16814d8598a6af6dc149a
+    - name: mud_slime_Frame_9
+      frameIndex: 9
+      cellRect:
+        x: 6
+        y: 9
+        width: 19
+        height: 16
+      spriteId: 8b77782326737014bbba521ef076734b
+    - name: mud_slime_Frame_10
+      frameIndex: 10
+      cellRect:
+        x: 6
+        y: 7
+        width: 18
+        height: 15
+      spriteId: a7e60c6187b4ba742af0e4180e02468a
+    - name: mud_slime_Frame_11
+      frameIndex: 11
+      cellRect:
+        x: 4
+        y: 7
+        width: 19
+        height: 13
+      spriteId: a0aae8789346754448f73f977f683783
+    - name: mud_slime_Frame_12
+      frameIndex: 12
+      cellRect:
+        x: 4
+        y: 7
+        width: 19
+        height: 13
+      spriteId: fd6efa0aea87a3e4fb6f8ab48da7ff1d
+    - name: mud_slime_Frame_13
+      frameIndex: 13
+      cellRect:
+        x: 8
+        y: 7
+        width: 21
+        height: 13
+      spriteId: 7c29eef20b5eea946bb56f82465c82cf
+    - name: mud_slime_Frame_14
+      frameIndex: 14
+      cellRect:
+        x: 7
+        y: 7
+        width: 19
+        height: 13
+      spriteId: 644f91380660c2a4aa84c37dbd18e6d9
+    - name: mud_slime_Frame_15
+      frameIndex: 15
+      cellRect:
+        x: 6
+        y: 7
+        width: 19
+        height: 15
+      spriteId: 3d32d1a4f22f72543832c4e21ff25122
+    - name: mud_slime_Frame_16
+      frameIndex: 16
+      cellRect:
+        x: 6
+        y: 7
+        width: 18
+        height: 14
+      spriteId: 13b32a3100971b1488a39de3bf7fe818
+    - name: mud_slime_Frame_17
+      frameIndex: 17
+      cellRect:
+        x: 6
+        y: 7
+        width: 18
+        height: 15
+      spriteId: 9d7de50d8f0f43544932c2dd7971813d
+    - name: mud_slime_Frame_18
+      frameIndex: 18
+      cellRect:
+        x: 6
+        y: 7
+        width: 18
+        height: 16
+      spriteId: d22e25d08259a314b87e2410b22995bf
+    - name: mud_slime_Frame_19
+      frameIndex: 19
+      cellRect:
+        x: 5
+        y: 7
+        width: 20
+        height: 14
+      spriteId: a1d97d8228c2fec47bbeec8768e08f88
+    - name: mud_slime_Frame_20
+      frameIndex: 20
+      cellRect:
+        x: 3
+        y: 7
+        width: 25
+        height: 10
+      spriteId: 7cb7fd196f288ca43abc9728440f95d9
+    - name: mud_slime_Frame_21
+      frameIndex: 21
+      cellRect:
+        x: 2
+        y: 7
+        width: 27
+        height: 7
+      spriteId: aa0253f616cc20943bc92b7f3a7d7d88
+    - name: mud_slime_Frame_22
+      frameIndex: 22
+      cellRect:
+        x: 1
+        y: 7
+        width: 29
+        height: 4
+      spriteId: f81ae5a62095b534aaacdf738a4a910d
+    - name: mud_slime_Frame_23
+      frameIndex: 23
+      cellRect:
+        x: 1
+        y: 7
+        width: 29
+        height: 3
+      spriteId: 0ca7f24968e59c34f8024a955648ea6d
+    linkedCells: []
+    parentIndex: -1
+  platformSettings: []
+  generatePhysicsShape: 0
+  secondarySpriteTextures: []
+  spritePackingTag: 
+  canvasSize: {x: 32, y: 32}
