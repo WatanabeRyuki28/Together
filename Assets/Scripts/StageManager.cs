@@ -30,6 +30,34 @@ public class StageManager : MonoBehaviour
 
     private int currentStageIndex = 0; // 現在選んでいるステージ番号
 
+    [SerializeField] private GameObject gestPanel;
+
+    private CommunicationUI controls;
+
+    void Awake()
+    {
+        // インスタンスの生成
+        controls = new CommunicationUI();
+    }
+
+    void OnEnable()
+    {
+        // ステージ選択シーン用の操作マップ「StageSelect」を有効化
+        if (controls != null)
+        {
+            controls.StageSelect.Enable();
+        }
+    }
+
+    void OnDisable()
+    {
+        // シーンを抜ける時は安全のために操作をオフにする
+        if (controls != null)
+        {
+            controls.StageSelect.Disable();
+        }
+    }
+
     void Start()
     {
         CheckHost();
@@ -62,21 +90,21 @@ public class StageManager : MonoBehaviour
 
         // グリッド状（2行×5列）のキーボード移動処理
         // 横移動（右）
-        if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
+        if (controls.StageSelect.Right.triggered)
         {
             currentStageIndex++;
             if (currentStageIndex >= stageButtons.Length) currentStageIndex = 0;
             isMoved = true;
         }
         // 横移動（左）
-        else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
+        else if (controls.StageSelect.Left.triggered)
         {
             currentStageIndex--;
             if (currentStageIndex < 0) currentStageIndex = stageButtons.Length - 1;
             isMoved = true;
         }
-        // 縦移動
-        else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
+        // 縦移動（下）
+        else if (controls.StageSelect.Down.triggered)
         {
             if (currentStageIndex < 5) // 上の段（0〜4）にいるとき
             {
@@ -85,8 +113,8 @@ public class StageManager : MonoBehaviour
                 isMoved = true;
             }
         }
-        // 縦移動
-        else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
+        // 縦移動（上）
+        else if (controls.StageSelect.Up.triggered)
         {
             if (currentStageIndex >= 5) // 下の段（5〜9）にいるとき
             {
@@ -107,8 +135,8 @@ public class StageManager : MonoBehaviour
             SendStageSelectNotification(currentStageIndex, false);
         }
 
-        // 決定キーで本決定
-        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Z))
+        // 決定ボタンで本決定（Aボタン、またはEnter/Space/Zキーなど）
+        if (controls.StageSelect.Submit.triggered)
         {
             ConfirmStageSelection();
         }
@@ -265,10 +293,22 @@ public class StageManager : MonoBehaviour
     // シーン遷移用の関数
     private void LoadTargetScene(int stageIndex)
     {
+<<<<<<< HEAD
         if (stageIndex == -1) SceneManager.LoadScene("TutorialStageScene_Backup");
         else if (stageIndex == 0) SceneManager.LoadScene("Stage1");
         else if (stageIndex == 1) SceneManager.LoadScene("Stage2");
         else if (stageIndex == 2) SceneManager.LoadScene("Stage3");
+=======
+        if (controls != null)
+        {
+            controls.StageSelect.Disable();
+        }
+            if (stageIndex == -1) SceneManager.LoadScene("TutorialStageScene_Backup"); 
+        else if (stageIndex == 0) SceneManager.LoadScene("Stage1");               
+        else if (stageIndex == 1) SceneManager.LoadScene("Stage2");               
+        else if (stageIndex == 2) SceneManager.LoadScene("Stage3");              
+       
+>>>>>>> origin/hayano
     }
 
     private bool IsHost() => NetworkManager.Instance != null && NetworkManager.Instance.myPlayerIndex == 0;
@@ -279,10 +319,12 @@ public class StageManager : MonoBehaviour
 
         if (IsHost())
         {
+            if (gestPanel != null) gestPanel.SetActive(false);
             Debug.Log("あなたはホストです。キーボードでステージ選択が可能です。");
         }
         else
         {
+            if (gestPanel != null) gestPanel.SetActive(true);
             Debug.Log("あなたはゲストです。ホストのカーソル同期を待機しています。");
         }
     }

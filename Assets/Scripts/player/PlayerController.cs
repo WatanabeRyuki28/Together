@@ -67,6 +67,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private int projectilePrefabIndex;
     private int projectileCount = 0;
 
+    private CommunicationUI controls;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -77,8 +79,25 @@ public class PlayerController : MonoBehaviour
         // AudioSourceの初期設定（3Dサウンドではなく2Dとして手軽にハッキリ鳴らす）
         audioSource.playOnAwake = false;
         audioSource.spatialBlend = 0f;
+
+        controls = new CommunicationUI();
+    }
+    void OnEnable()
+    {
+        // 自分のキャラ（ローカルプレイヤー）の時だけ入力を有効にする
+        if (IsLocalPlayer && controls != null)
+        {
+            controls.Player.Enable(); // アクションマップ名「Player」を有効化
+        }
     }
 
+    void OnDisable()
+    {
+        if (controls != null)
+        {
+            controls.Player.Disable();
+        }
+    }
     void Start()
     {
         if (NetworkManager.Instance != null)
@@ -117,12 +136,14 @@ public class PlayerController : MonoBehaviour
 
         // 毎フレーム移動処理を呼び出し
         Move();
+        // ジャンプ
+        if (controls.Player.Jump.triggered && isGrounded)
+        {
+            Jump();
+        }
 
-        // ★【キー直接入力】Wキーが押された瞬間 且つ 地面にいる時
-        if (Input.GetKeyDown(jumpKey) && isGrounded) Jump();
-
-        // ★【キー直接入力】スペースキーが押された瞬間
-        if (Input.GetKeyDown(fireKey))
+        // 攻撃ボタンが押された瞬間
+        if (controls.Player.Tama.triggered)
         {
             if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
             {
@@ -131,6 +152,20 @@ public class PlayerController : MonoBehaviour
 
             Shoot();
         }
+
+        //Wキーが押された瞬間 且つ 地面にいる時
+        /*if (Input.GetKeyDown(jumpKey) && isGrounded) Jump();
+
+        // 】スペースキーが押された瞬間
+        if (Input.GetKeyDown(fireKey))
+        {
+            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            {
+                return;
+            }
+
+            Shoot();
+        }*/
 
         // 毎フレーム最新の状態をAnimatorに送信
         UpdateAnimationParameters();
@@ -147,10 +182,12 @@ public class PlayerController : MonoBehaviour
 
     private void Move()
     {
-        // ★【キー直接入力】A/Dキーの押し状態から移動方向を完全自作（左: -1, なし: 0, 右: 1）
-        float moveInput = 0f;
-        if (Input.GetKey(leftKey)) moveInput -= 1f;
-        if (Input.GetKey(rightKey)) moveInput += 1f;
+        float moveInput = controls.Player.Move.ReadValue<float>();
+
+        // A/Dキーの押し状態から移動方向を完全自作（左: -1, なし: 0, 右: 1）
+        //float moveInput = 0f;
+        //if (Input.GetKey(leftKey)) moveInput -= 1f;
+        //if (Input.GetKey(rightKey)) moveInput += 1f;
 
         // 「箱に触れている」かつ「箱がある方向にキーを入力している」時だけ、本当に押していると判定
         bool isActuallyPushing = isPushing && IsInputtingTowardsBox(moveInput);
@@ -205,10 +242,10 @@ public class PlayerController : MonoBehaviour
         // プレハブや発射地点が未設定ならエラー防止のため中断
         if (projectilePrefab == null || firePoint == null) return;
 
-        // ★【キー直接入力】現在のA/Dキーの押し状態から弾の方向を計算
-        float moveInput = 0f;
-        if (Input.GetKey(leftKey)) moveInput -= 1f;
-        if (Input.GetKey(rightKey)) moveInput += 1f;
+        // +現在のA/Dキーの押し状態から弾の方向を計算
+        float moveInput = controls.Player.Move.ReadValue<float>();
+        //if (Input.GetKey(leftKey)) moveInput -= 1f;
+        //if (Input.GetKey(rightKey)) moveInput += 1f;
 
         float direction = 1f; // 基本は右向き
 

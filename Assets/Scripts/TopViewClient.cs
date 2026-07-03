@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using UnityEngine.InputSystem;
+using Unity.VisualScripting;
 
 public class TopViewClient : MonoBehaviour
 {
@@ -11,23 +13,59 @@ public class TopViewClient : MonoBehaviour
     public GameObject InputPanel;
     public GameObject LobbyPanel;
 
+    bool MatchNowflag;
+    bool Startflag;
+
     public Text P1Text;
     public Text P2Text;
     public GameObject StartButton;
 
     private string remotePlayer;
 
+    private CommunicationUI controls;
+
     void Start()
     {
         Init(true, false);
         StartButton.SetActive(false);
-
-   
+        Startflag = false;
+        controls = new CommunicationUI();
+        controls.UI.Enable();
     }
+    void Update()
+    {
 
+        if (controls != null && controls.UI.enabled && controls.UI.Match.triggered && !LobbyPanel.activeSelf)
+        {
+            if (InputPanel != null && InputPanel.activeSelf )
+            {
+                Debug.Log("【通信UI】Match（North）ボタン検知：Joinを実行します");
+                PushJoinButton();
+            }
+        }
+        if (controls != null && controls.UI.Cansel.triggered)
+        {
+            if (LobbyPanel != null && LobbyPanel.activeSelf)
+            {
+                DeleteDataButton();
+            }
+        }
+        if (controls != null && controls.UI.GameStart.triggered)
+        {
+            if (LobbyPanel != null && LobbyPanel.activeSelf&& Startflag == true )
+            {
+
+                SendPlayerData();
+            }
+        }
+    }
     private void OnDestroy()
     {
-       
+        if (controls != null)
+        {
+            controls.UI.Disable();
+            controls = null;
+        }
     }
 
     public void HandleMessage(string msg)
@@ -112,9 +150,12 @@ public class TopViewClient : MonoBehaviour
 
     private void UpdateLobbyUI()
     {
+        MatchNowflag = false;
+
         int myIndex = NetworkManager.Instance.myPlayerIndex;
         string myId = NetworkManager.Instance.myPlayerId;
 
+        
 
         if (myIndex == 0)
         {
@@ -159,6 +200,7 @@ public class TopViewClient : MonoBehaviour
         if (NetworkManager.Instance.myPlayerIndex == 0 && isP1Ready && isP2Ready)
         {
             StartButton.SetActive(true);
+            Startflag = true;
         }
         else
         {
@@ -175,7 +217,7 @@ public class TopViewClient : MonoBehaviour
             Debug.Log("サーバー接続完了");
 
         }
-
+        MatchNowflag = true;
         NetworkManager.Instance.DeleteData();
 
         UIInit();
