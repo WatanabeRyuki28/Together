@@ -2,25 +2,23 @@
 
 public class CameraFollow2D : MonoBehaviour
 {
-    [Header("追従対象（インスペクターから直接登録）")]
-    [SerializeField] private Transform player1;
-    [SerializeField] private Transform player2;
-
-    private Rigidbody2D p1Rb;
-    private Rigidbody2D p2Rb;
+    private Transform targetPlayer;
+    private Rigidbody2D playerRb;
 
     [Header("滑らかさ (数値が小さいほどキビキビ動く)")]
-    [SerializeField] private float smoothTime = 0.2f;
+    [SerializeField] private float smoothTimeX = 0.2f;
+    [SerializeField] private float smoothTimeY = 0.2f;
     private Vector3 currentVelocity;
 
-    [Header("デッドゾーンのサイズ (中心からの半径)")]
-    [SerializeField] private float deadZoneWidth = 1.5f;
-    [SerializeField] private float deadZoneHeight = 1.5f;
-
-    [Header("★工夫2：前方予測（Look-Ahead）の強さ")]
-    [SerializeField] private float lookAheadFactor = 2.0f; // ★戻らなくしたため、ここの数値を大きめ（1.5〜3.0等）にするのがオススメです
-    [SerializeField] private float lookAheadMoveSpeed = 5.0f; // 先行位置へ追いつく速度
+    [Header("横方向（X軸）の前方予測（Look-Ahead）")]
+    [SerializeField] private float lookAheadFactorX = 2.0f;
+    [SerializeField] private float lookAheadMoveSpeedX = 5.0f;
     private float currentLookAheadX;
+
+    [Header("縦方向（Y軸）の前方予測（Look-Ahead）")]
+    [SerializeField] private float lookAheadFactorY = 1.0f;
+    [SerializeField] private float lookAheadMoveSpeedY = 3.0f;
+    private float currentLookAheadY;
 
     [Header("ステージの境界線（限界値）")]
     [SerializeField] private float minX = -15.0f;
@@ -28,137 +26,110 @@ public class CameraFollow2D : MonoBehaviour
     [SerializeField] private float minY = 0.0f;
     [SerializeField] private float maxY = 0.0f;
 
-    private Vector3 cameraTargetPos;
-    private bool wasBothAlive = true;
+    // 前方予測を反映した最終目標位置を Gizmos で描くために保持する変数
+    private Vector3 debugFinalTarget;
+
+    public void SetupTarget(Transform player)
+    {
+        targetPlayer = player;
+        if (targetPlayer != null)
+        {
+            playerRb = targetPlayer.GetComponent<Rigidbody2D>();
+        }
+
+        if (targetPlayer != null)
+        {
+            float startX = Mathf.Clamp(targetPlayer.position.x, minX, maxX);
+            float startY = Mathf.Clamp(targetPlayer.position.y, minY, maxY);
+            transform.position = new Vector3(startX, startY, transform.position.z);
+        }
+    }
 
     void Start()
     {
-        RefreshRigidbodyReferences();
-
-        Vector3 initialTarget = GetPlayersCenterPosition();
-        float startX = Mathf.Clamp(initialTarget.x, minX, maxX);
-        float startY = Mathf.Clamp(initialTarget.y, minY, maxY);
-
-        cameraTargetPos = new Vector3(startX, startY, transform.position.z);
-        transform.position = cameraTargetPos;
+        if (targetPlayer != null)
+        {
+            SetupTarget(targetPlayer);
+        }
     }
 
     void FixedUpdate()
     {
-        if (player1 == null && player2 == null) return;
+        if (targetPlayer == null) return;
 
-        bool isBothAliveNow = (player1 != null && player2 != null);
-        Vector3 centerPosition = GetPlayersCenterPosition();
+        float targetX = targetPlayer.position.x;
+        float targetY = targetPlayer.position.y;
 
-        float targetX = cameraTargetPos.x;
-        float targetY = cameraTargetPos.y;
-
-        if (wasBothAlive && !isBothAliveNow)
-        {
-            cameraTargetPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-            wasBothAlive = false;
-        }
-        else
-        {
-            // --- デッドゾーンの計算 ---
-            if (centerPosition.x > cameraTargetPos.x + deadZoneWidth)
-            {
-                targetX = centerPosition.x - deadZoneWidth;
-            }
-            else if (centerPosition.x < cameraTargetPos.x - deadZoneWidth)
-            {
-                targetX = centerPosition.x + deadZoneWidth;
-            }
-
-            if (centerPosition.y > cameraTargetPos.y + deadZoneHeight)
-            {
-                targetY = centerPosition.y - deadZoneHeight;
-            }
-            else if (centerPosition.y < cameraTargetPos.y - deadZoneHeight)
-            {
-                targetY = centerPosition.y + deadZoneHeight;
-            }
-
-            targetX = Mathf.Clamp(targetX, minX, maxX);
-            targetY = Mathf.Clamp(targetY, minY, maxY);
-
-            cameraTargetPos = new Vector3(targetX, targetY, transform.position.z);
-        }
-
-        if (isBothAliveNow)
-        {
-            wasBothAlive = true;
-        }
-
-        // --- ★修正：戻らない前方予測の計算 ---
-        float averageVelocityX = GetPlayersAverageVelocityX();
-
-        // プレイヤーが一定以上の速度で動いている時だけ、その方向（右か左か）へ目標値を更新する
-        // 立ち止まった（速度がほぼ0）ときは targetLeadX を更新せず、前回の値をそのままキープする
+        // --- 前方予測（横方向・X軸） ---
+        float velX = (playerRb != null) ? playerRb.velocity.x : 0f;
         float targetLeadX = currentLookAheadX;
-        if (averageVelocityX > 0.1f)
+        if (velX > 0.1f)
         {
-            targetLeadX = lookAheadFactor; // 右に進んでいる時は右に固定
+            targetLeadX = lookAheadFactorX;
         }
-        else if (averageVelocityX < -0.1f)
+        else if (velX < -0.1f)
         {
-            targetLeadX = -lookAheadFactor; // 左に進んでいる時は左に固定
+            targetLeadX = -lookAheadFactorX;
         }
+        currentLookAheadX = Mathf.MoveTowards(currentLookAheadX, targetLeadX, lookAheadMoveSpeedX * Time.fixedDeltaTime);
 
-        // 現在の先行量を目標値に向けて滑らかに近づける（止まっても0に戻らない）
-        currentLookAheadX = Mathf.MoveTowards(currentLookAheadX, targetLeadX, lookAheadMoveSpeed * Time.fixedDeltaTime);
+        // --- 前方予測（縦方向・Y軸） ---
+        float velY = (playerRb != null) ? playerRb.velocity.y : 0f;
+        float targetLeadY = currentLookAheadY;
+        if (velY > 0.1f)
+        {
+            targetLeadY = lookAheadFactorY;
+        }
+        else if (velY < -0.1f)
+        {
+            targetLeadY = -lookAheadFactorY;
+        }
+        currentLookAheadY = Mathf.MoveTowards(currentLookAheadY, targetLeadY, lookAheadMoveSpeedY * Time.fixedDeltaTime);
 
-        // 最終的な目標座標の計算
-        Vector3 finalCameraTarget = cameraTargetPos;
-        finalCameraTarget.x += currentLookAheadX;
+        // --- 目標座標の合成とクランプ ---
+        Vector3 finalCameraTarget = new Vector3(targetX + currentLookAheadX, targetY + currentLookAheadY, transform.position.z);
+
         finalCameraTarget.x = Mathf.Clamp(finalCameraTarget.x, minX, maxX);
+        finalCameraTarget.y = Mathf.Clamp(finalCameraTarget.y, minY, maxY);
 
-        // スムーズに追従
-        transform.position = Vector3.SmoothDamp(transform.position, finalCameraTarget, ref currentVelocity, smoothTime, Mathf.Infinity, Time.fixedDeltaTime);
+        // デバッグ用に保存（Z軸は0にしておく）
+        debugFinalTarget = finalCameraTarget;
+        debugFinalTarget.z = 0f;
+
+        // --- スムーズ移動 ---
+        float posX = Mathf.SmoothDamp(transform.position.x, finalCameraTarget.x, ref currentVelocity.x, smoothTimeX, Mathf.Infinity, Time.fixedDeltaTime);
+        float posY = Mathf.SmoothDamp(transform.position.y, finalCameraTarget.y, ref currentVelocity.y, smoothTimeY, Mathf.Infinity, Time.fixedDeltaTime);
+
+        transform.position = new Vector3(posX, posY, transform.position.z);
     }
 
-    private float GetPlayersAverageVelocityX()
-    {
-        if (player1 == null && player2 == null) return 0f;
-        if (player1 == null) return (p2Rb != null) ? p2Rb.velocity.x : 0f;
-        if (player2 == null) return (p1Rb != null) ? p1Rb.velocity.x : 0f;
-        return (p1Rb.velocity.x + p2Rb.velocity.x) / 2f;
-    }
-
-    private Vector3 GetPlayersCenterPosition()
-    {
-        if (player1 == null && player2 == null) return Vector3.zero;
-        if (player1 == null) return player2.position;
-        if (player2 == null) return player1.position;
-        return (player1.position + player2.position) / 2f;
-    }
-
-    private void RefreshRigidbodyReferences()
-    {
-        if (player1 != null) p1Rb = player1.GetComponent<Rigidbody2D>();
-        if (player2 != null) p2Rb = player2.GetComponent<Rigidbody2D>();
-    }
-
+    // ★追加：Sceneビューにデバッグ用の線や印を描画する
     void OnDrawGizmos()
     {
-        Gizmos.color = Color.green;
-        Vector3 center = (Application.isPlaying) ? cameraTargetPos : transform.position;
-        center.z = 0;
-        Gizmos.DrawWireCube(center, new Vector3(deadZoneWidth * 2, deadZoneHeight * 2, 0));
-
+        // 1. ステージの境界線（赤色の枠線）を描画
         Gizmos.color = Color.red;
         Vector3 minPoint = new Vector3(minX, minY, 0);
         Vector3 maxPoint = new Vector3(maxX, maxY, 0);
+
         Vector3 clampCenter = (minPoint + maxPoint) / 2f;
-        Vector3 clampSize = new Vector3(Mathf.Abs(maxX - minX), Mathf.Abs(maxY - minY), 0);
-        if (clampSize.x < 0.1f) clampSize.x = 0.1f;
-        if (clampSize.y < 0.1f) clampSize.y = 0.1f;
+        Vector3 clampSize = new Vector3(Mathf.Abs(maxX - minX), Mathf.Abs(maxY - minY), 0.1f);
+
+        // 縦や横の幅が0だと線が見えなくなるので、最低限の厚みを持たせる
+        if (clampSize.x < 0.2f) clampSize.x = 0.2f;
+        if (clampSize.y < 0.2f) clampSize.y = 0.2f;
+
+        // 境界線の四角形を描く
         Gizmos.DrawWireCube(clampCenter, clampSize);
 
-        if (Application.isPlaying && (player1 != null || player2 != null))
+        // 2. ゲーム実行中、カメラが現在「目指している目標地点」を青い球で描画
+        if (Application.isPlaying && targetPlayer != null)
         {
             Gizmos.color = Color.blue;
-            Gizmos.DrawSphere(GetPlayersCenterPosition(), 0.3f);
+            Gizmos.DrawSphere(debugFinalTarget, 0.4f);
+
+            // プレイヤーからカメラ目標地点へのガイド線
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawLine(targetPlayer.position, debugFinalTarget);
         }
     }
 }

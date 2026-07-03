@@ -69,6 +69,19 @@ public class ObjectOnlineCommunication : MonoBehaviour
             controller.IsLocalPlayer = isLocal;
         }
 
+        // ========================================================
+        // ★【追加】自分が動かすキャラ（ローカルプレイヤー）だった場合、カメラに追従させる
+        // ========================================================
+        if (isLocal)
+        {
+            CameraFollow2D cameraScript = FindObjectOfType<CameraFollow2D>();
+            if (cameraScript != null)
+            {
+                cameraScript.SetupTarget(player.transform);
+                Debug.Log($"[カメラ連携完了] 生成されたローカルプレイヤー(Index:{charaindex})をカメラターゲットに設定しました。");
+            }
+        }
+
         if (!isLocal)
         {
             var rb = player.GetComponent<Rigidbody2D>();
