@@ -68,7 +68,7 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        audioSource = GetComponent<AudioSource>(); // ★取得
+        audioSource = GetComponent<AudioSource>(); // 取得
 
         // AudioSourceの初期設定（3Dサウンドではなく2Dとして手軽にハッキリ鳴らす）
         audioSource.playOnAwake = false;
@@ -285,7 +285,7 @@ public class PlayerController : MonoBehaviour
         nextFireTime = Time.time + fireRate;
     }
 
-    // ★【追加】足音のループ管理
+    // 足音のループ管理
     private void HandleWalkSound()
     {
         if (walkSound == null) return;
@@ -367,7 +367,7 @@ public class PlayerController : MonoBehaviour
         if (isPushableLayer) isPushing = state;
     }
 
-    // ★【追加】接触し続けている間も判定を毎フレームケアする（Enterの取りこぼし対策）
+    // 接触し続けている間も判定を毎フレームケアする（Enterの取りこぼし対策）
     private void OnCollisionStay2D(Collision2D collision) => CheckContact(collision, true);
 
     // プレイヤーの位置を送る

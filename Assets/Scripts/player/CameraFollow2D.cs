@@ -31,6 +31,27 @@ public class CameraFollow2D : MonoBehaviour
     private Vector3 cameraTargetPos;
     private bool wasBothAlive = true;
 
+    public void AssignPlayer(int playerIndex, Transform playerTransform)
+    {
+        if (playerIndex == 0)
+        {
+            player1 = playerTransform;
+            if (playerTransform != null) p1Rb = playerTransform.GetComponent<Rigidbody2D>();
+            Debug.Log($"[Camera] 1Pの参照とRigidbody2Dを割り当てました: {playerTransform.name}");
+        }
+        else if (playerIndex == 1)
+        {
+            player2 = playerTransform;
+            if (playerTransform != null) p2Rb = playerTransform.GetComponent<Rigidbody2D>();
+            Debug.Log($"[Camera] 2Pの参照とRigidbody2Dを割り当てました: {playerTransform.name}");
+        }
+
+        // プレイヤーが登録された直後にカメラの初期目標位置をリセットする
+        Vector3 initialTarget = GetPlayersCenterPosition();
+        float startX = Mathf.Clamp(initialTarget.x, minX, maxX);
+        float startY = Mathf.Clamp(initialTarget.y, minY, maxY);
+        cameraTargetPos = new Vector3(startX, startY, transform.position.z);
+    }
     void Start()
     {
         RefreshRigidbodyReferences();

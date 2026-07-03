@@ -86,6 +86,25 @@ public class ObjectOnlineCommunication : MonoBehaviour
                 ghostObjects[charaindex] = ghost;
             }
         }
+
+        CameraFollow2D cameraFollow = FindFirstObjectByType<CameraFollow2D>();
+        if (cameraFollow != null)
+        {
+            // カメラ側の player1, player2 の割り当てルールに合わせる
+            // ローカル（自分）なら myPlayerIndex、リモート（相手）ならその逆を割り当てる
+            int assignedCameraIndex = 0;
+            if (isLocal)
+            {
+                assignedCameraIndex = NetworkManager.Instance.myPlayerIndex;
+            }
+            else
+            {
+                assignedCameraIndex = (NetworkManager.Instance.myPlayerIndex == 0) ? 1 : 0;
+            }
+
+            // カメラに生成したプレイヤーのTransformを直接登録！
+            cameraFollow.AssignPlayer(assignedCameraIndex, player.transform);
+        }
     }
 
     public void HandleWebSocketMessage(string msg)
