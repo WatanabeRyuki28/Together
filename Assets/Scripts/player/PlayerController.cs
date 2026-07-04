@@ -8,6 +8,11 @@ using NativeWebSocket;
 [RequireComponent(typeof(AudioSource))] // ★AudioSourceを必須にする
 public class PlayerController : MonoBehaviour
 {
+
+    [Header("操作方法の設定 (チェックONで有効)")]
+    [SerializeField] private bool useKeyboard = true;  // キーボードを使うか
+    [SerializeField] private bool useGamepad = false;  // ゲームパッドを使うか
+
     [Header("キャラクターの属性")]
     [SerializeField] private ElementType element; // 属性設定：Fire（炎）または Ice（氷）
     public ElementType Element => element;       // 他のクラスから属性を確認するための公開プロパティ
@@ -28,7 +33,7 @@ public class PlayerController : MonoBehaviour
 
     // ★【Input Manager完全排除】使用するキーをコード側で固定
     private KeyCode leftKey = KeyCode.A;       // 左移動
-    private KeyCode rightKey = KeyCode.D;      // 右移動
+    private KeyCode rightKey= KeyCode.D;      // 右移動
     private KeyCode jumpKey = KeyCode.Space;       // ジャンプ
     private KeyCode fireKey = KeyCode.Return;   // ★【変更】攻撃をスペースキーに固定（マウス左クリックなら KeyCode.Mouse0）
 
@@ -128,23 +133,33 @@ public class PlayerController : MonoBehaviour
 
         // ────────── 以下は「自分のキャラ（IsLocalPlayer == true）」だけの処理 ──────────
 
-        // 毎フレーム移動処理を呼び出し
-        Move();
-        // ジャンプ
-        if (controls.Player.Jump.triggered && isGrounded)
+        if (CanMove)
         {
-            Jump();
-        }
+            // 毎フレーム移動処理を呼び出し
+            Move();
 
-        // 攻撃ボタンが押された瞬間
-        if (controls.Player.Tama.triggered)
-        {
-            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            // ジャンプ判定 (キーボード or ゲームパッド)
+            bool keyboardJump = useKeyboard && Input.GetKeyDown(jumpKey);
+            bool gamepadJump = useGamepad && controls.Player.Jump.triggered;
+
+            if ((keyboardJump || gamepadJump) && isGrounded)
             {
-                return;
+                Jump();
             }
 
-            Shoot();
+            // 攻撃判定 (キーボード or ゲームパッド)
+            bool keyboardFire = useKeyboard && Input.GetKeyDown(fireKey);
+            bool gamepadFire = useGamepad && controls.Player.Tama.triggered;
+
+            if (keyboardFire || gamepadFire)
+            {
+                if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+                {
+                    return;
+                }
+
+                Shoot();
+            }
         }
 
         //Wキーが押された瞬間 且つ 地面にいる時
@@ -176,12 +191,22 @@ public class PlayerController : MonoBehaviour
 
     private void Move()
     {
-        float moveInput = controls.Player.Move.ReadValue<float>();
+        float moveInput = 0f;
 
-        // A/Dキーの押し状態から移動方向を完全自作（左: -1, なし: 0, 右: 1）
-        //float moveInput = 0f;
-        //if (Input.GetKey(leftKey)) moveInput -= 1f;
-        //if (Input.GetKey(rightKey)) moveInput += 1f;
+        // ★キーボードの入力を加算
+        if (useKeyboard)
+        {
+            if (Input.GetKey(leftKey)) moveInput -= 1f;
+            if (Input.GetKey(rightKey)) moveInput += 1f;
+        }
+
+        // ★ゲームパッドの入力を加算 (両方ONならスティックもキーボードも両方効きます)
+        if (useGamepad && controls != null)
+        {
+            moveInput += controls.Player.Move.ReadValue<float>();
+        }
+
+        moveInput = Mathf.Clamp(moveInput, -1f, 1f);
 
         // 「箱に触れている」かつ「箱がある方向にキーを入力している」時だけ、本当に押していると判定
         bool isActuallyPushing = isPushing && IsInputtingTowardsBox(moveInput);
@@ -236,10 +261,16 @@ public class PlayerController : MonoBehaviour
         // プレハブや発射地点が未設定ならエラー防止のため中断
         if (projectilePrefab == null || firePoint == null) return;
 
-        // +現在のA/Dキーの押し状態から弾の方向を計算
-        float moveInput = controls.Player.Move.ReadValue<float>();
-        //if (Input.GetKey(leftKey)) moveInput -= 1f;
-        //if (Input.GetKey(rightKey)) moveInput += 1f;
+        float moveInput = 0f;
+        if (useKeyboard)
+        {
+            if (Input.GetKey(leftKey)) moveInput -= 1f;
+            if (Input.GetKey(rightKey)) moveInput += 1f;
+        }
+        if (useGamepad && controls != null)
+        {
+            moveInput += controls.Player.Move.ReadValue<float>();
+        }
 
         float direction = 1f; // 基本は右向き
 

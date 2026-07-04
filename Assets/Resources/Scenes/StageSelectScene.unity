@@ -5740,7 +5740,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1578824661
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6358,9 +6358,6 @@ MonoBehaviour:
   selectionCursor: {fileID: 1353732646}
   confirmButton: {fileID: 1735284544}
   gestPanel: {fileID: 491553758}
-  itemIcons: []
-  obtainedStarSprite: {fileID: 21300000, guid: ad3bcd06cc3d4144c87eab919bddc00f, type: 3}
-  missingStarSprite: {fileID: 21300000, guid: 92228887cd4362b4481ac605d890b3f2, type: 3}
 --- !u!4 &1886058339
 Transform:
   m_ObjectHideFlags: 0
