@@ -261,6 +261,8 @@ public class PlayerController : MonoBehaviour
         // プレハブや発射地点が未設定ならエラー防止のため中断
         if (projectilePrefab == null || firePoint == null) return;
 
+        anim.SetTrigger("Attack");
+
         float moveInput = 0f;
         if (useKeyboard)
         {
