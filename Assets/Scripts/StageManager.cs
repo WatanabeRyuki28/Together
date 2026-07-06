@@ -7,13 +7,26 @@ using UnityEngine.UI;
 
 public class StageManager : MonoBehaviour
 {
-  
     [SerializeField] private RectTransform[] stageButtons;
 
     [Header("ホストの選択枠（カーソル画像や太枠）")]
     [SerializeField] private RectTransform selectionCursor;
 
     public GameObject confirmButton; // ホストの画面にだけ出る「開始」ボタン
+
+    [Header("アイテム表示用の設定")]
+    // ★ Image[] から SpriteRenderer[] に修正
+    [SerializeField] private SpriteRenderer[] itemIcons;
+
+    // ★追加：星の画像をインスペクターから登録できるようにする
+    [SerializeField] private Sprite obtainedStarSprite; // 獲得済みの星（黄色の星など）
+    [SerializeField] private Sprite missingStarSprite;  // 未獲得の星（白い星など）
+
+    // ★修正：ヒエラルキーのオブジェクト名に合わせて「StarItem」に変更
+    private const string StarObjectName = "StarItem";
+
+    // マジックナンバーを避けるため、アイテムIDのベース名を定義
+    private const string ItemIdPrefix = "Stage_";
 
     private int currentStageIndex = 0; // 現在選んでいるステージ番号
 
@@ -57,6 +70,9 @@ public class StageManager : MonoBehaviour
 
         // 初期カーソル位置の更新
         UpdateCursorPosition();
+
+        // ★各ステージのアイテム獲得状況をロードしてUIに反映する
+        UpdateItemIconsDisplay();
 
         // ホストなら初期位置をゲストに共有
         if (IsHost())
@@ -138,6 +154,79 @@ public class StageManager : MonoBehaviour
         }
     }
 
+    // ★修正：SpriteRendererのSpriteを切り替えるように処理を最適化
+    private void UpdateItemIconsDisplay()
+    {
+        if (stageButtons == null || SaveManager.Instance == null) return;
+
+        // ボタンの数に合わせて配列を自動で用意する
+        itemIcons = new SpriteRenderer[stageButtons.Length];
+
+        for (int i = 0; i < stageButtons.Length; i++)
+        {
+            if (stageButtons[i] == null) continue;
+
+            // まずボタンの直下から探す
+            Transform starTransform = stageButtons[i].Find(StarObjectName);
+
+            // 階層が奥深い場合は再帰探索で探す
+            if (starTransform == null)
+            {
+                starTransform = FindChildRecursive(stageButtons[i], StarObjectName);
+            }
+
+            // ★ TryGetComponent<SpriteRenderer> で星のスプライトを取得
+            if (starTransform != null && starTransform.TryGetComponent<SpriteRenderer>(out SpriteRenderer starRenderer))
+            {
+                itemIcons[i] = starRenderer;
+
+                // 各ステージ固有のアイテムIDを生成（例: "Stage_0", "Stage_1"...）
+                string targetItemId = ItemIdPrefix + i;
+
+                // セーブデータに入っているかチェック
+                if (SaveManager.Instance.HasItem(targetItemId))
+                {
+                    // 取得済み：黄色の星の画像に切り替える
+                    if (obtainedStarSprite != null)
+                    {
+                        starRenderer.sprite = obtainedStarSprite;
+                    }
+                    starRenderer.color = Color.white; // カラーを通常に戻す
+                }
+                else
+                {
+                    // 未取得：白い星の画像に切り替える
+                    if (missingStarSprite != null)
+                    {
+                        starRenderer.sprite = missingStarSprite;
+                        starRenderer.color = Color.white;
+                    }
+                    else
+                    {
+                        // もしインスペクターに「白い星」が未登録なら、暫定処置として半透明のグレーにする
+                        starRenderer.color = new Color(0.2f, 0.2f, 0.2f, 0.5f);
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"{stageButtons[i].name} の中に名前が '{StarObjectName}' の SpriteRenderer コンポーネントが見つかりません。");
+            }
+        }
+    }
+
+    // ★追加：ボタンの奥深い子階層から名前でオブジェクトを検索するヘルパー関数
+    private Transform FindChildRecursive(Transform parent, string name)
+    {
+        foreach (Transform child in parent)
+        {
+            if (child.name == name) return child;
+            Transform result = FindChildRecursive(child, name);
+            if (result != null) return result;
+        }
+        return null;
+    }
+
     // 決定ボタンが押された（または決定キーが叩かれた）時の本決定処理
     public void ConfirmStageSelection()
     {
@@ -205,15 +294,31 @@ public class StageManager : MonoBehaviour
     private void LoadTargetScene(int stageIndex)
     {
 
+
+        if (stageIndex == -1) SceneManager.LoadScene("TutorialStageScene_Backup");
+        else if (stageIndex == 0) SceneManager.LoadScene("Stage1");
+        else if (stageIndex == 1) SceneManager.LoadScene("Stage2");
+        else if (stageIndex == 2) SceneManager.LoadScene("Stage3");
+
+
         if (controls != null)
         {
             controls.StageSelect.Disable();
         }
+
+            if (stageIndex == -1) SceneManager.LoadScene("TutorialStageScene_Backup"); 
+        else if (stageIndex == 0) SceneManager.LoadScene("Stage1");               
+        else if (stageIndex == 1) SceneManager.LoadScene("Stage2");               
+        else if (stageIndex == 2) SceneManager.LoadScene("Stage3");              
+       
+
+
         if (stageIndex == -1) SceneManager.LoadScene("TutorialStageScene_Backup");
 
         else if (stageIndex == 0) SceneManager.LoadScene("Stage1");
         else if (stageIndex == 1) SceneManager.LoadScene("Stage2");
         else if (stageIndex == 2) SceneManager.LoadScene("Stage3");
+
     }
   
 

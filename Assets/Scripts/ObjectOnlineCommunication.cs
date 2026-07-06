@@ -15,8 +15,13 @@ public class ObjectOnlineCommunication : MonoBehaviour
 
     public Dictionary<int, NetworkIdentity2D> syncObjects = new Dictionary<int, NetworkIdentity2D>();
 
-    void Start()
+    // ★修正：void Start() から IEnumerator Start() に変更
+    IEnumerator Start()
     {
+        // 1フレームだけ待つことで、カメラ側の初期化を確実に終わらせる
+        yield return null;
+
+        // --- 修正：NetworkManager がある場合（オンラインプレイ時） ---
         if (NetworkManager.Instance != null)
         {
             int myColorIndex = NetworkManager.Instance.myRealSelectedChar;
@@ -26,29 +31,32 @@ public class ObjectOnlineCommunication : MonoBehaviour
             Vector3 myStartPos = Vector3.zero;
             Vector3 opponentStartPos = Vector3.zero;
 
-            // 選んだ色（0:赤、1:青）によって初期位置を完全に固定する
             if (myColorIndex == 0)
             {
-                myStartPos = Vector3.zero;                  // 赤は中央
-                opponentStartPos = new Vector3(2f, -1.5f, 0f);  // 青は右
+                myStartPos = Vector3.zero;
+                opponentStartPos = new Vector3(2f, -1.5f, 0f);
             }
             else
             {
-                myStartPos = new Vector3(2f, -1.5f, 0f);       // 青は右
-                opponentStartPos = Vector3.zero;            // 赤は中央
+                myStartPos = new Vector3(2f, -1.5f, 0f);
+                opponentStartPos = Vector3.zero;
             }
 
-            // キャラクターの種類（0か1）をそのまま鍵にして生成
             CreatePlayer(myColorIndex, myStartPos, true);
             CreatePlayer(opponentColorIndex, opponentStartPos, false);
         }
+        // --- ★追加：NetworkManager がない場合（デバッグ・テストプレイ時） ---
+        else
+        {
+            Debug.LogWarning("[警告] NetworkManager が見つかりません。テスト用として赤スライムをローカルプレイヤーとして生成します。");
+            // とりあえず「0:赤のPrefab」を自分(true)として生成する
+            CreatePlayer(0, Vector3.zero, true);
+        }
 
-       
-        // ステージ内に最初から配置されている NetworkIdentity2D（箱や扉など）をすべて自動探索して登録！
+        // ステージ内のオブジェクト探索
         NetworkIdentity2D[] sceneObjects = FindObjectsOfType<NetworkIdentity2D>();
         foreach (var obj in sceneObjects)
         {
-            // すでに登録されていなければ辞書に入れる
             if (!syncObjects.ContainsKey(obj.objectId))
             {
                 syncObjects[obj.objectId] = obj;
@@ -67,6 +75,23 @@ public class ObjectOnlineCommunication : MonoBehaviour
         if (controller != null)
         {
             controller.IsLocalPlayer = isLocal;
+        }
+
+        // ========================================================
+        // 自分が動かすキャラ（ローカルプレイヤー）だった場合、カメラに追従させる
+        // ========================================================
+        if (isLocal)
+        {
+            CameraFollow2D cameraScript = FindObjectOfType<CameraFollow2D>();
+            if (cameraScript != null)
+            {
+                cameraScript.SetupTarget(player.transform);
+                Debug.Log($"[カメラ連携完了] 生成されたローカルプレイヤー(Index:{charaindex})をカメラターゲットに設定しました。");
+            }
+            else
+            {
+                Debug.LogError("[カメラ連携失敗] シーン内に CameraFollow2D が見つかりません！");
+            }
         }
 
         if (!isLocal)
@@ -109,25 +134,21 @@ public class ObjectOnlineCommunication : MonoBehaviour
 
     public void HandleWebSocketMessage(string msg)
     {
-
         if (msg.Contains("\"type\":\"menu_toggle\"") || msg.Contains("\"type\":\"menu_exit_ready\""))
         {
             try
             {
-                // いったん共通のデータ型に変換して中身を取り出す
                 InGameMoveData menuData = JsonUtility.FromJson<InGameMoveData>(msg);
 
                 if (menuData.type == "menu_toggle" && StageMenuManager.Instance != null)
                 {
-                    // メニューの開閉状態を同期
                     StageMenuManager.Instance.ReceiveMenuToggle(menuData.position_x, menuData.char_index);
-                    return; // ここで処理終了（位置同期の処理には行かせない）
+                    return;
                 }
                 else if (menuData.type == "menu_exit_ready" && StageMenuManager.Instance != null)
                 {
-                    // 退出同意のカウント（実名チェック）を同期
                     StageMenuManager.Instance.ReceiveExitReady(menuData.char_index);
-                    return; // ここで処理終了
+                    return;
                 }
             }
             catch (System.Exception e)
@@ -138,8 +159,6 @@ public class ObjectOnlineCommunication : MonoBehaviour
 
         var data = JsonUtility.FromJson<InGameMoveData>(msg);
 
-        
-
         if (data.dataType == "player")
         {
             HandlePlayerSync(data);
@@ -148,53 +167,41 @@ public class ObjectOnlineCommunication : MonoBehaviour
         {
             HandleObjectSync(data);
         }
-        
     }
 
     private void HandlePlayerSync(InGameMoveData data)
     {
         if (NetworkManager.Instance == null) return;
 
-        // 自分の選んだキャラ情報
         int myRealColor = NetworkManager.Instance.myRealSelectedChar;
         if (myRealColor == -1) myRealColor = NetworkManager.Instance.myCharaIndex;
 
-        // 届いたデータの色が、自分のキャラと同じなら自分のデータなので無視
         if (data.char_index == myRealColor) return;
-
-        // データの部屋IDが自分と違う場合も無視
         if (data.room_id != NetworkManager.Instance.myRoomID) return;
 
         Vector3 targetPos = new Vector3(data.position_x, data.position_y, 0);
 
-        // まず届いた生データ（ゴーストオブジェクト）をその座標に「瞬間移動」させて可視化する
         if (ghostObjects.ContainsKey(data.char_index))
         {
             ghostObjects[data.char_index].transform.position = targetPos;
         }
 
-        // 本物のキャラクターには、そのゴーストを追尾させるために座標を教える
         if (players.ContainsKey(data.char_index))
         {
             GameObject remotePlayerObj = players[data.char_index];
 
-            // 1. 座標追尾のための設定
             var controller = remotePlayerObj.GetComponent<PlayerController>();
             if (controller != null)
             {
-                // ゴーストの座標を目標地点として設定
                 controller.TargetPosition = targetPos;
             }
 
-            // 相手のスプライトの向きを同期する
             var remoteSprite = remotePlayerObj.GetComponent<SpriteRenderer>();
             if (remoteSprite != null)
             {
-                // 届いたパケットデータ(data.is_flip_x)をそのまま相手のSpriteRendererに適用
                 remoteSprite.flipX = data.is_flip_x;
             }
         }
-
     }
 
     private void HandleObjectSync(InGameMoveData data)
@@ -206,40 +213,31 @@ public class ObjectOnlineCommunication : MonoBehaviour
 
         if (data.dataType == "spawn_projectile")
         {
-            // データの char_index（撃った人の色）から、出すべき弾のプレハブを決める
             int bulletType = data.char_index;
 
             if (projectilePrefabs != null && bulletType < projectilePrefabs.Length && projectilePrefabs[bulletType] != null)
             {
-                // 送られてきた idを取り出す
                 float direction = data.id;
                 Quaternion spawnRotation = (direction == -1f) ? Quaternion.identity : Quaternion.Euler(0, 0, 180f);
 
-                // 相手の画面に弾を生成
                 GameObject spawnedProjectile = Instantiate(projectilePrefabs[bulletType], targetPos, spawnRotation);
 
-                // 相手の画面の弾にも速度を与えて勝手に飛ばす
                 Projectile projectileScript = spawnedProjectile.GetComponent<Projectile>();
                 if (projectileScript != null)
                 {
-                    // 属性は bulletType が 0 なら Fire、1 なら Ice 
                     ElementType bulletElement = (bulletType == 0) ? ElementType.Fire : ElementType.Ice;
                     projectileScript.Initialize(direction, bulletElement);
-                   
                 }
 
                 Debug.Log("[イベント生成完了] 相手が撃った弾をローカルで発射しました。");
             }
-            return; // 弾の処理はここで完全に終了！
+            return;
         }
 
-
-        // 既存のオブジェクト、もしくは上で新しく生成された弾の座標を更新する
         if (syncObjects.ContainsKey(data.id))
         {
             var targetObj = syncObjects[data.id];
             targetObj.UpdatePositionFromNetwork(targetPos);
         }
     }
-   
 }

@@ -32,12 +32,15 @@ public class JumpPad : MonoBehaviour
         // 触れたオブジェクトがプレイヤーかどうかをチェック
         if (other.TryGetComponent<PlayerController>(out PlayerController player))
         {
-            LaunchPlayer(other.gameObject);
+            // ★【追加】乗った瞬間にプレイヤーの接地判定を強制的にONにする
+            player.isGrounded = true;
+
+            LaunchPlayer(other.gameObject, player); // ★引数にplayerを追加
         }
     }
 
     // プレイヤーを跳ね上げる処理
-    private void LaunchPlayer(GameObject playerObj)
+    private void LaunchPlayer(GameObject playerObj, PlayerController player)
     {
         if (playerObj.TryGetComponent<Rigidbody2D>(out Rigidbody2D rb))
         {
@@ -46,6 +49,9 @@ public class JumpPad : MonoBehaviour
 
             // 上方向へ瞬間的な力を加える（Impulseモード）
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+
+            // ★【追加】跳ね上げたので、即座に接地判定をfalseにする（空中ジャンプ暴発防止）
+            player.isGrounded = false;
 
             // ジャンプ台がビヨーンと動くアニメーションを再生
             animator.SetTrigger(LaunchTrigger);
