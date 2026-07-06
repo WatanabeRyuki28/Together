@@ -50,13 +50,10 @@ public class PlayerController : MonoBehaviour
     private SpriteRenderer spriteRenderer; // 左右反転用
     private AudioSource audioSource;       // ★効果音再生用
 
-    // ────────── 変更前 ──────────
-    // private bool isGrounded; // 現在、地面に接地しているかどうかのフラグ
-    // private bool isPushing;  // 現在、押し出し対象に接触しているかどうかのフラグ
 
     // ────────── 変更後 ──────────
     // ★【修正】カメラ（CameraFollow2D）から読み取れるように public 属性（プロパティ）にする
-    public bool isGrounded { get; private set; }
+    public bool isGrounded { get; set; }
     private bool isPushing;
 
     NetworkManager client;

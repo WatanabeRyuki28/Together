@@ -56,6 +56,23 @@ public class SaveManager : MonoBehaviour
     // 特定のアイテムを持っているかチェックする便利な関数
     public bool HasItem(string itemId)
     {
+        // リストがヌルだった場合の安全対策を含める
+        if (CurrentSaveData == null || CurrentSaveData.obtainedItemIds == null) return false;
         return CurrentSaveData.obtainedItemIds.Contains(itemId);
+    }
+
+    // -------------------------------------------------------------
+    // ★追加：アイテムIDをセーブデータに追加する関数
+    // -------------------------------------------------------------
+    public void AddItem(string itemId)
+    {
+        if (CurrentSaveData == null || CurrentSaveData.obtainedItemIds == null) return;
+
+        // 二重で追加されないようにチェックしてから保存する
+        if (!CurrentSaveData.obtainedItemIds.Contains(itemId))
+        {
+            CurrentSaveData.obtainedItemIds.Add(itemId);
+            Debug.Log($"セーブデータにアイテムを追加しました: {itemId}");
+        }
     }
 }

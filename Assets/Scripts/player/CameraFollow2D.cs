@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class CameraFollow2D : MonoBehaviour
 {
@@ -46,29 +47,6 @@ public class CameraFollow2D : MonoBehaviour
             float startY = Mathf.Clamp(lastGroundedY, minY, maxY);
             transform.position = new Vector3(startX, startY, transform.position.z);
         }
-    }
-
-
-    public void AssignPlayer(int playerIndex, Transform playerTransform)
-    {
-        if (playerIndex == 0)
-        {
-            player1 = playerTransform;
-            if (playerTransform != null) p1Rb = playerTransform.GetComponent<Rigidbody2D>();
-            Debug.Log($"[Camera] 1Pの参照とRigidbody2Dを割り当てました: {playerTransform.name}");
-        }
-        else if (playerIndex == 1)
-        {
-            player2 = playerTransform;
-            if (playerTransform != null) p2Rb = playerTransform.GetComponent<Rigidbody2D>();
-            Debug.Log($"[Camera] 2Pの参照とRigidbody2Dを割り当てました: {playerTransform.name}");
-        }
-
-        // プレイヤーが登録された直後にカメラの初期目標位置をリセットする
-        Vector3 initialTarget = GetPlayersCenterPosition();
-        float startX = Mathf.Clamp(initialTarget.x, minX, maxX);
-        float startY = Mathf.Clamp(initialTarget.y, minY, maxY);
-        cameraTargetPos = new Vector3(startX, startY, transform.position.z);
     }
 
     void Start()
@@ -149,4 +127,17 @@ public class CameraFollow2D : MonoBehaviour
             Gizmos.DrawLine(targetPlayer.position, debugFinalTarget);
         }
     }
-}
+
+    public void AssignPlayer(int assignedCameraIndex, Transform playerTransform)
+    {
+        // 1. もし生成されたのが「自分（ローカルプレイヤー）」だった場合のみカメラの追従対象にする
+        // ※ObjectOnlineCommunication側のロジックで isLocal の場合にSetupTargetを呼ぶ仕組みに合わせます
+        if (playerTransform != null)
+        {
+            // すでにクラス内に用意されている SetupTarget メソッドを活用して登録
+            SetupTarget(playerTransform);
+
+            Debug.Log($"[CameraFollow2D] インデックス {assignedCameraIndex} のプレイヤーをターゲットとして認識しました。");
+        }
+    }
+} // クラスの一番最後の閉じカッコ

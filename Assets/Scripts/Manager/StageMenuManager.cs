@@ -25,7 +25,13 @@ public class StageMenuManager : MonoBehaviour
     [SerializeField] private Transform starUIPanel;
 
     [Header("生成するスターアイコンのプレハブ")]
-    [SerializeField] private GameObject starIconPrefab;
+    [SerializeField] private GameObject starIconPrefab; // 黄色の星プレハブ
+
+    [Header("未獲得時に表示する白スターのプレハブ")]
+    [SerializeField] private GameObject missingStarIconPrefab;
+
+    [Header("このステージのインデックス（0から開始）")]
+    [SerializeField] private int currentStageStageIndex = 0;
 
     [Header("ステージ選択画面のシーン名")]
     [SerializeField] private string stageSelectSceneName = "StageSelect";
@@ -47,11 +53,17 @@ public class StageMenuManager : MonoBehaviour
 
     private int readyPlayersCount = 0;
 
-    private bool player0Ready = false; 
+    private bool player0Ready = false;
     private bool player1Ready = false;
     public bool isMenuOpen { get; private set; } = false;
 
     private bool hasPressedYes = false;
+
+    private GameObject currentSpawnedStar = null;
+
+    // マジックナンバー回避のためのキー定数
+    private const string ItemIdPrefix = "Stage_";
+
     private void Awake()
     {
         if (Instance == null)
@@ -71,66 +83,27 @@ public class StageMenuManager : MonoBehaviour
 
         Time.timeScale = 1f;
         if (menuOpenButton != null) menuOpenButton.interactable = true;
+
+        InitializeStageStarDisplay();
     }
 
     private void Update()
     {
-        // Escapeキーが押されたとき（ここは変更なし：いつでも開閉可能）
-        /*if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (confirmationPanel.activeSelf) CancelExit();
-            else ToggleMenu();
-            return;
-        }
-
-        // ★【修正】Yキーが押されたとき
-        // メニューが完全に閉じている（isMenuOpen == false）ときだけメニューを開く
-        if (Input.GetKeyDown(KeyCode.Y))
-        {
-            if (!isMenuOpen)
-            {
-                ToggleMenu();
-            }
-            return;
-        }
-
-        // メニューが開いている時だけ入力を受け付ける
-        if (isMenuOpen)
-        {
-            if (confirmationPanel.activeSelf)
-            {
-                if (confirmationButtons != null && confirmationButtons.Length > 0)
-                {
-                    HandleConfirmationNavigation();
-                }
-            }
-            else
-            {
-                if (menuButtons != null && menuButtons.Length > 0)
-                {
-                    HandleMenuNavigation();
-                }
-            }
-        }*/
-
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (confirmationPanel.activeSelf)
             {
                 CancelExit();
-                // 確認画面のキャンセルも同期させる
                 SendMenuToggleAction("cancel");
             }
             else
             {
                 ToggleMenu();
-                // 通常メニューの開閉
                 SendMenuToggleAction("toggle");
             }
             return;
         }
 
-        // Yキーが押されたとき
         if (Input.GetKeyDown(KeyCode.Y))
         {
             if (!isMenuOpen)
@@ -141,7 +114,6 @@ public class StageMenuManager : MonoBehaviour
             return;
         }
 
-        // メニューが開いている時だけ入力を受け付ける（ここは変更なし）
         if (isMenuOpen)
         {
             if (confirmationPanel.activeSelf)
@@ -161,12 +133,84 @@ public class StageMenuManager : MonoBehaviour
         }
     }
 
-    // 通常メニュー用（閉じる／退出）の選択処理（A/Dで上下に動く）
+    // ★修正：初期表示の生成時に、ScaleとZ位置を正しくリセットする
+    private void InitializeStageStarDisplay()
+    {
+        if (starUIPanel == null) return;
+
+        string targetItemId = ItemIdPrefix + currentStageStageIndex;
+
+        if (SaveManager.Instance != null && SaveManager.Instance.HasItem(targetItemId))
+        {
+            if (starIconPrefab != null)
+            {
+                currentSpawnedStar = Instantiate(starIconPrefab, starUIPanel);
+                ResetUIElementTransform(currentSpawnedStar); // ★位置とスケールを補正
+            }
+        }
+        else
+        {
+            if (missingStarIconPrefab != null)
+            {
+                currentSpawnedStar = Instantiate(missingStarIconPrefab, starUIPanel);
+                ResetUIElementTransform(currentSpawnedStar); // ★位置とスケールを補正
+            }
+        }
+    }
+
+    // ★修正：獲得時の生成時にも、ScaleとZ位置を正しくリセットする
+    public void AddStar()
+    {
+        if (starUIPanel == null || starIconPrefab == null) return;
+
+        if (currentSpawnedStar != null)
+        {
+            Destroy(currentSpawnedStar);
+        }
+
+        currentSpawnedStar = Instantiate(starIconPrefab, starUIPanel);
+        ResetUIElementTransform(currentSpawnedStar); // ★位置とスケールを補正
+
+        if (SaveManager.Instance != null)
+        {
+            string targetItemId = ItemIdPrefix + currentStageStageIndex;
+
+            SaveManager.Instance.AddItem(targetItemId);
+            SaveManager.Instance.SaveGame();
+
+            Debug.Log($"【セーブ】ステージアイテム {targetItemId} の獲得情報を保存しました。");
+        }
+        else
+        {
+            Debug.LogWarning("SaveManager のインスタンスが見つからないため、獲得情報を保存できませんでした。");
+        }
+
+        Debug.Log($"ステージアイテムを取得！黄色のスターアイコンを左上に追加しました。(Stage_{currentStageStageIndex})");
+    }
+
+    // ★追加：UI生成時のバグ（Scaleが0になったりZ軸がズレる問題）を解決する安全関数
+    private void ResetUIElementTransform(GameObject targetObj)
+    {
+        if (targetObj == null) return;
+
+        // Scaleを確実に (1, 1, 1) に戻す
+        targetObj.transform.localScale = Vector3.one;
+
+        // UI（RectTransform）としての位置バグを防ぐため、ローカルのZ座標を確実に 0 にする
+        RectTransform rect = targetObj.GetComponent<RectTransform>();
+        if (rect != null)
+        {
+            Vector3 localPos = rect.localPosition;
+            localPos.z = 0f;
+            rect.localPosition = localPos;
+        }
+    }
+
     private void HandleMenuNavigation()
     {
         float inputVal = 0f;
-        if (Input.GetKey(menuLeftKey)) inputVal += 1f; // Aで上へ
-        if (Input.GetKey(menuRightKey)) inputVal -= 1f; // Dで下へ
+        if (Input.GetKey(menuLeftKey)) inputVal += 1f;
+        if (Input.GetKey(menuRightKey)) inputVal -= 1f;
 
         if (Mathf.Abs(inputVal) > 0.5f)
         {
@@ -184,16 +228,13 @@ public class StageMenuManager : MonoBehaviour
         {
             nextInputTime = 0f;
         }
-
-        // ❌ ここにあった手動のSpaceキー判定（Input.GetKeyDown）を削除しました
     }
 
-    // 確認画面（はい/いいえ）用の左右選択処理
     private void HandleConfirmationNavigation()
     {
         float horizontalInput = 0f;
-        if (Input.GetKey(menuLeftKey)) horizontalInput -= 1f; // Aキーで左（はい）
-        if (Input.GetKey(menuRightKey)) horizontalInput += 1f; // Dキーで右（いいえ）
+        if (Input.GetKey(menuLeftKey)) horizontalInput -= 1f;
+        if (Input.GetKey(menuRightKey)) horizontalInput += 1f;
 
         if (Mathf.Abs(horizontalInput) > 0.5f)
         {
@@ -201,12 +242,10 @@ public class StageMenuManager : MonoBehaviour
             {
                 if (horizontalInput > 0.5f)
                 {
-                    // 右に入力：いいえ（1番）を選択
                     currentConfirmationIndex = 1;
                 }
                 else if (horizontalInput < -0.5f)
                 {
-                    // 左に入力：はい（0番）を選択
                     currentConfirmationIndex = 0;
                 }
 
@@ -218,8 +257,6 @@ public class StageMenuManager : MonoBehaviour
         {
             nextInputTime = 0f;
         }
-
-       
     }
 
     private void ApplyMenuButtonFocus()
@@ -289,27 +326,19 @@ public class StageMenuManager : MonoBehaviour
     public void OpenConfirmation()
     {
         confirmationPanel.SetActive(true);
-        
-
         UpdateYesButtonText();
-
         currentConfirmationIndex = 0;
         ApplyConfirmationButtonFocus();
     }
 
     public async void PressYesByClick()
     {
-        // すでに一度押しているなら、処理を完全にブロックする 
         if (hasPressedYes) return;
-
-        // ロックをかける 
         hasPressedYes = true;
 
-        // 連打防止
         if (exitButton != null) exitButton.interactable = false;
 
         int myIndex = (NetworkManager.Instance != null) ? NetworkManager.Instance.myCharaIndex : 0;
-
         SetPlayerReady(myIndex);
 
         if (NetworkManager.Instance != null)
@@ -318,21 +347,18 @@ public class StageMenuManager : MonoBehaviour
             exitMsg.type = "menu_exit_ready";
             exitMsg.dataType = "";
             exitMsg.room_id = NetworkManager.Instance.myRoomID;
-            exitMsg.char_index = myIndex; 
+            exitMsg.char_index = myIndex;
 
             string json = JsonUtility.ToJson(exitMsg);
             await NetworkManager.Instance.SendMessageAsync(json);
 
-            Debug.Log(" 退出同意を送信しました。");
+            Debug.Log("退出同意を送信しました。");
         }
     }
-
-   
 
     public void ReceiveExitReady(int senderIndex)
     {
         Debug.Log($"【同期】インデックス {senderIndex} のプレイヤーから退出同意を受信しました。");
-        //  届いたインデックスの同意フラグをONにする
         SetPlayerReady(senderIndex);
     }
 
@@ -347,6 +373,26 @@ public class StageMenuManager : MonoBehaviour
         {
             Debug.Log("両プレイヤーの同意を確認。ステージ選択に戻ります。");
 
+            // -------------------------------------------------------------
+            // ★追加：途中でやめるので、このステージで仮取得した星を破棄してリロードする
+            // -------------------------------------------------------------
+            if (SaveManager.Instance != null)
+            {
+                string targetItemId = ItemIdPrefix + currentStageStageIndex;
+
+                // セーブデータ構造のリストから、このステージのIDを削除する
+                if (SaveManager.Instance.CurrentSaveData?.obtainedItemIds != null)
+                {
+                    SaveManager.Instance.CurrentSaveData.obtainedItemIds.Remove(targetItemId);
+                }
+
+                // ファイルから前回セーブされた状態（星を取る前のデータ）を読み込み直して同期を完璧にする
+                SaveManager.Instance.LoadGame();
+
+                Debug.Log($"【退出リセット】途中でやめたため、{targetItemId} の獲得をキャンセルしてデータを巻き戻しました。");
+            }
+            // -------------------------------------------------------------
+
             player0Ready = false;
             player1Ready = false;
 
@@ -355,20 +401,18 @@ public class StageMenuManager : MonoBehaviour
         }
     }
 
-
     private async void SendMenuToggleAction(string actionType)
     {
         if (NetworkManager.Instance != null)
         {
             InGameMoveData menuMsg = new InGameMoveData();
-            menuMsg.type = "menu_toggle"; 
+            menuMsg.type = "menu_toggle";
             menuMsg.dataType = "";
-
             menuMsg.room_id = NetworkManager.Instance.myRoomID;
 
             int myRealChara = NetworkManager.Instance.myRealSelectedChar;
             if (myRealChara == -1) myRealChara = NetworkManager.Instance.myCharaIndex;
-            menuMsg.char_index = myRealChara; // 誰が操作したかを乗せる
+            menuMsg.char_index = myRealChara;
 
             menuMsg.position_x = (actionType == "toggle") ? 1f : 2f;
 
@@ -377,24 +421,21 @@ public class StageMenuManager : MonoBehaviour
         }
     }
 
-    // サーバーから戻ってきたパケットを元に、実際に画面を切り替える関数
     public void ReceiveMenuToggle(float actionCode, int senderCharIndex)
     {
         Debug.Log($"【同期受信】ReceiveMenuToggle: Code={actionCode}, Sender={senderCharIndex}");
 
-        if (actionCode == 1f) // メニューを開く
+        if (actionCode == 1f)
         {
             ToggleMenuLocal(true);
-
-            // 相手が開いたことによるリセット処理
             hasPressedYes = false;
             if (exitButton != null) exitButton.interactable = true;
         }
-        else if (actionCode == 2f) // メメインメニューを閉じる
+        else if (actionCode == 2f)
         {
             ToggleMenuLocal(false);
         }
-        else if (actionCode == 3f) // 確認画面のみキャンセル
+        else if (actionCode == 3f)
         {
             if (confirmationPanel != null) confirmationPanel.SetActive(false);
             hasPressedYes = false;
@@ -403,21 +444,10 @@ public class StageMenuManager : MonoBehaviour
         }
     }
 
- 
-   
-
-    public void AddStar()
-    {
-        if (starUIPanel == null || starIconPrefab == null) return;
-        Instantiate(starIconPrefab, starUIPanel);
-        Debug.Log("スターアイコンを左上に追加しました。");
-    }
-
     private void UpdateYesButtonText()
     {
         if (yesButtonText != null)
         {
-            // 同意している人数を数える
             int count = 0;
             if (player0Ready) count++;
             if (player1Ready) count++;
@@ -426,14 +456,12 @@ public class StageMenuManager : MonoBehaviour
         }
     }
 
-   
     public void CancelExit()
     {
         confirmationPanel.SetActive(false);
         currentConfirmationIndex = 0;
         hasPressedYes = false;
 
-       
         int myIndex = (NetworkManager.Instance != null) ? NetworkManager.Instance.myCharaIndex : 0;
         if (myIndex == 0) player0Ready = false;
         if (myIndex == 1) player1Ready = false;
@@ -444,6 +472,7 @@ public class StageMenuManager : MonoBehaviour
 
         ApplyMenuButtonFocus();
     }
+
     private void OnDestroy()
     {
         Time.timeScale = 1f;

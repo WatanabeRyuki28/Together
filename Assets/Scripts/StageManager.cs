@@ -294,32 +294,31 @@ public class StageManager : MonoBehaviour
     private void LoadTargetScene(int stageIndex)
     {
 
-<<<<<<< HEAD
+
         if (stageIndex == -1) SceneManager.LoadScene("TutorialStageScene_Backup");
         else if (stageIndex == 0) SceneManager.LoadScene("Stage1");
         else if (stageIndex == 1) SceneManager.LoadScene("Stage2");
         else if (stageIndex == 2) SceneManager.LoadScene("Stage3");
 
-=======
->>>>>>> origin/WR
+
         if (controls != null)
         {
             controls.StageSelect.Disable();
         }
-<<<<<<< HEAD
+
             if (stageIndex == -1) SceneManager.LoadScene("TutorialStageScene_Backup"); 
         else if (stageIndex == 0) SceneManager.LoadScene("Stage1");               
         else if (stageIndex == 1) SceneManager.LoadScene("Stage2");               
         else if (stageIndex == 2) SceneManager.LoadScene("Stage3");              
        
 
-=======
+
         if (stageIndex == -1) SceneManager.LoadScene("TutorialStageScene_Backup");
 
         else if (stageIndex == 0) SceneManager.LoadScene("Stage1");
         else if (stageIndex == 1) SceneManager.LoadScene("Stage2");
         else if (stageIndex == 2) SceneManager.LoadScene("Stage3");
->>>>>>> origin/WR
+
     }
   
 
