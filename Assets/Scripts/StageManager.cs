@@ -293,12 +293,12 @@ public class StageManager : MonoBehaviour
     // シーン遷移用の関数
     private void LoadTargetScene(int stageIndex)
     {
-<<<<<<< HEAD
+
         if (stageIndex == -1) SceneManager.LoadScene("TutorialStageScene_Backup");
         else if (stageIndex == 0) SceneManager.LoadScene("Stage1");
         else if (stageIndex == 1) SceneManager.LoadScene("Stage2");
         else if (stageIndex == 2) SceneManager.LoadScene("Stage3");
-=======
+
         if (controls != null)
         {
             controls.StageSelect.Disable();
@@ -308,7 +308,7 @@ public class StageManager : MonoBehaviour
         else if (stageIndex == 1) SceneManager.LoadScene("Stage2");               
         else if (stageIndex == 2) SceneManager.LoadScene("Stage3");              
        
->>>>>>> origin/hayano
+
     }
 
     private bool IsHost() => NetworkManager.Instance != null && NetworkManager.Instance.myPlayerIndex == 0;
