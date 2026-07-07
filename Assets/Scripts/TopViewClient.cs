@@ -18,7 +18,9 @@ public class TopViewClient : MonoBehaviour
 
     public Text P1Text;
     public Text P2Text;
-    public GameObject StartButton;
+    public GameObject HostText;
+    public GameObject GestText;
+
 
     private string remotePlayer;
 
@@ -27,7 +29,8 @@ public class TopViewClient : MonoBehaviour
     void Start()
     {
         Init(true, false);
-        StartButton.SetActive(false);
+        HostText.SetActive(false);
+        GestText.SetActive(false);
         Startflag = false;
         controls = new CommunicationUI();
         controls.UI.Enable();
@@ -199,12 +202,14 @@ public class TopViewClient : MonoBehaviour
         // 自分がホスト（Index 0）かつ、両方準備できたらボタン表示
         if (NetworkManager.Instance.myPlayerIndex == 0 && isP1Ready && isP2Ready)
         {
-            StartButton.SetActive(true);
+            HostText.SetActive(true);
+            GestText.SetActive(false);
             Startflag = true;
         }
         else
         {
-            StartButton.SetActive(false);
+            HostText.SetActive(false);
+            GestText.SetActive(true);
         }
     }
 
@@ -233,7 +238,8 @@ public class TopViewClient : MonoBehaviour
 
         P1Text.text = string.Empty;
         P2Text.text = string.Empty;
-        StartButton.SetActive(false);
+        HostText.SetActive(false);
+        GestText.SetActive(false);
 
         Init(true, false);
     }

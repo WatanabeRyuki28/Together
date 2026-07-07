@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class StageManager : MonoBehaviour
 {
-  
+
     [SerializeField] private RectTransform[] stageButtons;
 
     [Header("ホストの選択枠（カーソル画像や太枠）")]
@@ -138,6 +138,26 @@ public class StageManager : MonoBehaviour
         }
     }
 
+    public void OnStageButtonClick(int clickedStageIndex)
+    {
+        // ホスト以外はマウス操作も受け付けない
+        if (!IsHost()) return;
+
+        // 引数として受け取った数字（0, 1, 2...）を現在のステージインデックスにする
+        currentStageIndex = clickedStageIndex;
+
+        // カーソル位置を更新
+        UpdateCursorPosition();
+
+        // 「開始」ボタンを表示
+        if (confirmButton != null) confirmButton.SetActive(true);
+
+        // ゲストに選択位置を同期送信
+        SendStageSelectNotification(currentStageIndex, false);
+
+        Debug.Log($"【マウス入力】ステージ {currentStageIndex + 1} がクリックされました。");
+    }
+
     // 決定ボタンが押された（または決定キーが叩かれた）時の本決定処理
     public void ConfirmStageSelection()
     {
@@ -215,7 +235,7 @@ public class StageManager : MonoBehaviour
         else if (stageIndex == 1) SceneManager.LoadScene("Stage2");
         else if (stageIndex == 2) SceneManager.LoadScene("Stage3");
     }
-  
+
 
 
     private bool IsHost() => NetworkManager.Instance != null && NetworkManager.Instance.myPlayerIndex == 0;
