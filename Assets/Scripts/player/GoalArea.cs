@@ -47,7 +47,20 @@ public class GoalArea : MonoBehaviour
     {
         Debug.Log("全員到達！現在のステージ名を保存してクリアシーンへ移行します。");
 
-        // ★【ここが超重要！】
+        // -------------------------------------------------------------
+        // ★追加：ステージクリア確定のタイミングで、星の獲得データを正式セーブ
+        // -------------------------------------------------------------
+        if (SaveManager.Instance != null)
+        {
+            SaveManager.Instance.SaveGame(); // メモリ上のキープ状態をファイルに本保存
+            Debug.Log("【セーブ】ステージクリアに伴い、星の獲得データを正式に保存しました。");
+        }
+        else
+        {
+            Debug.LogWarning("SaveManager のインスタンスが見つからないため、クリア時の正式保存がスキップされました。");
+        }
+        // -------------------------------------------------------------
+
         // シーンが切り替わる前に、現在のステージ名（"Stage1"など）を「RetrySceneName」という名前でメモリにセーブします
         string currentStageName = SceneManager.GetActiveScene().name;
         PlayerPrefs.SetString("RetrySceneName", currentStageName);

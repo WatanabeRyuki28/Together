@@ -131,7 +131,7 @@ MonoBehaviour:
   projectileType: 1
   collisionLayers:
     serializedVersion: 2
-    m_Bits: 2048
+    m_Bits: 7169
 --- !u!61 &-6076958677929758475
 BoxCollider2D:
   m_ObjectHideFlags: 0
