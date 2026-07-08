@@ -559,6 +559,10 @@ public class InputFieldFocus : MonoBehaviour
             controls.Keyboard.Move.canceled -= OnKeyboardMoveCancel;
             controls.Keyboard.Disable();
             controls = null;
+
+            StartCoroutine(SafeEnableUI(controls));
+
+            controls = null;
         }
 
         
@@ -567,6 +571,19 @@ public class InputFieldFocus : MonoBehaviour
         {
             StopCoroutine(keyboardMoveCoroutine);
             keyboardMoveCoroutine = null;
+        }
+    }
+
+    private IEnumerator SafeEnableUI(CommunicationUI targetControls)
+    {
+        // 1フレーム待つことで、キーボードを閉じた「Aボタン」の押しっぱなしが
+        // 裏画面のボタンを勝手に押してしまうのを完全に防ぎます
+        yield return null;
+
+        if (targetControls != null)
+        {
+            targetControls.UI.Enable();
+            Debug.Log("裏画面のUI（Yボタンなど）が正常に復活しました！");
         }
     }
 
@@ -706,5 +723,39 @@ public class InputFieldFocus : MonoBehaviour
             controls.Keyboard.Disable();
             controls = null;
         }
+    }
+
+    private void OnEnable()
+    {
+        // 画面が戻ってきた（アクティブになった）瞬間に、
+        // 内部に記憶されている文字を、表示用テキストとInputFieldに強制的に再反映させる
+
+        if (NameInputField != null)
+        {
+            // 1. 入力フィールド本体に文字を戻す
+            NameInputField.ForceLabelUpdate();
+
+            // 2. もし「常に表示する用」のTextを使っていれば、そこにも文字を戻す
+            if (displayedNameText != null)
+            {
+                displayedNameText.text = NameInputField.text;
+            }
+        }
+
+        if (RoomInputField != null)
+        {
+            // 1. 入力フィールド本体に文字を戻す
+            RoomInputField.ForceLabelUpdate();
+
+            // 2. もし「常に表示する用」のTextを使っていれば、そこにも文字を戻す
+            if (displayedRoomText != null)
+            {
+                displayedRoomText.text = RoomInputField.text;
+            }
+        }
+
+        // 文字数カウントの表示もここで強制更新（NameCheck / RoomCheckを呼ぶ）
+        NameCheck();
+        RoomCheck();
     }
 }

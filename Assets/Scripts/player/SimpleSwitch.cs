@@ -85,11 +85,12 @@ public class FloorSwitch : MonoBehaviour
 
         // ★スイッチが押された音を鳴らす
 
-        if (switchOnSound != null && audioSource != null)
+        if (switchOnSound != null && audioSource != null&&isPressed!=false)
 
         {
 
             audioSource.PlayOneShot(switchOnSound);
+
 
         }
 
