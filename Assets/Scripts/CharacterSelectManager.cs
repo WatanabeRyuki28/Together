@@ -4,6 +4,7 @@ using System.Xml.Linq;
 using Unity.Properties;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -18,6 +19,9 @@ public class CharacterSelectManager : MonoBehaviour
     [Header("相手の選択枠（カーソル画像）")]
     public RectTransform remoteSelectionCursor;
 
+    [SerializeField] private Color normalColor = Color.white;   
+    [SerializeField] private Color confirmedColor = Color.black;
+
     private int currentSelectIndex = 0; // 現在選んでいるキャラの番号 
 
     private int mySelectedChar = -1;     // 自分が確定したキャラ番号 
@@ -30,6 +34,8 @@ public class CharacterSelectManager : MonoBehaviour
 
     private string remoteplayer;
 
+    private bool isInputPressed = false;
+
     [SerializeField] private CommunicationUI controls;
 
     void Awake()
@@ -40,21 +46,57 @@ public class CharacterSelectManager : MonoBehaviour
 
     void OnEnable()
     {
-        // このシーン用の操作マップ（例: CharSelect）だけをピンポイントで有効化
-        // ※InputActions画面で作成したマップ名に合わせて書き換えてください（例: controls.UI.Enable() などでも可）
         if (controls != null)
         {
             controls.CharSelect.Enable();
+
+            // ★【追加】ボタンが押された瞬間のイベントを登録する
+            controls.CharSelect.Right.started += OnRightPressed;
+            controls.CharSelect.Left.started += OnLeftPressed;
+            controls.CharSelect.Submit.started += OnSubmitPressed;
         }
     }
 
     void OnDisable()
     {
-        // シーンを抜ける時は安全のために操作をオフにする
         if (controls != null)
         {
-            controls.CharSelect.Disable();
+            controls.CharSelect.Enable();
+
+            // ★【追加】ボタンが押された瞬間のイベントを登録する
+            controls.CharSelect.Right.started += OnRightPressed;
+            controls.CharSelect.Left.started += OnLeftPressed;
+            controls.CharSelect.Submit.started += OnSubmitPressed;
         }
+    }
+
+    private void OnRightPressed(InputAction.CallbackContext context)
+    {
+        if (isMySelectionConfirmed) return;
+
+        currentSelectIndex++;
+        if (currentSelectIndex >= characterIcons.Length) currentSelectIndex = 0;
+
+        UpdateCursorPosition();
+        SendCharacterState(currentSelectIndex, false);
+    }
+
+    // ★【追加】左ボタンが1回カチッと押された瞬間に走る処理
+    private void OnLeftPressed(InputAction.CallbackContext context)
+    {
+        if (isMySelectionConfirmed) return;
+
+        currentSelectIndex--;
+        if (currentSelectIndex < 0) currentSelectIndex = characterIcons.Length - 1;
+
+        UpdateCursorPosition();
+        SendCharacterState(currentSelectIndex, false);
+    }
+
+    // ★【追加】決定（Submit）ボタンが1回カチッと押された瞬間に走る処理
+    private void OnSubmitPressed(InputAction.CallbackContext context)
+    {
+        SelectCharacter(currentSelectIndex);
     }
     void Start()
     {
@@ -113,14 +155,25 @@ public class CharacterSelectManager : MonoBehaviour
         if (remoteSelectionCursor != null)
         {
             remoteSelectionCursor.gameObject.SetActive(true); // 常に表示
-        
+
             int remoteDefault = (myIndex == 0) ? 1 : 0;
-            if (characterIcons.Length > remoteDefault)
+            float remoteStartX = 0f;
+            float remoteStartY = 0f;
+
+            if (myIndex == 0) // 自分が1P ➔ 相手は2P
             {
-                remoteSelectionCursor.position = characterIcons[remoteDefault].position;
+                // 相手（2P）の初期位置は1番なので 611
+                remoteStartX = (remoteDefault == 0) ? -389f : 611f;
+               
+            }
+            else // 自分が2P ➔ 相手は1P
+            {
+                // 相手（1P）の初期位置は0番なので -611
+                remoteStartX = (remoteDefault == 0) ? -611f : 389f;
+               
             }
 
-          
+            remoteSelectionCursor.anchoredPosition = new Vector2(remoteStartX,0);
         }
 
         SendCharacterState(currentSelectIndex, false);
@@ -128,46 +181,32 @@ public class CharacterSelectManager : MonoBehaviour
 
     void Update()
     {
-        // 既に決定しているなら、もうカーソル移動キーは受け付けない
-        if (isMySelectionConfirmed || controls == null) return;
-
-        bool isMoved = false;
-
-        // if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
-        if (controls.CharSelect.Right.triggered)
-        {
-            currentSelectIndex++;
-            if (currentSelectIndex >= characterIcons.Length) currentSelectIndex = 0;
-            isMoved = true;
-        }
-
-        // if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
-        if (controls.CharSelect.Left.triggered)
-        {
-            currentSelectIndex--;
-            if (currentSelectIndex < 0) currentSelectIndex = characterIcons.Length - 1;
-            isMoved = true;
-        }
-
-        //カーソルが動いたら、位置を更新してサーバーにも送信する
-        if (isMoved)
-        {
-            UpdateCursorPosition();
-            SendCharacterState(currentSelectIndex, false); // is_ready = false (移動中)
-        }
-
-
-        //if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Z))
-        if (controls.CharSelect.Submit.triggered)
-        {
-            SelectCharacter(currentSelectIndex);
-        }
+    
     }
 
     void UpdateCursorPosition()
     {
-        if (characterIcons.Length == 0 || selectionCursor == null) return;
-        selectionCursor.position = characterIcons[currentSelectIndex].position;
+        if (selectionCursor == null) return;
+
+        int myIndex = NetworkManager.Instance != null ? NetworkManager.Instance.myPlayerIndex : 0;
+
+        float targetX = 0f;
+        float targetY = 0f;
+
+        if (myIndex == 0) // 1P（ホスト）の場合
+        {
+            // 0番（ほのお）なら -611、1番（こおり）なら 389
+            targetX = (currentSelectIndex == 0) ? -611f : 389f;
+        }
+        else // 2P（ゲスト）の場合
+        {
+            // 0番（ほのお）なら -389、1番（こおり）なら 611
+            targetX = (currentSelectIndex == 0) ? -389f : 611f;
+            
+        }
+
+        // 決定した座標をローカル座標（anchoredPosition）としてセットする
+        selectionCursor.anchoredPosition = new Vector2(targetX,0);
     }
 
     // データを送信する共通の関数を作りました
@@ -204,6 +243,11 @@ public class CharacterSelectManager : MonoBehaviour
         mySelectedChar = index;
         isMySelectionConfirmed = true;
 
+        if (selectionCursor != null && selectionCursor.GetComponent<Image>() != null)
+        {
+            selectionCursor.GetComponent<Image>().color = confirmedColor;
+        }
+
         //  決定フラグを true にして送信
         SendCharacterState(index, true);
 
@@ -231,8 +275,22 @@ public class CharacterSelectManager : MonoBehaviour
                 if (remoteSelectionCursor != null && characterIcons.Length > playerData.char_index)
                 {
                     remoteSelectionCursor.gameObject.SetActive(true);
-                    remoteSelectionCursor.position = characterIcons[playerData.char_index].position;
-                   
+                    float remoteX = 0f;
+                  
+
+                    // 相手のインデックス（1Pか2Pか）で判定
+                    if (playerData.index == 0) // 相手が1Pの場合
+                    {
+                        remoteX = (playerData.char_index == 0) ? -611f : 389f;
+                    }
+                    else // 相手が2Pの場合
+                    {
+                        remoteX = (playerData.char_index == 0) ? -389f : 611f;
+                      
+                    }
+
+                    remoteSelectionCursor.anchoredPosition = new Vector2(remoteX, 0f);
+
                     remoteplayer = playerData.name_id;
 
                     NetworkManager.Instance.myCharaIndex = playerData.char_index;
@@ -257,6 +315,18 @@ public class CharacterSelectManager : MonoBehaviour
                     remoteSelectedChar = playerData.char_index;
                     Debug.Log($"【同期】相手がキャラ {remoteSelectedChar} 番で決定しました。");
                     CheckBothPlayersReady();
+
+                    if (remoteSelectionCursor != null && remoteSelectionCursor.GetComponent<Image>() != null)
+                    {
+                        remoteSelectionCursor.GetComponent<Image>().color = confirmedColor;
+                    }
+                }
+                else
+                {
+                    if (remoteSelectionCursor != null && remoteSelectionCursor.GetComponent<Image>() != null)
+                    {
+                        remoteSelectionCursor.GetComponent<Image>().color = normalColor;
+                    }
                 }
             }
         }
@@ -281,6 +351,12 @@ public class CharacterSelectManager : MonoBehaviour
                 Debug.LogWarning("キャラが重複しています！選び直してください。");
                 isMySelectionConfirmed = false;
                 mySelectedChar = -1;
+
+                if (selectionCursor != null && selectionCursor.GetComponent<Image>() != null)
+                    selectionCursor.GetComponent<Image>().color = normalColor;
+
+                if (remoteSelectionCursor != null && remoteSelectionCursor.GetComponent<Image>() != null)
+                    remoteSelectionCursor.GetComponent<Image>().color = normalColor;
 
                 //  被ったので、相手側にも自分が「未確定（移動中）」に戻ったことを通知する
                 SendCharacterState(currentSelectIndex, false);

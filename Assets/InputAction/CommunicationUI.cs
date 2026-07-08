@@ -222,7 +222,7 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
                 {
                     ""name"": ""left"",
                     ""id"": ""9e492a64-9029-4cdb-a83c-26b1ebf8ee7a"",
-                    ""path"": ""<AndroidGamepad>/leftStick/left"",
+                    ""path"": ""<Gamepad>/leftStick/left"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -686,6 +686,34 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Tital"",
+            ""id"": ""4e980044-b794-4289-a632-b0d03df4ff03"",
+            ""actions"": [
+                {
+                    ""name"": ""Submit"",
+                    ""type"": ""Button"",
+                    ""id"": ""fe17da48-fdae-4d88-91d2-0e07ad81297f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""d77e7301-5dce-471a-b0c1-1d28667c008f"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Submit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -724,6 +752,9 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
         m_GameClear_Up = m_GameClear.FindAction("Up", throwIfNotFound: true);
         m_GameClear_Down = m_GameClear.FindAction("Down", throwIfNotFound: true);
         m_GameClear_Sumbit = m_GameClear.FindAction("Sumbit", throwIfNotFound: true);
+        // Tital
+        m_Tital = asset.FindActionMap("Tital", throwIfNotFound: true);
+        m_Tital_Submit = m_Tital.FindAction("Submit", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1185,6 +1216,52 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
         }
     }
     public GameClearActions @GameClear => new GameClearActions(this);
+
+    // Tital
+    private readonly InputActionMap m_Tital;
+    private List<ITitalActions> m_TitalActionsCallbackInterfaces = new List<ITitalActions>();
+    private readonly InputAction m_Tital_Submit;
+    public struct TitalActions
+    {
+        private @CommunicationUI m_Wrapper;
+        public TitalActions(@CommunicationUI wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Submit => m_Wrapper.m_Tital_Submit;
+        public InputActionMap Get() { return m_Wrapper.m_Tital; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(TitalActions set) { return set.Get(); }
+        public void AddCallbacks(ITitalActions instance)
+        {
+            if (instance == null || m_Wrapper.m_TitalActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_TitalActionsCallbackInterfaces.Add(instance);
+            @Submit.started += instance.OnSubmit;
+            @Submit.performed += instance.OnSubmit;
+            @Submit.canceled += instance.OnSubmit;
+        }
+
+        private void UnregisterCallbacks(ITitalActions instance)
+        {
+            @Submit.started -= instance.OnSubmit;
+            @Submit.performed -= instance.OnSubmit;
+            @Submit.canceled -= instance.OnSubmit;
+        }
+
+        public void RemoveCallbacks(ITitalActions instance)
+        {
+            if (m_Wrapper.m_TitalActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(ITitalActions instance)
+        {
+            foreach (var item in m_Wrapper.m_TitalActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_TitalActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public TitalActions @Tital => new TitalActions(this);
     public interface IUIActions
     {
         void OnMove(InputAction.CallbackContext context);
@@ -1224,5 +1301,9 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
         void OnUp(InputAction.CallbackContext context);
         void OnDown(InputAction.CallbackContext context);
         void OnSumbit(InputAction.CallbackContext context);
+    }
+    public interface ITitalActions
+    {
+        void OnSubmit(InputAction.CallbackContext context);
     }
 }

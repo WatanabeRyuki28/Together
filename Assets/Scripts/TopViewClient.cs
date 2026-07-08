@@ -231,9 +231,6 @@ public class TopViewClient : MonoBehaviour
 
     private void UIInit()
     {
-        if (inputPlayerName != null) inputPlayerName.text = string.Empty;
-        if (inputRoomId != null) inputRoomId.text = string.Empty;
-
         remotePlayer = string.Empty;
 
         P1Text.text = string.Empty;

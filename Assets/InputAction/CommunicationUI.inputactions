@@ -200,7 +200,7 @@
                 {
                     "name": "left",
                     "id": "9e492a64-9029-4cdb-a83c-26b1ebf8ee7a",
-                    "path": "<AndroidGamepad>/leftStick/left",
+                    "path": "<Gamepad>/leftStick/left",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -660,6 +660,34 @@
                     "processors": "",
                     "groups": "",
                     "action": "Sumbit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Tital",
+            "id": "4e980044-b794-4289-a632-b0d03df4ff03",
+            "actions": [
+                {
+                    "name": "Submit",
+                    "type": "Button",
+                    "id": "fe17da48-fdae-4d88-91d2-0e07ad81297f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "d77e7301-5dce-471a-b0c1-1d28667c008f",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Submit",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

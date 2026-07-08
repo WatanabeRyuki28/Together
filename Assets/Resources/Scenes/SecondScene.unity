@@ -59552,8 +59552,8 @@ MonoBehaviour:
   LobbyPanel: {fileID: 34074002}
   P1Text: {fileID: 33861979}
   P2Text: {fileID: 779038275}
-  HostText: {fileID: 0}
-  GestText: {fileID: 0}
+  HostText: {fileID: 939541051}
+  GestText: {fileID: 1228542541}
 --- !u!4 &2146094888
 Transform:
   m_ObjectHideFlags: 0
