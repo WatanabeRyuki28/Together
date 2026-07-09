@@ -81,7 +81,7 @@ public class CharacterSelectManager : MonoBehaviour
         SendCharacterState(currentSelectIndex, false);
     }
 
-    // ★【追加】左ボタンが1回カチッと押された瞬間に走る処理
+    // 左ボタンが1回カチッと押された瞬間に走る処理
     private void OnLeftPressed(InputAction.CallbackContext context)
     {
         if (isMySelectionConfirmed) return;
@@ -93,7 +93,7 @@ public class CharacterSelectManager : MonoBehaviour
         SendCharacterState(currentSelectIndex, false);
     }
 
-    // ★【追加】決定（Submit）ボタンが1回カチッと押された瞬間に走る処理
+    //決定（Submit）ボタンが1回カチッと押された瞬間に走る処理
     private void OnSubmitPressed(InputAction.CallbackContext context)
     {
         SelectCharacter(currentSelectIndex);
@@ -110,7 +110,7 @@ public class CharacterSelectManager : MonoBehaviour
             myName = NetworkManager.Instance.myPlayerId;
 
            
-            // 自分の番号を表示
+           /* // 自分の番号を表示
             if (myInfoText != null && otherInfoText != null)
             {
                 if (myIndex == 0)
@@ -127,7 +127,7 @@ public class CharacterSelectManager : MonoBehaviour
 
 
             }
-            
+            */
             if (myIndex == 1)
             {
 
@@ -163,17 +163,17 @@ public class CharacterSelectManager : MonoBehaviour
             if (myIndex == 0) // 自分が1P ➔ 相手は2P
             {
                 // 相手（2P）の初期位置は1番なので 611
-                remoteStartX = (remoteDefault == 0) ? -389f : 611f;
+                remoteStartX = (remoteDefault == 0) ? -364f : 636f;
                
             }
             else // 自分が2P ➔ 相手は1P
             {
                 // 相手（1P）の初期位置は0番なので -611
-                remoteStartX = (remoteDefault == 0) ? -611f : 389f;
+                remoteStartX = (remoteDefault == 0) ? -636f : 364f;
                
             }
 
-            remoteSelectionCursor.anchoredPosition = new Vector2(remoteStartX,0);
+            remoteSelectionCursor.anchoredPosition = new Vector2(remoteStartX,290);
         }
 
         SendCharacterState(currentSelectIndex, false);
@@ -196,17 +196,17 @@ public class CharacterSelectManager : MonoBehaviour
         if (myIndex == 0) // 1P（ホスト）の場合
         {
             // 0番（ほのお）なら -611、1番（こおり）なら 389
-            targetX = (currentSelectIndex == 0) ? -611f : 389f;
+            targetX = (currentSelectIndex == 0) ? -636f : 364f;
         }
         else // 2P（ゲスト）の場合
         {
             // 0番（ほのお）なら -389、1番（こおり）なら 611
-            targetX = (currentSelectIndex == 0) ? -389f : 611f;
-            
+            targetX = (currentSelectIndex == 0) ? -364f : 636f;
+
         }
 
         // 決定した座標をローカル座標（anchoredPosition）としてセットする
-        selectionCursor.anchoredPosition = new Vector2(targetX,0);
+        selectionCursor.anchoredPosition = new Vector2(targetX,290);
     }
 
     // データを送信する共通の関数を作りました
@@ -281,22 +281,22 @@ public class CharacterSelectManager : MonoBehaviour
                     // 相手のインデックス（1Pか2Pか）で判定
                     if (playerData.index == 0) // 相手が1Pの場合
                     {
-                        remoteX = (playerData.char_index == 0) ? -611f : 389f;
+                        remoteX = (playerData.char_index == 0) ? -636f :364f;
                     }
                     else // 相手が2Pの場合
                     {
-                        remoteX = (playerData.char_index == 0) ? -389f : 611f;
+                        remoteX = (playerData.char_index == 0) ? -364f : 636f;
                       
                     }
 
-                    remoteSelectionCursor.anchoredPosition = new Vector2(remoteX, 0f);
+                    remoteSelectionCursor.anchoredPosition = new Vector2(remoteX, 290f);
 
                     remoteplayer = playerData.name_id;
 
                     NetworkManager.Instance.myCharaIndex = playerData.char_index;
 
                     int myIndex = NetworkManager.Instance.myPlayerIndex;
-
+/*
                     if (myIndex == 0)
                     {
                        
@@ -306,7 +306,7 @@ public class CharacterSelectManager : MonoBehaviour
                     {
                         myInfoText.text = remoteplayer;
                       
-                    }
+                    }*/
                 }
 
                 //  相手が「決定（is_ready == true）」した時だけ、選択番号を確定させる

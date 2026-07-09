@@ -33,13 +33,13 @@ public class ObjectOnlineCommunication : MonoBehaviour
 
             if (myColorIndex == 0)
             {
-                myStartPos = Vector3.zero;
-                opponentStartPos = new Vector3(2f, -1.5f, 0f);
+                myStartPos = new Vector3(-4f, -1.5f, 0f);
+                opponentStartPos = new Vector3(-2f, -1.5f, 0f);
             }
             else
             {
-                myStartPos = new Vector3(2f, -1.5f, 0f);
-                opponentStartPos = Vector3.zero;
+                myStartPos = new Vector3(-2f, -1.5f, 0f);
+                opponentStartPos = new Vector3(-4f, -1.5f, 0f);
             }
 
             CreatePlayer(myColorIndex, myStartPos, true);
