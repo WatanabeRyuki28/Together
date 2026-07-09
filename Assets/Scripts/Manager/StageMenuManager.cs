@@ -133,7 +133,6 @@ public class StageMenuManager : MonoBehaviour
         }
     }
 
-    // ★修正：初期表示の生成時に、ScaleとZ位置を正しくリセットする
     private void InitializeStageStarDisplay()
     {
         if (starUIPanel == null) return;
@@ -145,7 +144,7 @@ public class StageMenuManager : MonoBehaviour
             if (starIconPrefab != null)
             {
                 currentSpawnedStar = Instantiate(starIconPrefab, starUIPanel);
-                ResetUIElementTransform(currentSpawnedStar); // ★位置とスケールを補正
+                ResetUIElementTransform(currentSpawnedStar);
             }
         }
         else
@@ -153,12 +152,11 @@ public class StageMenuManager : MonoBehaviour
             if (missingStarIconPrefab != null)
             {
                 currentSpawnedStar = Instantiate(missingStarIconPrefab, starUIPanel);
-                ResetUIElementTransform(currentSpawnedStar); // ★位置とスケールを補正
+                ResetUIElementTransform(currentSpawnedStar);
             }
         }
     }
 
-    // ★修正：獲得時の生成時にも、ScaleとZ位置を正しくリセットする
     public void AddStar()
     {
         if (starUIPanel == null || starIconPrefab == null) return;
@@ -169,7 +167,7 @@ public class StageMenuManager : MonoBehaviour
         }
 
         currentSpawnedStar = Instantiate(starIconPrefab, starUIPanel);
-        ResetUIElementTransform(currentSpawnedStar); // ★位置とスケールを補正
+        ResetUIElementTransform(currentSpawnedStar);
 
         if (SaveManager.Instance != null)
         {
@@ -188,15 +186,12 @@ public class StageMenuManager : MonoBehaviour
         Debug.Log($"ステージアイテムを取得！黄色のスターアイコンを左上に追加しました。(Stage_{currentStageStageIndex})");
     }
 
-    // ★追加：UI生成時のバグ（Scaleが0になったりZ軸がズレる問題）を解決する安全関数
     private void ResetUIElementTransform(GameObject targetObj)
     {
         if (targetObj == null) return;
 
-        // Scaleを確実に (1, 1, 1) に戻す
         targetObj.transform.localScale = Vector3.one;
 
-        // UI（RectTransform）としての位置バグを防ぐため、ローカルのZ座標を確実に 0 にする
         RectTransform rect = targetObj.GetComponent<RectTransform>();
         if (rect != null)
         {
@@ -293,6 +288,9 @@ public class StageMenuManager : MonoBehaviour
 
             if (menuOpenButton != null) menuOpenButton.interactable = false;
 
+            // メニューが開いた時は元のボタン群を触れるようにしておく
+            SetMenuButtonsInteractable(true);
+
             currentSelectedIndex = 0;
             ApplyMenuButtonFocus();
         }
@@ -313,6 +311,7 @@ public class StageMenuManager : MonoBehaviour
         if (isMenuOpen)
         {
             if (menuOpenButton != null) menuOpenButton.interactable = false;
+            SetMenuButtonsInteractable(true);
             currentSelectedIndex = 0;
             ApplyMenuButtonFocus();
         }
@@ -323,12 +322,16 @@ public class StageMenuManager : MonoBehaviour
         }
     }
 
+    // ★修正：確認画面を開いた時、背後のメニューボタン群を押せなくする
     public void OpenConfirmation()
     {
         confirmationPanel.SetActive(true);
         UpdateYesButtonText();
         currentConfirmationIndex = 0;
         ApplyConfirmationButtonFocus();
+
+        // メインメニューのボタンを一括で非活性化
+        SetMenuButtonsInteractable(false);
     }
 
     public async void PressYesByClick()
@@ -373,25 +376,19 @@ public class StageMenuManager : MonoBehaviour
         {
             Debug.Log("両プレイヤーの同意を確認。ステージ選択に戻ります。");
 
-            // -------------------------------------------------------------
-            // ★追加：途中でやめるので、このステージで仮取得した星を破棄してリロードする
-            // -------------------------------------------------------------
             if (SaveManager.Instance != null)
             {
                 string targetItemId = ItemIdPrefix + currentStageStageIndex;
 
-                // セーブデータ構造のリストから、このステージのIDを削除する
                 if (SaveManager.Instance.CurrentSaveData?.obtainedItemIds != null)
                 {
                     SaveManager.Instance.CurrentSaveData.obtainedItemIds.Remove(targetItemId);
                 }
 
-                // ファイルから前回セーブされた状態（星を取る前のデータ）を読み込み直して同期を完璧にする
                 SaveManager.Instance.LoadGame();
 
                 Debug.Log($"【退出リセット】途中でやめたため、{targetItemId} の獲得をキャンセルしてデータを巻き戻しました。");
             }
-            // -------------------------------------------------------------
 
             player0Ready = false;
             player1Ready = false;
@@ -440,6 +437,9 @@ public class StageMenuManager : MonoBehaviour
             if (confirmationPanel != null) confirmationPanel.SetActive(false);
             hasPressedYes = false;
             if (exitButton != null) exitButton.interactable = true;
+
+            // ★修正：ネットワーク同期経由でのキャンセル時も、メインメニューのボタンを復活させる
+            SetMenuButtonsInteractable(true);
             ApplyMenuButtonFocus();
         }
     }
@@ -456,6 +456,7 @@ public class StageMenuManager : MonoBehaviour
         }
     }
 
+    // ★修正：「いいえ」またはキャンセルで戻った時、背後のメニューボタン群を再び押せるようにする
     public void CancelExit()
     {
         confirmationPanel.SetActive(false);
@@ -470,7 +471,25 @@ public class StageMenuManager : MonoBehaviour
         if (exitButton != null) exitButton.interactable = true;
         if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
 
+        // メインメニューのボタンを一括で活性化
+        SetMenuButtonsInteractable(true);
+
         ApplyMenuButtonFocus();
+    }
+
+    // ★追加：menuButtonsの配列に登録されたボタンの有効・無効を一括で切り替えるヘルパー関数
+    private void SetMenuButtonsInteractable(bool interactable)
+    {
+        if (menuButtons != null)
+        {
+            foreach (var btn in menuButtons)
+            {
+                if (btn != null)
+                {
+                    btn.interactable = interactable;
+                }
+            }
+        }
     }
 
     private void OnDestroy()

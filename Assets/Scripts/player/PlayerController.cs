@@ -5,13 +5,17 @@ using System.Threading.Tasks;
 using NativeWebSocket;
 
 [RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(AudioSource))] // ★AudioSourceを必須にする
+[RequireComponent(typeof(AudioSource))]
 public class PlayerController : MonoBehaviour
 {
-
     [Header("操作方法の設定 (チェックONで有効)")]
     [SerializeField] private bool useKeyboard = true;  // キーボードを使うか
     [SerializeField] private bool useGamepad = false;  // ゲームパッドを使うか
+
+    // ★【方法Aのための追加】インスペクターから1Pか2Pかを設定する変数
+    [Header("プレイヤー番号の設定")]
+    [Tooltip("1Pなら1、2Pなら2を設定してください")]
+    public int playerNumber = 1;
 
     [Header("キャラクターの属性")]
     [SerializeField] private ElementType element; // 属性設定：Fire（炎）または Ice（氷）
@@ -33,7 +37,7 @@ public class PlayerController : MonoBehaviour
 
     // ★【Input Manager完全排除】使用するキーをコード側で固定
     private KeyCode leftKey = KeyCode.A;       // 左移動
-    private KeyCode rightKey= KeyCode.D;      // 右移動
+    private KeyCode rightKey = KeyCode.D;      // 右移動
     private KeyCode jumpKey = KeyCode.Space;       // ジャンプ
     private KeyCode fireKey = KeyCode.Return;   // ★【変更】攻撃をスペースキーに固定（マウス左クリックなら KeyCode.Mouse0）
 
@@ -50,9 +54,6 @@ public class PlayerController : MonoBehaviour
     private SpriteRenderer spriteRenderer; // 左右反転用
     private AudioSource audioSource;       // ★効果音再生用
 
-
-    // ────────── 変更後 ──────────
-    // ★【修正】カメラ（CameraFollow2D）から読み取れるように public 属性（プロパティ）にする
     public bool isGrounded { get; set; }
     private bool isPushing;
 
@@ -84,6 +85,7 @@ public class PlayerController : MonoBehaviour
 
         controls = new CommunicationUI();
     }
+
     void OnEnable()
     {
         // 自分のキャラ（ローカルプレイヤー）の時だけ入力を有効にする
@@ -100,6 +102,7 @@ public class PlayerController : MonoBehaviour
             controls.Player.Disable();
         }
     }
+
     void Start()
     {
         if (NetworkManager.Instance != null)
@@ -164,20 +167,6 @@ public class PlayerController : MonoBehaviour
                 Shoot();
             }
         }
-
-        //Wキーが押された瞬間 且つ 地面にいる時
-        /*if (Input.GetKeyDown(jumpKey) && isGrounded) Jump();
-
-        // 】スペースキーが押された瞬間
-        if (Input.GetKeyDown(fireKey))
-        {
-            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
-            {
-                return;
-            }
-
-            Shoot();
-        }*/
 
         // 毎フレーム最新の状態をAnimatorに送信
         UpdateAnimationParameters();
@@ -339,7 +328,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            // 止まった、または空中に浮いたときは、足音が鳴っていたら止める
+            // 止まった、あるいは空中に浮いたときは、足音が鳴っていたら止める
             if (audioSource.isPlaying && audioSource.clip == walkSound)
             {
                 audioSource.Stop();
@@ -369,7 +358,6 @@ public class PlayerController : MonoBehaviour
     private void OnCollisionExit2D(Collision2D collision) => CheckContact(collision, false);
 
     // 衝突している相手が床か箱かを確認し、状態を更新する
-    // ★【接地判定を強化・マイルドに修正】
     private void CheckContact(Collision2D collision, bool state)
     {
         int layer = collision.gameObject.layer;
@@ -383,7 +371,6 @@ public class PlayerController : MonoBehaviour
             {
                 foreach (ContactPoint2D contact in collision.contacts)
                 {
-                    // 判定角度を 0.7f ➡ 0.5f に緩和（坂道やコライダーの継ぎ目対策）
                     float minGroundAngleY = 0.5f;
 
                     if (contact.normal.y >= minGroundAngleY)
@@ -395,7 +382,6 @@ public class PlayerController : MonoBehaviour
             }
             else // 離れた（Exit）とき
             {
-                // 完全に離れた場合のみfalseにする
                 isGrounded = false;
             }
         }
