@@ -1,68 +1,70 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
-[RequireComponent(typeof(AudioSource))] // ★効果音再生に必須
+[RequireComponent(typeof(AudioSource))]
 public class JumpPad : MonoBehaviour
 {
     [Header("ジャンプの設定")]
-    [SerializeField] private float jumpForce = 12.0f; // 跳ね上げる強さ（通常のジャンプより高め）
+    [SerializeField] private float jumpForce = 12.0f;
 
     [Header("Audio Settings (効果音)")]
-    [SerializeField] private AudioClip launchSound; // ★跳ね上がった瞬間の音
+    [SerializeField] private AudioClip launchSound;
 
     private Animator animator;
-    private AudioSource audioSource; // ★効果音再生用
+    private AudioSource audioSource;
 
-    // アニメーターのトリガー名（インスペクターでのスペルミス防止）
     private static readonly int LaunchTrigger = Animator.StringToHash("Launch");
 
     private void Awake()
     {
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
-
-        // AudioSourceの初期設定
         audioSource.playOnAwake = false;
-        audioSource.spatialBlend = 0f; // 2Dサウンドとしてハッキリ鳴らす
+        audioSource.spatialBlend = 0f;
     }
 
-    // トリガー判定（プレイヤーが上に乗った瞬間の検知）
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // 触れたオブジェクトがプレイヤーかどうかをチェック
         if (other.TryGetComponent<PlayerController>(out PlayerController player))
         {
-            // ★【追加】乗った瞬間にプレイヤーの接地判定を強制的にONにする
             player.isGrounded = true;
-
-            LaunchPlayer(other.gameObject, player); // ★引数にplayerを追加
+            LaunchPlayer(other.gameObject, player);
         }
     }
 
-    // プレイヤーを跳ね上げる処理
     private void LaunchPlayer(GameObject playerObj, PlayerController player)
     {
         if (playerObj.TryGetComponent<Rigidbody2D>(out Rigidbody2D rb))
         {
-            // 落下中の勢いを一度リセットし、常に一定の高さまで飛べるようにする
             rb.velocity = new Vector2(rb.velocity.x, 0f);
-
-            // 上方向へ瞬間的な力を加える（Impulseモード）
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-
-            // ★【追加】跳ね上げたので、即座に接地判定をfalseにする（空中ジャンプ暴発防止）
             player.isGrounded = false;
 
-            // ジャンプ台がビヨーンと動くアニメーションを再生
-            animator.SetTrigger(LaunchTrigger);
+            // ★【方法A】PlayerControllerの番号を読み取ってアニメーションを分岐
+            if (playerObj.TryGetComponent<Animator>(out Animator playerAnim))
+            {
+                if (player.playerNumber == 1)
+                {
+                    playerAnim.Play("1P_jump", 0, 0f);
+                    Debug.Log("1Pのジャンプアニメーションを再生しました。");
+                }
+                else if (player.playerNumber == 2)
+                {
+                    playerAnim.Play("2P_jump", 0, 0f);
+                    Debug.Log("2Pのジャンプアニメーションを再生しました。");
+                }
+                else
+                {
+                    Debug.LogWarning($"{playerObj.name} の playerNumber が 1 または 2 ではありません（現在の値: {player.playerNumber}）");
+                }
+            }
 
-            // ★跳ね上げ音を再生
+            // ジャンプ台自身の演出
+            animator.SetTrigger(LaunchTrigger);
             if (launchSound != null && audioSource != null)
             {
                 audioSource.PlayOneShot(launchSound);
             }
-
-            Debug.Log($"{playerObj.name} がジャンプ台で大ジャンプしました！強さ: {jumpForce}");
         }
     }
 }
