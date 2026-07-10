@@ -112,16 +112,7 @@ public class ObjectOnlineCommunication : MonoBehaviour
             }
         }
 
-        CameraFollow2D cameraFollow = FindFirstObjectByType<CameraFollow2D>();
-        if (cameraFollow != null)
-        {
-            // カメラ側の player1, player2 の割り当てルールに合わせる
-            // 逆の入力
-            int assignedCameraIndex = isLocal ? 1 : 0;
-
-            // カメラに生成したプレイヤーのTransformを直接登録！
-            cameraFollow.AssignPlayer(assignedCameraIndex, player.transform);
-        }
+        
     }
 
     public void HandleWebSocketMessage(string msg)

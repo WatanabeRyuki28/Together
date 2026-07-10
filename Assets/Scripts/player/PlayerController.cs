@@ -115,6 +115,17 @@ public class PlayerController : MonoBehaviour
         }
 
         lastPosition = transform.position;
+
+        CameraFollow2D cameraFollow = FindFirstObjectByType<CameraFollow2D>();
+
+        if (cameraFollow != null)
+        {
+            // 自分が操作するキャラ（IsLocalPlayer == true）なら 0番（プレイヤー1）
+            // 通信相手のキャラ（IsLocalPlayer == false）なら 1番（プレイヤー2）にする
+            int cameraIndex = IsLocalPlayer ? 0 : 1;
+
+            cameraFollow.AssignPlayer(cameraIndex, this.transform);
+        }
     }
 
     void Update()
