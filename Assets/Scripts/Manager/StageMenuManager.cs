@@ -1,9 +1,10 @@
-﻿using UnityEditor.PackageManager;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
-using System;
 
 public class StageMenuManager : MonoBehaviour
 {
@@ -66,14 +67,13 @@ public class StageMenuManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
+        // ★修正：次のステージへ遷移した際、古いステージのインスタンスの残骸を確実に破棄し、
+        // 常に新ステージのManagerが正しく新しいInstanceとして上書きされるようにする
+        if (Instance != null && Instance != this)
         {
-            Instance = this;
+            Destroy(Instance.gameObject);
         }
-        else
-        {
-            Destroy(gameObject);
-        }
+        Instance = this;
     }
 
     private void Start()
@@ -84,6 +84,7 @@ public class StageMenuManager : MonoBehaviour
         Time.timeScale = 1f;
         if (menuOpenButton != null) menuOpenButton.interactable = true;
 
+        // 新しいステージに合わせて星表示をクリーンアップ＆リセットする
         InitializeStageStarDisplay();
     }
 
@@ -137,14 +138,33 @@ public class StageMenuManager : MonoBehaviour
     {
         if (starUIPanel == null) return;
 
+        // -------------------------------------------------------------
+        // ★追加：前のステージの星のアイコンUIオブジェクトが残っていたら、すべて全削除してまっさらにする
+        // -------------------------------------------------------------
+        foreach (Transform child in starUIPanel)
+        {
+            Destroy(child.gameObject);
+        }
+        currentSpawnedStar = null;
+        // -------------------------------------------------------------
+
+        // 今回の新しいステージに対応するIDを生成
         string targetItemId = ItemIdPrefix + currentStageStageIndex;
 
+        // 念のため最新の正規セーブ状態をロードしてメモリに同期
+        if (SaveManager.Instance != null)
+        {
+            SaveManager.Instance.LoadGame();
+        }
+
+        // 今回のステージで既に星を獲得しているかチェックしてUIを生成
         if (SaveManager.Instance != null && SaveManager.Instance.HasItem(targetItemId))
         {
             if (starIconPrefab != null)
             {
                 currentSpawnedStar = Instantiate(starIconPrefab, starUIPanel);
                 ResetUIElementTransform(currentSpawnedStar);
+                Debug.Log($"【UI初期化】{targetItemId} は獲得済みのため、黄色の星を表示します。");
             }
         }
         else
@@ -153,10 +173,12 @@ public class StageMenuManager : MonoBehaviour
             {
                 currentSpawnedStar = Instantiate(missingStarIconPrefab, starUIPanel);
                 ResetUIElementTransform(currentSpawnedStar);
+                Debug.Log($"【UI初期化】{targetItemId} は未獲得のため、白星を表示します。");
             }
         }
     }
 
+    // ★修正：星を取った時点ではファイル保存(SaveGame)は走らせず、メモリ(List)に一時キープのみにする
     public void AddStar()
     {
         if (starUIPanel == null || starIconPrefab == null) return;
@@ -173,14 +195,14 @@ public class StageMenuManager : MonoBehaviour
         {
             string targetItemId = ItemIdPrefix + currentStageStageIndex;
 
+            // メモリ上のリストに仮追加（この時点ではまだセーブファイルに書き込まない）
             SaveManager.Instance.AddItem(targetItemId);
-            SaveManager.Instance.SaveGame();
 
-            Debug.Log($"【セーブ】ステージアイテム {targetItemId} の獲得情報を保存しました。");
+            Debug.Log($"【仮取得】メモリに星 {targetItemId} をキープしました。クリア時に正式保存されます。");
         }
         else
         {
-            Debug.LogWarning("SaveManager のインスタンスが見つからないため、獲得情報を保存できませんでした。");
+            Debug.LogWarning("SaveManager のインスタンスが見つからないため、獲得情報をキープできませんでした。");
         }
 
         Debug.Log($"ステージアイテムを取得！黄色のスターアイコンを左上に追加しました。(Stage_{currentStageStageIndex})");
@@ -322,7 +344,6 @@ public class StageMenuManager : MonoBehaviour
         }
     }
 
-    // ★修正：確認画面を開いた時、背後のメニューボタン群を押せなくする
     public void OpenConfirmation()
     {
         confirmationPanel.SetActive(true);
@@ -365,6 +386,7 @@ public class StageMenuManager : MonoBehaviour
         SetPlayerReady(senderIndex);
     }
 
+    // ★修正：退出が確定した際にメモリを完全にクリアし、元の状態に巻き戻してから遷移する
     private void SetPlayerReady(int index)
     {
         if (index == 0) player0Ready = true;
@@ -376,6 +398,9 @@ public class StageMenuManager : MonoBehaviour
         {
             Debug.Log("両プレイヤーの同意を確認。ステージ選択に戻ります。");
 
+            // -------------------------------------------------------------
+            // ★途中でやめるため、キープ中の星のIDをメモリ（List）から破棄し、ファイルをリロードして巻き戻す
+            // -------------------------------------------------------------
             if (SaveManager.Instance != null)
             {
                 string targetItemId = ItemIdPrefix + currentStageStageIndex;
@@ -385,10 +410,12 @@ public class StageMenuManager : MonoBehaviour
                     SaveManager.Instance.CurrentSaveData.obtainedItemIds.Remove(targetItemId);
                 }
 
+                // セーブファイルから前回の確定セーブ状態をロードし直し、同期をリセットする
                 SaveManager.Instance.LoadGame();
 
                 Debug.Log($"【退出リセット】途中でやめたため、{targetItemId} の獲得をキャンセルしてデータを巻き戻しました。");
             }
+            // -------------------------------------------------------------
 
             player0Ready = false;
             player1Ready = false;
@@ -438,7 +465,6 @@ public class StageMenuManager : MonoBehaviour
             hasPressedYes = false;
             if (exitButton != null) exitButton.interactable = true;
 
-            // ★修正：ネットワーク同期経由でのキャンセル時も、メインメニューのボタンを復活させる
             SetMenuButtonsInteractable(true);
             ApplyMenuButtonFocus();
         }
@@ -456,7 +482,6 @@ public class StageMenuManager : MonoBehaviour
         }
     }
 
-    // ★修正：「いいえ」またはキャンセルで戻った時、背後のメニューボタン群を再び押せるようにする
     public void CancelExit()
     {
         confirmationPanel.SetActive(false);
@@ -477,7 +502,6 @@ public class StageMenuManager : MonoBehaviour
         ApplyMenuButtonFocus();
     }
 
-    // ★追加：menuButtonsの配列に登録されたボタンの有効・無効を一括で切り替えるヘルパー関数
     private void SetMenuButtonsInteractable(bool interactable)
     {
         if (menuButtons != null)
