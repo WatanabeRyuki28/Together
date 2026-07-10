@@ -3,8 +3,10 @@ using UnityEngine;
 
 public class CameraFollow2D : MonoBehaviour
 {
-    [Header("ターゲット参照")]
-    private Transform targetPlayer;
+    // ========================================================
+    // ★古い targetPlayer は廃止。自分（player1）として固定管理します
+    // ========================================================
+    private Transform player1;
     private Rigidbody2D playerRb;
     private PlayerController playerController;
 
@@ -37,42 +39,15 @@ public class CameraFollow2D : MonoBehaviour
     private float lastFollowedY;
     private Vector3 debugFinalTarget;
 
-    public void SetupTarget(Transform player)
-    {
-        targetPlayer = player;
-        if (targetPlayer != null)
-        {
-            playerRb = targetPlayer.GetComponent<Rigidbody2D>();
-            playerController = targetPlayer.GetComponent<PlayerController>();
-        }
-
-        if (targetPlayer != null)
-        {
-            float startX = Mathf.Clamp(targetPlayer.position.x, minX, maxX);
-            float startY = Mathf.Clamp(targetPlayer.position.y + offsetY_Up, minY, maxY);
-            transform.position = new Vector3(startX, startY, transform.position.z);
-
-            lastFollowedY = targetPlayer.position.y;
-            currentOffsetY = offsetY_Up;
-        }
-    }
-
-    void Start()
-    {
-        if (targetPlayer != null)
-        {
-            SetupTarget(targetPlayer);
-        }
-    }
-
     void FixedUpdate()
     {
-        if (targetPlayer == null) return;
+        // 生成されるまでは動かない（エラーを防ぐ）
+        if (player1 == null) return;
 
-        // 1. 横方向（X軸）の目標位置計算
-        float targetX = targetPlayer.position.x;
+        //  横方向（X軸）の目標位置計算
+        float targetX = player1.position.x;
 
-        // 2. 横方向の前方予測（Look-Ahead）
+        //  横方向の前方予測（Look-Ahead）
         float velX = (playerRb != null) ? playerRb.velocity.x : 0f;
         float velY = (playerRb != null) ? playerRb.velocity.y : 0f;
 
@@ -87,22 +62,22 @@ public class CameraFollow2D : MonoBehaviour
         }
         currentLookAheadX = Mathf.MoveTowards(currentLookAheadX, targetLeadX, lookAheadMoveSpeedX * Time.fixedDeltaTime);
 
-        // 3. 縦方向（Y軸）の目標位置計算（ジャンプ時固定・下降時滑らかシフト）
+        // 縦方向（Y軸）の目標位置計算（ジャンプ時固定・下降時滑らかシフト）
         float targetOffsetY_Goal = offsetY_Up;
 
         // 本当の崖から下に落ちているかどうかの判定
-        bool isTrulyFallingDown = (velY < -0.05f) && (targetPlayer.position.y < lastFollowedY - fallThresholdY);
+        bool isTrulyFallingDown = (velY < -0.05f) && (player1.position.y < lastFollowedY - fallThresholdY);
 
         if (playerController != null && playerController.isGrounded)
         {
             // 地面に完全に着地している時
-            lastFollowedY = targetPlayer.position.y;
+            lastFollowedY = player1.position.y;
             targetOffsetY_Goal = offsetY_Up;
         }
         else if (isTrulyFallingDown)
         {
             // 本当の崖から下に落ちている時
-            lastFollowedY = targetPlayer.position.y;
+            lastFollowedY = player1.position.y;
             targetOffsetY_Goal = offsetY_Down;
         }
         else
@@ -117,7 +92,7 @@ public class CameraFollow2D : MonoBehaviour
         // カメラが目指す最終的な高さ
         float targetY = lastFollowedY + currentOffsetY;
 
-        // 4. 目標座標の合成とクランプ
+        //  目標座標の合成とクランプ
         Vector3 finalCameraTarget = new Vector3(targetX + currentLookAheadX, targetY, transform.position.z);
         finalCameraTarget.x = Mathf.Clamp(finalCameraTarget.x, minX, maxX);
         finalCameraTarget.y = Mathf.Clamp(finalCameraTarget.y, minY, maxY);
@@ -125,19 +100,39 @@ public class CameraFollow2D : MonoBehaviour
         debugFinalTarget = finalCameraTarget;
         debugFinalTarget.z = 0f;
 
-        // 5. スムーズ移動の実行
+        // スムーズ移動の実行
         float posX = Mathf.SmoothDamp(transform.position.x, finalCameraTarget.x, ref currentVelocity.x, smoothTimeX, Mathf.Infinity, Time.fixedDeltaTime);
         float posY = Mathf.SmoothDamp(transform.position.y, finalCameraTarget.y, ref currentVelocity.y, smoothTimeY, Mathf.Infinity, Time.fixedDeltaTime);
 
         transform.position = new Vector3(posX, posY, transform.position.z);
     }
 
+    // プレイヤー生成時に各PlayerControllerのStartから呼ばれる窓口
+
     public void AssignPlayer(int assignedCameraIndex, Transform playerTransform)
     {
-        if (playerTransform != null)
+        if (playerTransform == null) return;
+
+        //  0番が来た時だけガチッとロックオンする
+        if (assignedCameraIndex == 0)
         {
-            SetupTarget(playerTransform);
-            Debug.Log($"[CameraFollow2D] インデックス {assignedCameraIndex} のプレイヤーをターゲットとして認識しました。");
+            player1 = playerTransform;
+            playerRb = player1.GetComponent<Rigidbody2D>();
+            playerController = player1.GetComponent<PlayerController>();
+
+            // 生成された位置にカメラをパッと瞬時に合わせる初期化
+            lastFollowedY = player1.position.y;
+            currentOffsetY = offsetY_Up;
+            float startX = Mathf.Clamp(player1.position.x, minX, maxX);
+            float startY = Mathf.Clamp(player1.position.y + offsetY_Up, minY, maxY);
+            transform.position = new Vector3(startX, startY, transform.position.z);
+
+            Debug.Log("[CameraFollow2D] 【自分】をカメラの追従ターゲットに設定しました！");
+        }
+        else if (assignedCameraIndex == 1)
+        {
+            // 1番が来たらログだけ出してスルーする
+            Debug.Log("[CameraFollow2D] 相手プレイヤーの登録を受け取りましたが、追従はせず無視します。");
         }
     }
 
@@ -155,13 +150,13 @@ public class CameraFollow2D : MonoBehaviour
 
         Gizmos.DrawWireCube(clampCenter, clampSize);
 
-        if (Application.isPlaying && targetPlayer != null)
+        if (Application.isPlaying && player1 != null)
         {
             Gizmos.color = Color.blue;
             Gizmos.DrawSphere(debugFinalTarget, 0.4f);
 
             Gizmos.color = Color.cyan;
-            Gizmos.DrawLine(targetPlayer.position, debugFinalTarget);
+            Gizmos.DrawLine(player1.position, debugFinalTarget);
         }
     }
 }
