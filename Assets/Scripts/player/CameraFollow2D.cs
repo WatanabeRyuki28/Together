@@ -3,30 +3,38 @@ using UnityEngine;
 
 public class CameraFollow2D : MonoBehaviour
 {
+    [Header("ターゲット参照")]
     private Transform targetPlayer;
     private Rigidbody2D playerRb;
-    private PlayerController playerController; // ★接地状態をチェックするために追加
+    private PlayerController playerController;
 
-    [Header("滑らかさ (数値が小さいほどキビキビ動く)")]
+    [Header("カメラの追従速度 (数値が小さいほどキビキビ動く)")]
     [SerializeField] private float smoothTimeX = 0.2f;
-    [Header("段差を上がった時のカメラ移動の遅れ・滑らかさ")]
-    [SerializeField] private float smoothTimeY = 0.4f; // ★少し大きめ(0.4〜0.6)にするとフワッと遅れて上がります
-    private Vector3 currentVelocity;
+    [SerializeField] private float smoothTimeY = 0.35f;
 
     [Header("横方向（X軸）の前方予測（Look-Ahead）")]
     [SerializeField] private float lookAheadFactorX = 2.0f;
     [SerializeField] private float lookAheadMoveSpeedX = 5.0f;
-    private float currentLookAheadX;
 
-    // ★縦方向の前方予測は「ジャンプで動かさない」仕様にするため不要になったので削除
+    [Header("縦方向（Y軸）の視界・オフセット調整")]
+    [SerializeField] private float offsetY_Up = 2.0f;      // 通常・上昇時のカメラの高さ
+    [SerializeField] private float offsetY_Down = -1.0f;   // 崖を降りる時のカメラの高さ（マイナス値で下を広く映す）
+    [SerializeField] private float offsetChangeSpeed = 2.0f; // 視界が上下に切り替わる時の滑らかさ（小さいほどじわじわ動く）
+
+    [Header("落下（崖降り）の判定基準")]
+    [SerializeField] private float fallThresholdY = 1.5f;   // 元の床からどれくらい落ちたら崖降り判定にするか
 
     [Header("ステージの境界線（限界値）")]
     [SerializeField] private float minX = -15.0f;
     [SerializeField] private float maxX = 50.0f;
     [SerializeField] private float minY = 0.0f;
-    [SerializeField] private float maxY = 15.0f; // ★段差の上に上がれるようにインスペクターで15などに広げてください！
+    [SerializeField] private float maxY = 100.0f;
 
-    private float lastGroundedY; // 最後に地面にいた時のプレイヤーのY座標
+    // 内部計算用変数
+    private Vector3 currentVelocity;
+    private float currentOffsetY;
+    private float currentLookAheadX;
+    private float lastFollowedY;
     private Vector3 debugFinalTarget;
 
     public void SetupTarget(Transform player)
@@ -35,17 +43,17 @@ public class CameraFollow2D : MonoBehaviour
         if (targetPlayer != null)
         {
             playerRb = targetPlayer.GetComponent<Rigidbody2D>();
-            playerController = targetPlayer.GetComponent<PlayerController>(); // ★コンポーネント取得
-
-            // 初期位置のY座標を記録
-            lastGroundedY = targetPlayer.position.y;
+            playerController = targetPlayer.GetComponent<PlayerController>();
         }
 
         if (targetPlayer != null)
         {
             float startX = Mathf.Clamp(targetPlayer.position.x, minX, maxX);
-            float startY = Mathf.Clamp(lastGroundedY, minY, maxY);
+            float startY = Mathf.Clamp(targetPlayer.position.y + offsetY_Up, minY, maxY);
             transform.position = new Vector3(startX, startY, transform.position.z);
+
+            lastFollowedY = targetPlayer.position.y;
+            currentOffsetY = offsetY_Up;
         }
     }
 
@@ -61,11 +69,13 @@ public class CameraFollow2D : MonoBehaviour
     {
         if (targetPlayer == null) return;
 
-        // --- 1. 横方向（X軸）の目標位置計算 ---
+        // 1. 横方向（X軸）の目標位置計算
         float targetX = targetPlayer.position.x;
 
-        // --- 2. 横方向の前方予測（Look-Ahead） ---
+        // 2. 横方向の前方予測（Look-Ahead）
         float velX = (playerRb != null) ? playerRb.velocity.x : 0f;
+        float velY = (playerRb != null) ? playerRb.velocity.y : 0f;
+
         float targetLeadX = currentLookAheadX;
         if (velX > 0.1f)
         {
@@ -77,31 +87,58 @@ public class CameraFollow2D : MonoBehaviour
         }
         currentLookAheadX = Mathf.MoveTowards(currentLookAheadX, targetLeadX, lookAheadMoveSpeedX * Time.fixedDeltaTime);
 
-        // --- ★3. 縦方向（Y軸）の目標位置計算（ここがキモ！） ---
-        // プレイヤーが地面に着いている（またはPlayerControllerがない）場合だけ、カメラの目標高さを更新する
-        if (playerController == null || playerController.isGrounded)
+        // 3. 縦方向（Y軸）の目標位置計算（ジャンプ時固定・下降時滑らかシフト）
+        float targetOffsetY_Goal = offsetY_Up;
+
+        // 本当の崖から下に落ちているかどうかの判定
+        bool isTrulyFallingDown = (velY < -0.05f) && (targetPlayer.position.y < lastFollowedY - fallThresholdY);
+
+        if (playerController != null && playerController.isGrounded)
         {
-            lastGroundedY = targetPlayer.position.y;
+            // 地面に完全に着地している時
+            lastFollowedY = targetPlayer.position.y;
+            targetOffsetY_Goal = offsetY_Up;
+        }
+        else if (isTrulyFallingDown)
+        {
+            // 本当の崖から下に落ちている時
+            lastFollowedY = targetPlayer.position.y;
+            targetOffsetY_Goal = offsetY_Down;
+        }
+        else
+        {
+            // 通常のジャンプ（上昇中、または元の床より少し下までの空中）
+            targetOffsetY_Goal = offsetY_Up;
         }
 
-        // カメラが目指す高さは、最後に着地していた床の高さ
-        float targetY = lastGroundedY;
+        // カメラ位置のオフセット（ズレ）自体をじわじわと補間
+        currentOffsetY = Mathf.Lerp(currentOffsetY, targetOffsetY_Goal, offsetChangeSpeed * Time.fixedDeltaTime);
 
-        // --- 4. 目標座標の合成とクランプ ---
+        // カメラが目指す最終的な高さ
+        float targetY = lastFollowedY + currentOffsetY;
+
+        // 4. 目標座標の合成とクランプ
         Vector3 finalCameraTarget = new Vector3(targetX + currentLookAheadX, targetY, transform.position.z);
-
         finalCameraTarget.x = Mathf.Clamp(finalCameraTarget.x, minX, maxX);
         finalCameraTarget.y = Mathf.Clamp(finalCameraTarget.y, minY, maxY);
 
         debugFinalTarget = finalCameraTarget;
         debugFinalTarget.z = 0f;
 
-        // --- 5. スムーズ移動（XとYで追従の速度を変える） ---
+        // 5. スムーズ移動の実行
         float posX = Mathf.SmoothDamp(transform.position.x, finalCameraTarget.x, ref currentVelocity.x, smoothTimeX, Mathf.Infinity, Time.fixedDeltaTime);
-        // Y軸は smoothTimeY を使って、段差を上がった後に遅れてフワッと追いつかせる
         float posY = Mathf.SmoothDamp(transform.position.y, finalCameraTarget.y, ref currentVelocity.y, smoothTimeY, Mathf.Infinity, Time.fixedDeltaTime);
 
         transform.position = new Vector3(posX, posY, transform.position.z);
+    }
+
+    public void AssignPlayer(int assignedCameraIndex, Transform playerTransform)
+    {
+        if (playerTransform != null)
+        {
+            SetupTarget(playerTransform);
+            Debug.Log($"[CameraFollow2D] インデックス {assignedCameraIndex} のプレイヤーをターゲットとして認識しました。");
+        }
     }
 
     void OnDrawGizmos()
@@ -127,17 +164,4 @@ public class CameraFollow2D : MonoBehaviour
             Gizmos.DrawLine(targetPlayer.position, debugFinalTarget);
         }
     }
-
-    public void AssignPlayer(int assignedCameraIndex, Transform playerTransform)
-    {
-        // 1. もし生成されたのが「自分（ローカルプレイヤー）」だった場合のみカメラの追従対象にする
-        // ※ObjectOnlineCommunication側のロジックで isLocal の場合にSetupTargetを呼ぶ仕組みに合わせます
-        if (playerTransform != null)
-        {
-            // すでにクラス内に用意されている SetupTarget メソッドを活用して登録
-            SetupTarget(playerTransform);
-
-            Debug.Log($"[CameraFollow2D] インデックス {assignedCameraIndex} のプレイヤーをターゲットとして認識しました。");
-        }
-    }
-} // クラスの一番最後の閉じカッコ
+}
