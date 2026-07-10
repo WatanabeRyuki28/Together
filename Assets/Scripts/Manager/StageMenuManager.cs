@@ -207,6 +207,22 @@ public class StageMenuManager : MonoBehaviour
 
         Debug.Log($"ステージアイテムを取得！黄色のスターアイコンを左上に追加しました。(Stage_{currentStageStageIndex})");
     }
+    /// <summary>
+    /// ★追加：独立した1つのクリアシーンへ安全に情報を引き渡すため、
+    /// 現在のステージインデックスをPlayerPrefsに保存する
+    /// </summary>
+    public void PrepareClearSceneTransition()
+    {
+        // 1つのクリアシーンが「どのステージの結果を表示すべきか」を判断するためのメモ
+        PlayerPrefs.SetInt("CurrentStageIndex", currentStageStageIndex);
+
+        // （参考）リトライ用やネクストステージ用の設定もここで一緒に担保しておくと安全です
+        PlayerPrefs.SetString("RetrySceneName", SceneManager.GetActiveScene().name);
+        PlayerPrefs.SetInt("NextStageIndex", SceneManager.GetActiveScene().buildIndex + 1);
+
+        PlayerPrefs.Save();
+        Debug.Log($"【クリア準備】ステージ {currentStageStageIndex} の情報を引き渡し用に保存しました。");
+    }
 
     private void ResetUIElementTransform(GameObject targetObj)
     {

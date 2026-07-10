@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using UnityEngine.InputSystem;
 
 public class StageManager : MonoBehaviour
 {
@@ -16,7 +15,7 @@ public class StageManager : MonoBehaviour
     public GameObject confirmButton; // ホストの画面にだけ出る「開始」ボタン
 
     [Header("アイテム表示用の設定")]
-
+    // ★ Image[] から SpriteRenderer[] に修正
     [SerializeField] private SpriteRenderer[] itemIcons;
 
     // ★追加：星の画像をインスペクターから登録できるようにする
@@ -35,14 +34,10 @@ public class StageManager : MonoBehaviour
 
     private CommunicationUI controls;
 
-    private float moveCoolTime = 0.2f;  // 次の移動まで受け付けない時間（秒）
-    private float nextMoveTime = 0f;    // 次に移動できる時間
-
     void Awake()
     {
         // インスタンスの生成
         controls = new CommunicationUI();
-        controls.devices = InputSystem.devices;
     }
 
     void OnEnable()
@@ -51,12 +46,6 @@ public class StageManager : MonoBehaviour
         if (controls != null)
         {
             controls.StageSelect.Enable();
-
-            controls.StageSelect.Right.started += OnRightPressed;
-            controls.StageSelect.Left.started += OnLeftPressed;
-            controls.StageSelect.Down.started += OnDownPressed;
-            controls.StageSelect.Up.started += OnUpPressed;
-            controls.StageSelect.Submit.started += OnSubmitPressed;
         }
     }
 
@@ -65,13 +54,6 @@ public class StageManager : MonoBehaviour
         // シーンを抜ける時は安全のために操作をオフにする
         if (controls != null)
         {
-
-            controls.StageSelect.Right.started -= OnRightPressed;
-            controls.StageSelect.Left.started -= OnLeftPressed;
-            controls.StageSelect.Down.started -= OnDownPressed;
-            controls.StageSelect.Up.started -= OnUpPressed;
-            controls.StageSelect.Submit.started -= OnSubmitPressed;
-
             controls.StageSelect.Disable();
         }
     }
@@ -89,6 +71,12 @@ public class StageManager : MonoBehaviour
         // 初期カーソル位置の更新
         UpdateCursorPosition();
 
+        // ★セーブファイルから前回の確定セーブ状態をロードし直し、同期をリセットする
+        if (SaveManager.Instance != null)
+        {
+            SaveManager.Instance.LoadGame();
+        }
+
         // 各ステージのアイテム獲得状況をロードしてUIに反映する
         UpdateItemIconsDisplay();
 
@@ -101,87 +89,63 @@ public class StageManager : MonoBehaviour
 
     void Update()
     {
-        if (nextMoveTime > 0f)
+        // ホスト以外はキーボード操作を受け付けない！
+        if (!IsHost()) return;
+
+        bool isMoved = false;
+
+        // グリッド状（2行×5列）のキーボード移動処理
+        // 横移動（右）
+        if (controls.StageSelect.Right.triggered)
         {
-            nextMoveTime -= Time.deltaTime;
+            currentStageIndex++;
+            if (currentStageIndex >= stageButtons.Length) currentStageIndex = 0;
+            isMoved = true;
         }
-    }
-
-    // 右に1回倒されたとき
-    private void OnRightPressed(InputAction.CallbackContext context)
-    {
-        if (!IsHost()) return;
-        if (nextMoveTime > 0f) return;
-
-        currentStageIndex++;
-        if (currentStageIndex >= stageButtons.Length) currentStageIndex = 0;
-
-        nextMoveTime = moveCoolTime;
-        OnCursorMoved();
-    }
-
-    // 左に1回倒されたとき
-    private void OnLeftPressed(InputAction.CallbackContext context)
-    {
-        if (!IsHost()) return;
-        if (nextMoveTime > 0f) return;
-
-        currentStageIndex--;
-        if (currentStageIndex < 0) currentStageIndex = stageButtons.Length - 1;
-
-        nextMoveTime = moveCoolTime;
-        OnCursorMoved();
-    }
-
-    // 下に1回倒されたとき
-    private void OnDownPressed(InputAction.CallbackContext context)
-    {
-        if (!IsHost()) return;
-        if (nextMoveTime > 0f) return;
-
-        if (currentStageIndex < 5) // 上の段（0〜4）にいるとき
+        // 横移動（左）
+        else if (controls.StageSelect.Left.triggered)
         {
-            currentStageIndex += 5;
-           
-            if (currentStageIndex >= stageButtons.Length) currentStageIndex = stageButtons.Length - 1;
-            OnCursorMoved();
-            nextMoveTime = moveCoolTime;
+            currentStageIndex--;
+            if (currentStageIndex < 0) currentStageIndex = stageButtons.Length - 1;
+            isMoved = true;
         }
-    }
-
-    // 上に1回倒されたとき
-    private void OnUpPressed(InputAction.CallbackContext context)
-    {
-        if (!IsHost()) return;
-        if (nextMoveTime > 0f) return;
-
-        if (currentStageIndex >= 5) // 下の段（5〜9）にいるとき
+        // 縦移動（下）
+        else if (controls.StageSelect.Down.triggered)
         {
-            currentStageIndex -= 5;
-            OnCursorMoved();
-            nextMoveTime = moveCoolTime;
+            if (currentStageIndex < 5) // 上の段（0〜4）にいるとき
+            {
+                currentStageIndex += 5;
+                if (currentStageIndex >= stageButtons.Length) currentStageIndex = stageButtons.Length - 1;
+                isMoved = true;
+            }
         }
-    }
+        // 縦移動（上）
+        else if (controls.StageSelect.Up.triggered)
+        {
+            if (currentStageIndex >= 5) // 下の段（5〜9）にいるとき
+            {
+                currentStageIndex -= 5;
+                isMoved = true;
+            }
+        }
 
-    // 決定
-    private void OnSubmitPressed(InputAction.CallbackContext context)
-    {
-        if (!IsHost()) return;
-        if (nextMoveTime > 0f) return;
+        // カーソルが動いたら、位置を更新してゲストにも即座にパケットを送信する
+        if (isMoved)
+        {
+            UpdateCursorPosition();
 
-        ConfirmStageSelection();
-        nextMoveTime = moveCoolTime;
-    }
+            // ホストの画面にも「開始」ボタンを出してあげる
+            if (confirmButton != null) confirmButton.SetActive(true);
 
-    // 移動した後の共通処理
-    private void OnCursorMoved()
-    {
-        UpdateCursorPosition();
+            // ゲストへ同期送信
+            SendStageSelectNotification(currentStageIndex, false);
+        }
 
-        if (confirmButton != null) confirmButton.SetActive(true);
-
-        // ゲストへ同期送信
-        SendStageSelectNotification(currentStageIndex, false);
+        // 決定ボタンで本決定（Aボタン、またはEnter/Space/Zキーなど）
+        if (controls.StageSelect.Submit.triggered)
+        {
+            ConfirmStageSelection();
+        }
     }
 
     // 自画面のカーソルの位置を更新する
@@ -196,7 +160,7 @@ public class StageManager : MonoBehaviour
         }
     }
 
-    // SpriteRendererのSpriteを切り替えるように処理を最適化
+    // ★修正：SpriteRendererのSpriteを切り替えるように処理を最適化
     private void UpdateItemIconsDisplay()
     {
         if (stageButtons == null || SaveManager.Instance == null) return;
