@@ -45,10 +45,31 @@ public class GoalArea : MonoBehaviour
 
     private void ClearStage()
     {
-        Debug.Log("全員到達！現在のステージ名を保存してクリアシーンへ移行します。");
+        Debug.Log("全員到達！現在のステージ情報を引き渡し用データとして保存し、クリアシーンへ移行します。");
 
         // -------------------------------------------------------------
-        // ★追加：ステージクリア確定のタイミングで、星の獲得データを正式セーブ
+        // ★追加：星の獲得状況がクリア画面で混ざらないよう、現在のステージ番号を保存
+        // -------------------------------------------------------------
+        if (StageMenuManager.Instance != null)
+        {
+            // StageMenuManagerに現在のステージインデックス（CurrentStageIndex）や
+            // リトライ用、次のステージ用のPlayerPrefsへのメモをまとめてやらせる
+            StageMenuManager.Instance.PrepareClearSceneTransition();
+        }
+        else
+        {
+            // 万が一 StageMenuManager がない場合のフォールバック（従来の保存処理）
+            Debug.LogWarning("StageMenuManager のインスタンスが見つからないため、個別に遷移情報を保存します。");
+            string currentStageName = SceneManager.GetActiveScene().name;
+            PlayerPrefs.SetString("RetrySceneName", currentStageName);
+
+            int nextStageIndex = SceneManager.GetActiveScene().buildIndex + 1;
+            PlayerPrefs.SetInt("NextStageIndex", nextStageIndex);
+            PlayerPrefs.Save();
+        }
+
+        // -------------------------------------------------------------
+        // ★星の獲得データを正式セーブ
         // -------------------------------------------------------------
         if (SaveManager.Instance != null)
         {
@@ -60,14 +81,6 @@ public class GoalArea : MonoBehaviour
             Debug.LogWarning("SaveManager のインスタンスが見つからないため、クリア時の正式保存がスキップされました。");
         }
         // -------------------------------------------------------------
-
-        // シーンが切り替わる前に、現在のステージ名（"Stage1"など）を「RetrySceneName」という名前でメモリにセーブします
-        string currentStageName = SceneManager.GetActiveScene().name;
-        PlayerPrefs.SetString("RetrySceneName", currentStageName);
-
-        int nextStageIndex = SceneManager.GetActiveScene().buildIndex + 1;
-        PlayerPrefs.SetInt("NextStageIndex", nextStageIndex);
-        PlayerPrefs.Save(); // 確実に保存
 
         // 満を持してクリアシーン（ClearScene）へ遷移
         SceneManager.LoadScene(nextStageSceneName);
