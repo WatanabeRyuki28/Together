@@ -15,13 +15,13 @@ public class ObjectOnlineCommunication : MonoBehaviour
 
     public Dictionary<int, NetworkIdentity2D> syncObjects = new Dictionary<int, NetworkIdentity2D>();
 
-    // ★修正：void Start() から IEnumerator Start() に変更
+    // void Start() から IEnumerator Start() に変更
     IEnumerator Start()
     {
         // 1フレームだけ待つことで、カメラ側の初期化を確実に終わらせる
         yield return null;
 
-        // --- 修正：NetworkManager がある場合（オンラインプレイ時） ---
+        // NetworkManager がある場合
         if (NetworkManager.Instance != null)
         {
             int myColorIndex = NetworkManager.Instance.myRealSelectedChar;
@@ -33,8 +33,8 @@ public class ObjectOnlineCommunication : MonoBehaviour
 
             if (myColorIndex == 0)
             {
-                myStartPos = new Vector3(-4f, -1.5f, 0f);
-                opponentStartPos = new Vector3(-2f, -1.5f, 0f);
+                myStartPos = new Vector3(-10f, -1.5f, 0f);
+                opponentStartPos = new Vector3(-7f, -1.5f, 0f);
             }
             else
             {
@@ -117,15 +117,7 @@ public class ObjectOnlineCommunication : MonoBehaviour
         {
             // カメラ側の player1, player2 の割り当てルールに合わせる
             // ローカル（自分）なら myPlayerIndex、リモート（相手）ならその逆を割り当てる
-            int assignedCameraIndex = 0;
-            if (isLocal)
-            {
-                assignedCameraIndex = NetworkManager.Instance.myPlayerIndex;
-            }
-            else
-            {
-                assignedCameraIndex = (NetworkManager.Instance.myPlayerIndex == 0) ? 1 : 0;
-            }
+            int assignedCameraIndex = isLocal ? 0 : 1;
 
             // カメラに生成したプレイヤーのTransformを直接登録！
             cameraFollow.AssignPlayer(assignedCameraIndex, player.transform);
