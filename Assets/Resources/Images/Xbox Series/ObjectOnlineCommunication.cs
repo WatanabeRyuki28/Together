@@ -45,7 +45,7 @@ public class ObjectOnlineCommunication : MonoBehaviour
             CreatePlayer(myColorIndex, myStartPos, true);
             CreatePlayer(opponentColorIndex, opponentStartPos, false);
         }
-        // --- ★追加：NetworkManager がない場合（デバッグ・テストプレイ時） ---
+        // NetworkManager がない場合
         else
         {
             Debug.LogWarning("[警告] NetworkManager が見つかりません。テスト用として赤スライムをローカルプレイヤーとして生成します。");
@@ -194,6 +194,8 @@ public class ObjectOnlineCommunication : MonoBehaviour
             if (controller != null)
             {
                 controller.TargetPosition = targetPos;
+
+                controller.isGrounded = data.IsGrounded;
             }
 
             var remoteSprite = remotePlayerObj.GetComponent<SpriteRenderer>();
@@ -229,8 +231,26 @@ public class ObjectOnlineCommunication : MonoBehaviour
                     projectileScript.Initialize(direction, bulletElement);
                 }
 
-                Debug.Log("[イベント生成完了] 相手が撃った弾をローカルで発射しました。");
+                if (players != null && players.ContainsKey(bulletType))
+                {
+                    GameObject remotePlayerObj = players[bulletType];
+                    if (remotePlayerObj != null)
+                    {
+                        PlayerController pc = remotePlayerObj.GetComponent<PlayerController>();
+
+                        // 自分ではないキャラクターの時だけアニメーションを実行
+                        if (pc != null && !pc.IsLocalPlayer)
+                        {
+                            Animator remoteAnim = pc.GetComponent<Animator>();
+                            if (remoteAnim != null)
+                            {
+                                remoteAnim.SetTrigger("Attack"); //  相手のアニメーションを直接再生！
+                            }
+                        }
+                    }
+                }
             }
+
             return;
         }
 
