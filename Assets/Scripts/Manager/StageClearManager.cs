@@ -106,7 +106,7 @@ public class StageClearManager : MonoBehaviour
                 currentSelectedIndex = (currentSelectedIndex - 1 + TotalButtons) % TotalButtons;
                 ApplyButtonFocus();
             }
-            else if (controls.GameClear.Sumbit.triggered)
+            else if (controls.GameClear.Submit.triggered)
             {
                 ExecuteCurrentSelectedButton();
             }
