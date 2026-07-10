@@ -122,9 +122,12 @@ public class PlayerController : MonoBehaviour
         {
             // 自分が操作するキャラ（IsLocalPlayer == true）なら 0番（プレイヤー1）
             // 通信相手のキャラ（IsLocalPlayer == false）なら 1番（プレイヤー2）にする
-            int cameraIndex = IsLocalPlayer ? 0 : 1;
+            int cameraIndex = IsLocalPlayer ? 1 : 0;
 
             cameraFollow.AssignPlayer(cameraIndex, this.transform);
+            string playerType = IsLocalPlayer ? "【自分（ローカル）】" : "【相手（リモート）】";
+            Debug.Log($"[カメラ登録ログ] オブジェクト名: {gameObject.name} | 属性: {playerType} ➔ カメラ番号 {cameraIndex} 番に登録しました！");
+        
         }
     }
 
