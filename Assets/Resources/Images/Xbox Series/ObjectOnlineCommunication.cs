@@ -38,12 +38,12 @@ public class ObjectOnlineCommunication : MonoBehaviour
             }
             else
             {
-                myStartPos = new Vector3(-2f, -1.5f, 0f);
-                opponentStartPos = new Vector3(-4f, -1.5f, 0f);
+                myStartPos = new Vector3(-7f, -1.5f, 0f);
+                opponentStartPos = new Vector3(-10f, -1.5f, 0f);
             }
 
-            CreatePlayer(myColorIndex, myStartPos, true);
-            CreatePlayer(opponentColorIndex, opponentStartPos, false);
+            CreatePlayer(0, myStartPos, true);
+            CreatePlayer(1, opponentStartPos, false);
         }
         // NetworkManager Ç™Ç»Ç¢èÍçá
         else
