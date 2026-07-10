@@ -63,7 +63,7 @@ public class CharacterSelectManager : MonoBehaviour
         {
             controls.CharSelect.Enable();
 
-            // ★【追加】ボタンが押された瞬間のイベントを登録する
+            // ボタンが押された瞬間のイベントを登録する
             controls.CharSelect.Right.started += OnRightPressed;
             controls.CharSelect.Left.started += OnLeftPressed;
             controls.CharSelect.Submit.started += OnSubmitPressed;
@@ -147,8 +147,12 @@ public class CharacterSelectManager : MonoBehaviour
 
 
         }
+        if (selectionCursor != null && selectionCursor.GetComponent<Image>() != null)
+            selectionCursor.GetComponent<Image>().color = normalColor;
 
-        
+        if (remoteSelectionCursor != null && remoteSelectionCursor.GetComponent<Image>() != null)
+            remoteSelectionCursor.GetComponent<Image>().color = normalColor;
+
         UpdateCursorPosition();
 
         //  初期状態から相手のカーソルを見せるために最初からTrueにする、またはSetActiveを制御

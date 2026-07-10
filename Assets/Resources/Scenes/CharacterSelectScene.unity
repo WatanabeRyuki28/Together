@@ -449,7 +449,7 @@ MonoBehaviour:
   - {fileID: 1942306318}
   selectionCursor: {fileID: 2121449246}
   remoteSelectionCursor: {fileID: 878077607}
-  normalColor: {r: 0.3584906, g: 0.3584906, b: 0.3584906, a: 1}
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
   confirmedColor: {r: 0, g: 0, b: 0, a: 1}
   myInfoText: {fileID: 1448512626}
   otherInfoText: {fileID: 1458739669}

@@ -42,7 +42,7 @@ public class CommunicationUIGamePad : MonoBehaviour
         controls.UI.Enable();
 
         // 決定イベントを登録
-        controls.UI.Submit.started += OnSubmit;
+        controls.UI.Submit.performed += OnSubmit;
 
         UpdateCursorPosition();
         isHolding = false;
@@ -54,7 +54,7 @@ public class CommunicationUIGamePad : MonoBehaviour
         // 通信画面が閉じる時は、完全にすべてをシャットダウンしてクリアする
         if (controls != null)
         {
-            controls.UI.Submit.started -= OnSubmit;
+            controls.UI.Submit.performed -= OnSubmit;
             controls.UI.Disable();
             controls = null; // 無効化
         }
@@ -63,46 +63,13 @@ public class CommunicationUIGamePad : MonoBehaviour
         moveTimer = 0f;
         currentInput = Vector2.zero;
     }
-    private void OnMoveInput(InputAction.CallbackContext context)
-    {
-        if (uiButtons.Length == 0) return;
 
-        Vector2 moveInput = context.ReadValue<Vector2>();
-
-        Debug.Log($"【入力検知】 X: {currentInput.x} / Y: {currentInput.y}");
-
-        // 上下の入力を判定 (UIシステムは上がプラス、リストのインデックスは下がプラスなので反転)
-        if (moveInput.y > 0.4f)
-        {
-            ChangeSelection(-1); // 上へ
-        }
-        else if (moveInput.y < -0.4f)
-        {
-            ChangeSelection(1);  // 下へ
-        }
-    }
-
-
-    private void OnMoveCancel(InputAction.CallbackContext context)
-    {
-        StopMovement();
-    }
-
-    private void StopMovement()
-    {
-        currentInput = Vector2.zero;
-        if (movementCoroutine != null)
-        {
-            StopCoroutine(movementCoroutine);
-            movementCoroutine = null;
-        }
-    }
 
     private void Update()
     {
         if (uiButtons.Length == 0 || !gameObject.activeInHierarchy || controls == null) return;
 
-       
+
         if (keyboardMenuCanvas != null && keyboardMenuCanvas.activeSelf)
         {
             isHolding = false;
@@ -145,20 +112,18 @@ public class CommunicationUIGamePad : MonoBehaviour
     // 決定ボタンが押されたとき
     public void OnSubmit(InputAction.CallbackContext context)
     {
-        if (context.started)
-        {
-            Debug.Log($"{uiButtons[currentSelectedIndex].name} が決定されました！");
-            // ここに選択中のボタンの実行処理を書く
-        }
+        if (keyboardMenuCanvas != null && keyboardMenuCanvas.activeSelf) return;
+
+        // 入力が完全に成立した1フレーム(performed)だけ処理を通すガード
+        if (!context.performed) return;
 
         if (uiButtons.Length == 0 || uiButtons[currentSelectedIndex] == null) return;
 
-        // 現在カーソルが合っているボタンの「Button」コンポーネントを取得
-        Button targetButton = uiButtons[currentSelectedIndex].GetComponent<Button>();
+        Debug.Log($"{uiButtons[currentSelectedIndex].name} が決定されました！");
 
-        if (targetButton != null)
+        Button targetButton = uiButtons[currentSelectedIndex].GetComponent<Button>();
+        if (targetButton != null && targetButton.interactable)
         {
-            // 該当するボタンの「On Click()」に登録されている処理を、コードから実行する！
             targetButton.onClick.Invoke();
             Debug.Log($"{uiButtons[currentSelectedIndex].name} を決定ボタンで実行しました！");
         }

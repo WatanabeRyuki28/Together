@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using System;
 using System.Threading.Tasks;
+using UnityEngine.InputSystem;
 
 
 public class StageClearManager : MonoBehaviour
@@ -15,6 +16,11 @@ public class StageClearManager : MonoBehaviour
     [SerializeField] private Button nextStageButton;     // ④ 次のステージ
     [SerializeField] private Button stageSelectButton;   // ⑤ ステージ選択に戻る
     [SerializeField] private Button retryButton;         // ⑥ リトライ
+
+
+    [SerializeField] private GameObject[] uiButtons;
+    [SerializeField] RectTransform cursorImage;
+    [SerializeField] private float cursorOffsetOfX = -100f;
 
     [Header("各アクションの遷移先シーン名")]
     // [SerializeField] private string nextStageSceneName = "Stage2";
@@ -42,6 +48,10 @@ public class StageClearManager : MonoBehaviour
         // ステージ選択シーン用の操作マップ「StageSelect」を有効化
         if (controls != null)
         {
+            controls.GameClear.Down.started += OnDownPressed;
+            controls.GameClear.Up.started += OnUpPressed;
+            controls.GameClear.Submit.started += OnSubmitPressed;
+
             controls.GameClear.Enable();
         }
     }
@@ -51,6 +61,10 @@ public class StageClearManager : MonoBehaviour
         // シーンを抜ける時は安全のために操作をオフにする
         if (controls != null)
         {
+            controls.GameClear.Down.started -= OnDownPressed;
+            controls.GameClear.Up.started -= OnUpPressed;
+            controls.GameClear.Submit.started -= OnSubmitPressed;
+
             controls.GameClear.Disable();
         }
     }
@@ -59,108 +73,72 @@ public class StageClearManager : MonoBehaviour
     {
         CheckHost();
         currentSelectedIndex = 0;
-        ApplyButtonFocus();
+        UpdateCursorPosition();
         GestPanel.SetActive(false);
     }
 
     private void Update()
     {
-        if (IsHost())
-        {
-
-            if (controls.GameClear.Down.triggered)
-            {
-                currentSelectedIndex = (currentSelectedIndex + 1) % TotalButtons;
-                ApplyButtonFocus();
-            }
-            else if (controls.GameClear.Up.triggered)
-            {
-                currentSelectedIndex = (currentSelectedIndex - 1 + TotalButtons) % TotalButtons;
-                ApplyButtonFocus();
-            }
-            else if (controls.GameClear.Sumbit.triggered)
-            {
-                ExecuteCurrentSelectedButton();
-            }
-
-            #region 前の処理
-            /*
-            float v1 = 0f; float v2 = 0f; float vDefault = 0f;
-            if (HasAxis("Vertical1")) v1 = Input.GetAxisRaw("Vertical1");
-            if (HasAxis("Vertical2")) v2 = Input.GetAxisRaw("Vertical2");
-            if (HasAxis("Vertical")) vDefault = Input.GetAxisRaw("Vertical");
-
-             float finalVerticalInput = v1 + v2 + vDefault;
-
-
-            if (Mathf.Abs(finalVerticalInput) > 0.5f)
-            {
-                if (finalVerticalInput < -0.5f)
-                {
-                    currentSelectedIndex = (currentSelectedIndex + 1) % TotalButtons;
-                    ApplyButtonFocus();
-                }
-                else if (finalVerticalInput > 0.5f)
-                {
-                    currentSelectedIndex = (currentSelectedIndex - 1 + TotalButtons) % TotalButtons;
-                    ApplyButtonFocus();
-                }
-                if (Time.unscaledTime >= nextInputTime)
-                {
-
-                    nextInputTime = Time.unscaledTime + inputDelay;
-                }
-            }
-            else
-            {
-                nextInputTime = 0f;
-            }
-            if ((HasAxis("Fire1") && Input.GetButtonDown("Fire1")) ||
-                (HasAxis("Fire2") && Input.GetButtonDown("Fire2")) ||
-                (HasAxis("Submit") && Input.GetButtonDown("Submit")))
-            {
-                Debug.Log("【入力ログ】決定入力検知。ボタンを実行します。");
-                ExecuteCurrentSelectedButton();
-            }*/
-            #endregion 
-
-        }
-        else if (!IsHost())
+       
+        if (!IsHost())
         {
             GestPanel.SetActive(true);
         }
     }
 
-    private bool HasAxis(string axisName)
+    // 下に1回倒されたとき
+    private void OnDownPressed(InputAction.CallbackContext context)
     {
-        try { Input.GetAxisRaw(axisName); return true; }
-        catch (System.ArgumentException) { return false; }
+        if (!IsHost()) return;
+        currentSelectedIndex = (currentSelectedIndex + 1) % uiButtons.Length;
+
+   
+      
+        UpdateCursorPosition();
     }
 
-    private void ApplyButtonFocus()
+    // 上に1回倒されたとき
+    private void OnUpPressed(InputAction.CallbackContext context)
     {
-        if (EventSystem.current == null) return;
-        switch (currentSelectedIndex)
-        {
-            case 0: if (nextStageButton != null) nextStageButton.Select(); break;
-            case 1: if (stageSelectButton != null) stageSelectButton.Select(); break;
-            case 2: if (retryButton != null) retryButton.Select(); break;
-        }
+        if (!IsHost()) return;
+        currentSelectedIndex = (currentSelectedIndex - 1 + TotalButtons) % uiButtons.Length;
+       
+        UpdateCursorPosition();
     }
+
+    private void OnSubmitPressed(InputAction.CallbackContext context)
+    {
+        if (!IsHost()) return;
+        ExecuteCurrentSelectedButton();
+    }
+
+    private void UpdateCursorPosition()
+    {
+        if (uiButtons.Length == 0 || uiButtons[currentSelectedIndex] == null || cursorImage == null) return;
+
+        // 選択中のボタンの RectTransform を取得
+        RectTransform buttonRect = uiButtons[currentSelectedIndex].GetComponent<RectTransform>();
+
+        if (buttonRect != null)
+        {
+            Vector3 targetPosition = buttonRect.anchoredPosition;
+   
+            cursorImage.anchoredPosition = targetPosition;
+        }
+
+        Debug.Log($"現在選択中: {uiButtons[currentSelectedIndex].name}");
+    }
+ 
 
     private void ExecuteCurrentSelectedButton()
     {
-        if (EventSystem.current == null) return;
-        GameObject currentSelected = EventSystem.current.currentSelectedGameObject;
-        if (currentSelected != null)
-        {
-            Button button = currentSelected.GetComponent<Button>();
+       
+            Button button = uiButtons[currentSelectedIndex].GetComponent<Button>();
             if (button != null && button.onClick != null)
             {
-                Debug.Log($"【UIログ】ボタン「{currentSelected.name}」のOnClickを呼び出します。");
                 button.onClick.Invoke();
             }
-        }
+        
     }
 
     public async void OnNextStagePressed()

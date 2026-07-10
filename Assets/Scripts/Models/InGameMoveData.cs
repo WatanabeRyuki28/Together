@@ -36,6 +36,8 @@ public class InGameMoveData : InitResponse
 
     public bool is_flip_x;  // ƒvƒŒƒCƒ„[‚ÌŒü‚«
 
+    public bool IsGrounded;
+
 
 }
 

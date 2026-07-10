@@ -109,52 +109,27 @@ public class InputFieldFocus : MonoBehaviour
         {
             UpdateCaretPosition();
 
-           
 
-            
-            HandleButtonHoldInput();
+            if (controls != null && controls.Keyboard.Back.IsPressed())
+            {
+                InputTextEnter();
+            }
+
         }
     }
-    private void HandleButtonHoldInput()
+
+    // 決定ボタンが押された瞬間の処理
+    private void OnKeyboardSubmit(InputAction.CallbackContext context)
     {
-        if (controls == null) return;
 
-        bool isSubmitPressed = controls.Keyboard.Submit.IsPressed();
+        if (!context.performed) return;
+        if (keyGrid == null) return;
 
-        if (isSubmitPressed)
-        {
-            Button currentButton = keyGrid[currentX, currentY];
-            if (currentButton == null || !currentButton.interactable) return;
+        Button currentButton = keyGrid[currentX, currentY];
+        if (currentButton == null || !currentButton.interactable) return;
 
-            if (!wasSubmitPressedLastFrame)
-            {
-                TriggerCurrentButtonOnClick(currentButton);
-                isCharHolding = true;
-                charHoldTimer = charHoldDelay;
-            }
-            else
-            {
-                charHoldTimer -= Time.deltaTime;
-                if (charHoldTimer <= 0f)
-                {
-                    TriggerCurrentButtonOnClick(currentButton);
-                    charHoldTimer = charRepeatRate;
-                }
-            }
-        }
-        else
-        {
-            isCharHolding = false;
-            charHoldTimer = 0f;
-        }
+        TriggerCurrentButtonOnClick(currentButton);
 
-        wasSubmitPressedLastFrame = isSubmitPressed;
-
-        bool isBackPressed = controls.Keyboard.Back.IsPressed();
-        if (isBackPressed)
-        {
-            InputTextEnter();
-        }
     }
 
     private void TriggerCurrentButtonOnClick(Button button)
@@ -187,6 +162,14 @@ public class InputFieldFocus : MonoBehaviour
         }
     }
 
+   
+
+    // 決定ボタンが離された瞬間の処理
+    private void OnKeyboardSubmitCancel(InputAction.CallbackContext context)
+    {
+        wasSubmitPressedLastFrame = false;
+        charHoldTimer = 0f;
+    }
     private IEnumerator KeepKeyboardMovingRoutine()
     {
         // 最初の1回目の移動
@@ -249,7 +232,11 @@ public class InputFieldFocus : MonoBehaviour
     {
         keyGrid = new Button[gridCols, gridRows];
 
+        if (rightFixedColumn != null) rightFixedColumn.gameObject.SetActive(true);
+        if (leftFixedColumn != null) leftFixedColumn.gameObject.SetActive(true);
+
         RegisterColumn(12, rightFixedColumn);
+
         Transform currentCenterPanel = null;
         if (Hiragana != null && Hiragana.activeSelf) currentCenterPanel = hiraganaPanel;
         else if (Katakana != null && Katakana.activeSelf) currentCenterPanel = katakanaPanel;
@@ -553,18 +540,9 @@ public class InputFieldFocus : MonoBehaviour
         if (N != null) N.SetActive(false);
         if (R != null) R.SetActive(false);
 
-        if (controls != null)
-        {
-            controls.Keyboard.Move.started -= OnKeyboardMove;
-            controls.Keyboard.Move.canceled -= OnKeyboardMoveCancel;
-            controls.Keyboard.Disable();
-            controls = null;
+        CleanupControls();
 
-            StartCoroutine(SafeEnableUI(controls));
-
-            controls = null;
-        }
-
+      
         
         currentKeyboardInput = Vector2.zero;
         if (keyboardMoveCoroutine != null)
@@ -573,7 +551,24 @@ public class InputFieldFocus : MonoBehaviour
             keyboardMoveCoroutine = null;
         }
     }
+    private void CleanupControls()
+    {
+        if (controls != null)
+        {
+            // まずイベントを確実に解除
+            controls.Keyboard.Move.started -= OnKeyboardMove;
+            controls.Keyboard.Move.canceled -= OnKeyboardMoveCancel;
+            controls.Keyboard.Submit.performed -= OnKeyboardSubmit;
 
+            controls.Keyboard.Disable();
+
+            // コルーチン側へ安全に変数を引き渡すために一時変数へ退避
+            CommunicationUI oldControls = controls;
+            controls = null;
+
+            StartCoroutine(SafeEnableUI(oldControls));
+        }
+    }
     private IEnumerator SafeEnableUI(CommunicationUI targetControls)
     {
         // 1フレーム待つことで、キーボードを閉じた「Aボタン」の押しっぱなしが
@@ -592,12 +587,19 @@ public class InputFieldFocus : MonoBehaviour
         if (menuCanvas)
         {
             currentTargetInputField = NameInputField;
-            KeyboardPadStart();
 
+            currentX = 11;
+            currentY = 0;
+
+            //  先にパネルを「ひらがな」に切り替える
             Hiragana.SetActive(true);
-            englishB.SetActive(false);
+            Katakana.SetActive(false);
+            if (englishS != null) englishS.SetActive(false);
+            if (englishB != null) englishB.SetActive(false);
             ChangeLaugauge.SetActive(true);
 
+            // 最後にキーボードを開始
+            KeyboardPadStart();
         }
     }
 
@@ -606,11 +608,19 @@ public class InputFieldFocus : MonoBehaviour
         if (menuCanvas)
         {
             currentTargetInputField = RoomInputField;
-            KeyboardPadStart();
+
+            currentX = 11;
+            currentY = 0;
+
+            // 先にパネルを「アルファベット大文字」に切り替える
             Hiragana.SetActive(false);
-            englishB.SetActive(true);
+            Katakana.SetActive(false);
+            if (englishS != null) englishS.SetActive(false);
+            if (englishB != null) englishB.SetActive(true);
             ChangeLaugauge.SetActive(false);
 
+            // 最後にキーボードを開始
+            KeyboardPadStart();
         }
     }
 
@@ -629,6 +639,8 @@ public class InputFieldFocus : MonoBehaviour
         controls.UI.Disable();
         controls.Keyboard.Move.started += OnKeyboardMove;
         controls.Keyboard.Move.canceled += OnKeyboardMoveCancel;
+
+        controls.Keyboard.Submit.performed += OnKeyboardSubmit;
 
         SwitchDepthOfField(true);
     }
@@ -704,6 +716,9 @@ public class InputFieldFocus : MonoBehaviour
             controls.Keyboard.Move.canceled -= OnKeyboardMoveCancel;
             controls.Keyboard.Disable();
             controls = null;
+
+            controls.Keyboard.Submit.started -= OnKeyboardSubmit;
+            controls.Keyboard.Submit.canceled -= OnKeyboardSubmitCancel;
         }
         currentKeyboardInput = Vector2.zero;
     }
@@ -722,6 +737,9 @@ public class InputFieldFocus : MonoBehaviour
             controls.Keyboard.Move.canceled -= OnKeyboardMoveCancel;
             controls.Keyboard.Disable();
             controls = null;
+
+            controls.Keyboard.Submit.started -= OnKeyboardSubmit;
+            controls.Keyboard.Submit.canceled -= OnKeyboardSubmitCancel;
         }
     }
 
