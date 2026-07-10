@@ -42,8 +42,8 @@ public class ObjectOnlineCommunication : MonoBehaviour
                 opponentStartPos = new Vector3(-10f, -1.5f, 0f);
             }
 
-            CreatePlayer(0, myStartPos, true);
-            CreatePlayer(1, opponentStartPos, false);
+            CreatePlayer(myColorIndex, myStartPos, true);
+            CreatePlayer(opponentColorIndex, opponentStartPos, false);
         }
         // NetworkManager がない場合
         else
@@ -116,8 +116,8 @@ public class ObjectOnlineCommunication : MonoBehaviour
         if (cameraFollow != null)
         {
             // カメラ側の player1, player2 の割り当てルールに合わせる
-            // ローカル（自分）なら myPlayerIndex、リモート（相手）ならその逆を割り当てる
-            int assignedCameraIndex = isLocal ? 0 : 1;
+            // 逆の入力
+            int assignedCameraIndex = isLocal ? 1 : 0;
 
             // カメラに生成したプレイヤーのTransformを直接登録！
             cameraFollow.AssignPlayer(assignedCameraIndex, player.transform);
