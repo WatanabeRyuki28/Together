@@ -150,7 +150,12 @@ public class NetworkManager : MonoBehaviour
                     Debug.LogWarning("ObjectOnlineCommunication が現在のシーンに見つかりません！");
                 }
             }
-            else if (currentSceneName == "Stage1" || currentSceneName == "Stage2")
+            else if (currentSceneName == "Stage1" 
+                        || currentSceneName == "Stage2"
+                        || currentSceneName == "Stage3"
+                        || currentSceneName == "Stage4"
+                        || currentSceneName == "Stage5"
+                        || currentSceneName == "Stage6")
             {
                 var onlineComm = FindObjectOfType<ObjectOnlineCommunication>();
                 if (onlineComm != null)

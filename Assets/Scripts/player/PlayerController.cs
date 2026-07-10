@@ -115,6 +115,20 @@ public class PlayerController : MonoBehaviour
         }
 
         lastPosition = transform.position;
+
+        CameraFollow2D cameraFollow = FindFirstObjectByType<CameraFollow2D>();
+
+        if (cameraFollow != null)
+        {
+            // 自分が操作するキャラ（IsLocalPlayer == true）なら 0番（プレイヤー1）
+            // 通信相手のキャラ（IsLocalPlayer == false）なら 1番（プレイヤー2）にする
+            int cameraIndex = IsLocalPlayer ? 0 : 1;
+
+            cameraFollow.AssignPlayer(cameraIndex, this.transform);
+            string playerType = IsLocalPlayer ? "【自分（ローカル）】" : "【相手（リモート）】";
+            Debug.Log($"[カメラ登録ログ] オブジェクト名: {gameObject.name} | 属性: {playerType} ➔ カメラ番号 {cameraIndex} 番に登録しました！");
+        
+        }
     }
 
     void Update()
@@ -122,19 +136,32 @@ public class PlayerController : MonoBehaviour
         // 相手（リモート）のキャラクターの場合
         if (!IsLocalPlayer)
         {
+
+            Debug.Log($"現在の接地状態: {isGrounded}");
+
             if (rb != null)
             {
                 rb.velocity = Vector2.zero; // 物理干渉による荒ぶりを完全カット
             }
 
+            // 移動する前の座標を一時保存（アニメーションの速度計算用）
+            Vector3 previousPosition = transform.position;
+
+            // 線形補間で位置を同期
             transform.position = Vector3.Lerp(transform.position, TargetPosition, 0.05f);
 
-            // 相手が歩いている時の足音をミュート（自分の画面で相手の足音が鳴り続けるのを防ぐ）
+            // 実際の移動距離から、相手の擬似的な速度を計算して Animator に反映する
+            Vector2 simulatedVelocity = (transform.position - previousPosition) / Time.deltaTime;
+
+            // 相手のアニメーション更新を呼び出す
+            UpdateAnimationParametersForRemote(simulatedVelocity, this.isGrounded);
+
+            // 相手が歩いている時の足音をミュート
             if (audioSource.isPlaying && audioSource.clip == walkSound)
             {
                 audioSource.Stop();
             }
-            return;
+            return; 
         }
 
         // ────────── 以下は「自分のキャラ（IsLocalPlayer == true）」だけの処理 ──────────
@@ -169,14 +196,15 @@ public class PlayerController : MonoBehaviour
         }
 
         // 毎フレーム最新の状態をAnimatorに送信
-        UpdateAnimationParameters();
-
+        UpdateAnimationParameters(rb.velocity);
         // 足音の再生コントロール
         HandleWalkSound();
 
+        bool groundStateChanged = isGrounded != anim.GetBool("isGround");
+
         if (Vector2.Distance(transform.position, lastPosition) > 0.01f)
         {
-            SendPlayerData(transform.position);
+            SendPlayerData(transform.position, isGrounded);
             lastPosition = transform.position; // 記録を更新
         }
     }
@@ -185,17 +213,29 @@ public class PlayerController : MonoBehaviour
     {
         float moveInput = 0f;
 
-        // ★キーボードの入力を加算
+        // キーボードの入力を加算
         if (useKeyboard)
         {
             if (Input.GetKey(leftKey)) moveInput -= 1f;
             if (Input.GetKey(rightKey)) moveInput += 1f;
         }
 
-        // ★ゲームパッドの入力を加算 (両方ONならスティックもキーボードも両方効きます)
+        // ゲームパッドの入力を加算 (両方ONならスティックもキーボードも両方効きます)
         if (useGamepad && controls != null)
         {
-            moveInput += controls.Player.Move.ReadValue<float>();
+            float gamepadInput = controls.Player.Move.ReadValue<float>();
+
+            // デッドゾーン（遊び）の設定: スティックの傾きが 0.2 未満なら完全に 0 にする
+            if (Mathf.Abs(gamepadInput) < 0.2f)
+            {
+                gamepadInput = 0f;
+            }
+
+            // キーボード入力がなければ、ゲームパッドの入力をそのまま採用する
+            if (moveInput == 0f)
+            {
+                moveInput = gamepadInput;
+            }
         }
 
         moveInput = Mathf.Clamp(moveInput, -1f, 1f);
@@ -209,14 +249,23 @@ public class PlayerController : MonoBehaviour
         // 左右の速度を設定（y軸は現在の物理挙動を維持）
         rb.velocity = new Vector2(moveInput * currentSpeed, rb.velocity.y);
 
-        // 進行方向（入力値）に合わせてスプライトを左右反転する
+
+        if (Mathf.Abs(moveInput) < 0.01f)
+        {
+            rb.velocity = new Vector2(0f, rb.velocity.y);
+        }
+        else
+        {
+            rb.velocity = new Vector2(moveInput * currentSpeed, rb.velocity.y);
+        }
+
         if (moveInput > 0.1f)
         {
-            spriteRenderer.flipX = false; // 右を向く
+            spriteRenderer.flipX = false;
         }
         else if (moveInput < -0.1f)
         {
-            spriteRenderer.flipX = true;  // 左を向く
+            spriteRenderer.flipX = true;
         }
     }
 
@@ -238,7 +287,7 @@ public class PlayerController : MonoBehaviour
         // 上方向に瞬間的な力を加える
         rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
 
-        // ★ジャンプ音を再生（他の音をぶった切って最優先で鳴らす）
+        // ジャンプ音を再生（他の音をぶった切って最優先で鳴らす）
         if (jumpSound != null)
         {
             audioSource.PlayOneShot(jumpSound);
@@ -295,7 +344,7 @@ public class PlayerController : MonoBehaviour
             projectileScript.Initialize(direction, element);
         }
 
-        // ★射撃音を再生（移動の足音などと重なっても綺麗に鳴るPlayOneShot）
+        // 射撃音を再生（移動の足音などと重なっても綺麗に鳴るPlayOneShot）
         if (shootSound != null)
         {
             audioSource.PlayOneShot(shootSound);
@@ -336,21 +385,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // Animatorのパラメーターに物理速度ベースで数値を書き込む処理
-    private void UpdateAnimationParameters()
-    {
-        if (anim == null) return;
-
-        // 現在の Rigidbody2D の「実際の物理的な移動速度」をベースにアニメーションを切り替える
-        float currentHorizontalSpeed = Mathf.Abs(rb.velocity.x);
-        anim.SetFloat("Speed", currentHorizontalSpeed);
-
-        // Animatorウインドウの設定名に合わせて「isGrounded」から「isGround」に変更
-        anim.SetBool("isGround", isGrounded);
-
-        // 物理演算のリアルタイムな縦方向の速度を送る
-        anim.SetFloat("yVelocity", rb.velocity.y);
-    }
+   
 
     // 衝突開始時の判定
     private void OnCollisionEnter2D(Collision2D collision) => CheckContact(collision, true);
@@ -376,6 +411,11 @@ public class PlayerController : MonoBehaviour
                     if (contact.normal.y >= minGroundAngleY)
                     {
                         isGrounded = true;
+
+                        if (IsLocalPlayer)
+                        {
+                            SendPlayerData(transform.position, true);
+                        }
                         break;
                     }
                 }
@@ -383,6 +423,11 @@ public class PlayerController : MonoBehaviour
             else // 離れた（Exit）とき
             {
                 isGrounded = false;
+
+                if (IsLocalPlayer)
+                {
+                    SendPlayerData(transform.position, false);
+                }
             }
         }
 
@@ -393,7 +438,7 @@ public class PlayerController : MonoBehaviour
     private void OnCollisionStay2D(Collision2D collision) => CheckContact(collision, true);
 
     // プレイヤーの位置を送る
-    async void SendPlayerData(Vector3 pos)
+    async void SendPlayerData(Vector3 pos, bool groundedStatus)
     {
         if (networkManager == null) return;
 
@@ -415,6 +460,8 @@ public class PlayerController : MonoBehaviour
 
         playerData.is_flip_x = spriteRenderer.flipX;
 
+        playerData.IsGrounded = groundedStatus;
+
         var jsonMsg = JsonUtility.ToJson(playerData);
         await networkManager.SendMessageAsync(jsonMsg);
     }
@@ -435,5 +482,33 @@ public class PlayerController : MonoBehaviour
 
         string json = JsonUtility.ToJson(spawnData);
         await networkManager.SendMessageAsync(json);
+    }
+
+    private void UpdateAnimationParameters(Vector2 velocity)
+    {
+        if (anim == null) return;
+
+        float currentHorizontalSpeed = Mathf.Abs(velocity.x);
+        anim.SetFloat("Speed", currentHorizontalSpeed);
+        anim.SetBool("isGround", isGrounded);
+        anim.SetFloat("yVelocity", velocity.y);
+    }
+
+    // リモートプレイヤー用のアニメーション更新
+    private void UpdateAnimationParametersForRemote(Vector2 simulatedVelocity, bool remoteIsGrounded)
+    {
+        if (anim == null) return;
+
+        float currentHorizontalSpeed = Mathf.Abs(simulatedVelocity.x);
+
+        // Lerp移動による細かなガタつき（微小な移動速度）をカット
+        if (currentHorizontalSpeed < 0.2f) currentHorizontalSpeed = 0f;
+
+        anim.SetFloat("Speed", currentHorizontalSpeed);
+
+        // 通信から直接受け取った正確な接地状態をアニメーターに流し込む
+        anim.SetBool("isGround", remoteIsGrounded);
+
+        anim.SetFloat("yVelocity", simulatedVelocity.y);
     }
 }

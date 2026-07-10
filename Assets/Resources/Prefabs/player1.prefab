@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6531576138833918489}
   - component: {fileID: 5989466459067099210}
   - component: {fileID: 4145834035473696869}
-  - component: {fileID: 2352545061191185871}
+  - component: {fileID: 2510312004548577371}
   m_Layer: 6
   m_Name: player1
   m_TagString: Untagged
@@ -128,8 +128,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25e6c112875cde8489f3b95a58c86ed0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useKeyboard: 1
-  useGamepad: 0
+  useKeyboard: 0
+  useGamepad: 1
+  playerNumber: 1
   element: 0
   moveSpeed: 5
   pushSpeedMultiplier: 0.5
@@ -264,8 +265,8 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!58 &2352545061191185871
-CircleCollider2D:
+--- !u!61 &2510312004548577371
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -296,6 +297,16 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.03529104}
+  m_Offset: {x: 0.0027207136, y: -0.0807713}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 2, y: 2}
+    newSize: {x: 2, y: 2}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
   serializedVersion: 2
-  m_Radius: 0.5141824
+  m_Size: {x: 1.0260031, y: 0.93747896}
+  m_EdgeRadius: 0

@@ -15,13 +15,13 @@ public class ObjectOnlineCommunication : MonoBehaviour
 
     public Dictionary<int, NetworkIdentity2D> syncObjects = new Dictionary<int, NetworkIdentity2D>();
 
-    // ★修正：void Start() から IEnumerator Start() に変更
+    // void Start() から IEnumerator Start() に変更
     IEnumerator Start()
     {
         // 1フレームだけ待つことで、カメラ側の初期化を確実に終わらせる
         yield return null;
 
-        // --- 修正：NetworkManager がある場合（オンラインプレイ時） ---
+        // NetworkManager がある場合
         if (NetworkManager.Instance != null)
         {
             int myColorIndex = NetworkManager.Instance.myRealSelectedChar;
@@ -33,19 +33,19 @@ public class ObjectOnlineCommunication : MonoBehaviour
 
             if (myColorIndex == 0)
             {
-                myStartPos = Vector3.zero;
-                opponentStartPos = new Vector3(2f, -1.5f, 0f);
+                myStartPos = new Vector3(-10f, -1.5f, 0f);
+                opponentStartPos = new Vector3(-7f, -1.5f, 0f);
             }
             else
             {
-                myStartPos = new Vector3(2f, -1.5f, 0f);
-                opponentStartPos = Vector3.zero;
+                myStartPos = new Vector3(-7f, -1.5f, 0f);
+                opponentStartPos = new Vector3(-10f, -1.5f, 0f);
             }
 
             CreatePlayer(myColorIndex, myStartPos, true);
             CreatePlayer(opponentColorIndex, opponentStartPos, false);
         }
-        // --- ★追加：NetworkManager がない場合（デバッグ・テストプレイ時） ---
+        // NetworkManager がない場合
         else
         {
             Debug.LogWarning("[警告] NetworkManager が見つかりません。テスト用として赤スライムをローカルプレイヤーとして生成します。");
@@ -80,19 +80,8 @@ public class ObjectOnlineCommunication : MonoBehaviour
         // ========================================================
         // 自分が動かすキャラ（ローカルプレイヤー）だった場合、カメラに追従させる
         // ========================================================
-        if (isLocal)
-        {
-            CameraFollow2D cameraScript = FindObjectOfType<CameraFollow2D>();
-            if (cameraScript != null)
-            {
-                cameraScript.SetupTarget(player.transform);
-                Debug.Log($"[カメラ連携完了] 生成されたローカルプレイヤー(Index:{charaindex})をカメラターゲットに設定しました。");
-            }
-            else
-            {
-                Debug.LogError("[カメラ連携失敗] シーン内に CameraFollow2D が見つかりません！");
-            }
-        }
+        
+       
 
         if (!isLocal)
         {
@@ -112,24 +101,7 @@ public class ObjectOnlineCommunication : MonoBehaviour
             }
         }
 
-        CameraFollow2D cameraFollow = FindFirstObjectByType<CameraFollow2D>();
-        if (cameraFollow != null)
-        {
-            // カメラ側の player1, player2 の割り当てルールに合わせる
-            // ローカル（自分）なら myPlayerIndex、リモート（相手）ならその逆を割り当てる
-            int assignedCameraIndex = 0;
-            if (isLocal)
-            {
-                assignedCameraIndex = NetworkManager.Instance.myPlayerIndex;
-            }
-            else
-            {
-                assignedCameraIndex = (NetworkManager.Instance.myPlayerIndex == 0) ? 1 : 0;
-            }
-
-            // カメラに生成したプレイヤーのTransformを直接登録！
-            cameraFollow.AssignPlayer(assignedCameraIndex, player.transform);
-        }
+        
     }
 
     public void HandleWebSocketMessage(string msg)
@@ -194,6 +166,8 @@ public class ObjectOnlineCommunication : MonoBehaviour
             if (controller != null)
             {
                 controller.TargetPosition = targetPos;
+
+                controller.isGrounded = data.IsGrounded;
             }
 
             var remoteSprite = remotePlayerObj.GetComponent<SpriteRenderer>();
@@ -229,8 +203,26 @@ public class ObjectOnlineCommunication : MonoBehaviour
                     projectileScript.Initialize(direction, bulletElement);
                 }
 
-                Debug.Log("[イベント生成完了] 相手が撃った弾をローカルで発射しました。");
+                if (players != null && players.ContainsKey(bulletType))
+                {
+                    GameObject remotePlayerObj = players[bulletType];
+                    if (remotePlayerObj != null)
+                    {
+                        PlayerController pc = remotePlayerObj.GetComponent<PlayerController>();
+
+                        // 自分ではないキャラクターの時だけアニメーションを実行
+                        if (pc != null && !pc.IsLocalPlayer)
+                        {
+                            Animator remoteAnim = pc.GetComponent<Animator>();
+                            if (remoteAnim != null)
+                            {
+                                remoteAnim.SetTrigger("Attack"); //  相手のアニメーションを直接再生！
+                            }
+                        }
+                    }
+                }
             }
+
             return;
         }
 

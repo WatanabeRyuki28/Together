@@ -10,6 +10,11 @@ public class SaveManager : MonoBehaviour
 
     private string filePath;
 
+
+    void Start()
+    {
+        ResetSaveData();
+    }
     private void Awake()
     {
         if (Instance == null)
@@ -75,4 +80,23 @@ public class SaveManager : MonoBehaviour
             Debug.Log($"セーブデータにアイテムを追加しました: {itemId}");
         }
     }
+
+    public void ResetSaveData()
+    {
+        // データを消す
+        CurrentSaveData = new SaveData();
+
+        // もし保存されたファイルが存在するなら削除する
+        if (File.Exists(filePath))
+        {
+            File.Delete(filePath);
+            Debug.Log($"セーブファイルを削除し、初期化しました: {filePath}");
+        }
+        else
+        {
+            Debug.Log("セーブファイルが存在しないため、メモリ内のみ初期化しました。");
+        }
+
+    }
+
 }
