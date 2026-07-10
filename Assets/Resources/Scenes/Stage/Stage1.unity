@@ -402,6 +402,10 @@ MonoBehaviour:
   smoothTimeY: 0.35
   lookAheadFactorX: 2
   lookAheadMoveSpeedX: 3
+  offsetY_Up: 2
+  offsetY_Down: -1
+  offsetChangeSpeed: 2
+  fallThresholdY: 1.5
   minX: -3
   maxX: 10.5
   minY: 2
