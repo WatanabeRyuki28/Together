@@ -71,7 +71,13 @@ public class StageManager : MonoBehaviour
         // 初期カーソル位置の更新
         UpdateCursorPosition();
 
-        // ★各ステージのアイテム獲得状況をロードしてUIに反映する
+        // ★セーブファイルから前回の確定セーブ状態をロードし直し、同期をリセットする
+        if (SaveManager.Instance != null)
+        {
+            SaveManager.Instance.LoadGame();
+        }
+
+        // 各ステージのアイテム獲得状況をロードしてUIに反映する
         UpdateItemIconsDisplay();
 
         // ホストなら初期位置をゲストに共有
