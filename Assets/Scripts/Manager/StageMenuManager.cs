@@ -65,9 +65,14 @@ public class StageMenuManager : MonoBehaviour
     // マジックナンバー回避のためのキー定数
     private const string ItemIdPrefix = "Stage_";
 
+    [SerializeField] private GameObject panel;
+    [SerializeField] private GameObject Image;
+    [SerializeField] private Text stageNameText;
+
+
     private void Awake()
     {
-        // ★修正：次のステージへ遷移した際、古いステージのインスタンスの残骸を確実に破棄し、
+        // 次のステージへ遷移した際、古いステージのインスタンスの残骸を確実に破棄し、
         // 常に新ステージのManagerが正しく新しいInstanceとして上書きされるようにする
         if (Instance != null && Instance != this)
         {
@@ -86,6 +91,25 @@ public class StageMenuManager : MonoBehaviour
 
         // 新しいステージに合わせて星表示をクリーンアップ＆リセットする
         InitializeStageStarDisplay();
+
+      
+
+        if (stageNameText != null)
+        {
+            // まずテキストオブジェクトを確実に表示する
+            stageNameText.gameObject.SetActive(true);
+            Image.SetActive(true);
+            panel.SetActive(true);
+
+            if (stageNameText != null)
+            {
+                stageNameText.gameObject.SetActive(true);
+                StartCoroutine(AnimateStageNameRoutine());
+            }
+            // 3秒待って消す魔法（コルーチン）を呼び出す
+            StartCoroutine(HideStageNameAfterDelay(3f));
+        }
+
     }
 
     private void Update()
@@ -133,7 +157,50 @@ public class StageMenuManager : MonoBehaviour
             }
         }
     }
+    private IEnumerator HideStageNameAfterDelay(float delay)
+    {
+        // ゲーム中の一時停止（Time.timeScale = 0）の影響を受けずに、現実世界の時間で3秒待つ
+        yield return new WaitForSeconds(delay);
 
+        if (stageNameText != null)
+        {
+            stageNameText.gameObject.SetActive(false); // 3秒経ったら非表示にする
+            Image.SetActive(false);
+            panel.SetActive(false);
+        }
+    }
+
+    // テキストアニメーション
+    private IEnumerator AnimateStageNameRoutine()
+    {
+        int displayStageNumber = currentStageStageIndex + 1;
+        string baseText = $"ステージ {displayStageNumber}"; // ベースとなる文字
+
+        float duration = 3f;      // 全体で表示しておく時間
+        float interval = 0.3f;    // 「.」が増える文字更新の間隔
+        float elapsedTime = 0f;   // 経過時間
+        int dotCount = 0;         // 現在のドットの数 
+
+        // 3秒間が経過するまでループを繰り返す
+        while (elapsedTime < duration)
+        {
+            // ドットの数に応じたテキストを作る
+            
+            string dots = new string('.', dotCount);
+            stageNameText.text = baseText + dots;
+
+            // 0.5秒待つ（ポーズ中もカウントが進むようにRealtimeにしています）
+            yield return new WaitForSecondsRealtime(interval);
+            elapsedTime += interval;
+
+           
+            dotCount = (dotCount + 1) % 4;
+        }
+
+        // 3秒経ったらテキストオブジェクトごと非表示にする
+        stageNameText.gameObject.SetActive(false);
+        Debug.Log("3秒間のアニメーションが終了したため、テキストを非表示にしました。");
+    }
     private void InitializeStageStarDisplay()
     {
         if (starUIPanel == null) return;
@@ -178,7 +245,7 @@ public class StageMenuManager : MonoBehaviour
         }
     }
 
-    // ★修正：星を取った時点ではファイル保存(SaveGame)は走らせず、メモリ(List)に一時キープのみにする
+    // 星を取った時点ではファイル保存(SaveGame)は走らせず、メモリ(List)に一時キープのみにする
     public void AddStar()
     {
         if (starUIPanel == null || starIconPrefab == null) return;

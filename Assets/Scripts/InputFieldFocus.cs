@@ -87,6 +87,9 @@ public class InputFieldFocus : MonoBehaviour
     public GameObject ChangeLaugauge;
 
 
+    [SerializeField] private GameObject lobbyPanel;
+
+
     void Start()
     {
         globalVolume.profile.TryGet(out depthOfField);
@@ -584,8 +587,13 @@ public class InputFieldFocus : MonoBehaviour
 
     public void OpenNameKeyboard()
     {
+        if (lobbyPanel != null && lobbyPanel.activeSelf) return;
+
         if (menuCanvas)
         {
+
+      
+
             currentTargetInputField = NameInputField;
 
             currentX = 11;
@@ -605,6 +613,8 @@ public class InputFieldFocus : MonoBehaviour
 
     public void OpenRoomKeyboard()
     {
+        if (lobbyPanel != null && lobbyPanel.activeSelf) return;
+
         if (menuCanvas)
         {
             currentTargetInputField = RoomInputField;
@@ -632,8 +642,12 @@ public class InputFieldFocus : MonoBehaviour
         
 
         InitializeKeyboardGrid();
+        if (controls == null)
+        {
+            controls = new CommunicationUI();
+        }
 
-        controls = new CommunicationUI();
+        controls.UI.Disable();
         controls.Keyboard.Enable();
 
         controls.UI.Disable();
@@ -714,11 +728,15 @@ public class InputFieldFocus : MonoBehaviour
         {
             controls.Keyboard.Move.started -= OnKeyboardMove;
             controls.Keyboard.Move.canceled -= OnKeyboardMoveCancel;
+
+
+
+            controls.Keyboard.Submit.performed  -= OnKeyboardSubmit;
+            controls.Keyboard.Submit.started    -= OnKeyboardSubmitCancel;
+            controls.Keyboard.Submit.canceled   -= OnKeyboardSubmitCancel;
+
             controls.Keyboard.Disable();
             controls = null;
-
-            controls.Keyboard.Submit.started -= OnKeyboardSubmit;
-            controls.Keyboard.Submit.canceled -= OnKeyboardSubmitCancel;
         }
         currentKeyboardInput = Vector2.zero;
     }
@@ -735,11 +753,13 @@ public class InputFieldFocus : MonoBehaviour
         {
             controls.Keyboard.Move.started -= OnKeyboardMove;
             controls.Keyboard.Move.canceled -= OnKeyboardMoveCancel;
+
+            controls.Keyboard.Submit.performed -= OnKeyboardSubmit;
+            controls.Keyboard.Submit.started -= OnKeyboardSubmitCancel;
+            controls.Keyboard.Submit.canceled -= OnKeyboardSubmitCancel;
+
             controls.Keyboard.Disable();
             controls = null;
-
-            controls.Keyboard.Submit.started -= OnKeyboardSubmit;
-            controls.Keyboard.Submit.canceled -= OnKeyboardSubmitCancel;
         }
     }
 

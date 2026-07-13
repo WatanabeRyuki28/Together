@@ -28437,6 +28437,7 @@ MonoBehaviour:
   N: {fileID: 1340169696}
   R: {fileID: 1905093613}
   ChangeLaugauge: {fileID: 1003438317}
+  lobbyPanel: {fileID: 34074002}
 --- !u!114 &1020977958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34554,7 +34555,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_FirstSelected: {fileID: 530461062}
+  m_FirstSelected: {fileID: 0}
   m_sendNavigationEvents: 1
   m_DragThreshold: 10
 --- !u!4 &1298181972
@@ -34592,7 +34593,7 @@ MonoBehaviour:
   m_PointAction: {fileID: -1654692200621890270, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
   m_MoveAction: {fileID: 2447834662773544365, guid: edcb9ec83ab532d4c96ac3a000bdc19d, type: 3}
   m_SubmitAction: {fileID: -683746144910669972, guid: edcb9ec83ab532d4c96ac3a000bdc19d, type: 3}
-  m_CancelAction: {fileID: 7727032971491509709, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_CancelAction: {fileID: 1576467797154830702, guid: edcb9ec83ab532d4c96ac3a000bdc19d, type: 3}
   m_LeftClickAction: {fileID: 3001919216989983466, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
   m_MiddleClickAction: {fileID: -2185481485913320682, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
   m_RightClickAction: {fileID: -4090225696740746782, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}

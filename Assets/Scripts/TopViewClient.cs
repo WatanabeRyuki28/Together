@@ -10,6 +10,8 @@ public class TopViewClient : MonoBehaviour
     [SerializeField] InputField inputPlayerName;
     [SerializeField] InputField inputRoomId;
 
+
+
     public GameObject InputPanel;
     public GameObject LobbyPanel;
 
@@ -33,31 +35,44 @@ public class TopViewClient : MonoBehaviour
         GestText.SetActive(false);
         Startflag = false;
         controls = new CommunicationUI();
+
         controls.UI.Enable();
     }
     void Update()
     {
 
-        if (controls != null && controls.UI.enabled && controls.UI.Match.triggered && !LobbyPanel.activeSelf)
+        
+
+        GameObject keyboardMenu = GameObject.Find("CanvasKeyborad");
+        if (keyboardMenu != null && keyboardMenu.activeSelf)
         {
-            if (InputPanel != null && InputPanel.activeSelf )
+            return;
+        }
+
+        if (controls.UI.Match.triggered)
+        {
+            if (InputPanel != null && InputPanel.activeSelf && !LobbyPanel.activeSelf)
             {
-                Debug.Log("【通信UI】Match（North）ボタン検知：Joinを実行します");
+                Debug.Log("-> PushJoinButtonを実行します");
                 PushJoinButton();
             }
         }
-        if (controls != null && controls.UI.Cansel.triggered)
+
+        if (controls.UI.Cansel.triggered)
         {
             if (LobbyPanel != null && LobbyPanel.activeSelf)
             {
+                Debug.Log("-> DeleteDataButtonを実行します");
                 DeleteDataButton();
             }
         }
-        if (controls != null && controls.UI.GameStart.triggered)
-        {
-            if (LobbyPanel != null && LobbyPanel.activeSelf&& Startflag == true )
-            {
 
+        // 4. GameStart（Xボタン）の処理
+        if (controls.UI.GameStart.triggered)
+        {
+            if (LobbyPanel != null && LobbyPanel.activeSelf && Startflag == true)
+            {
+                Debug.Log("-> SendPlayerDataを実行します");
                 SendPlayerData();
             }
         }

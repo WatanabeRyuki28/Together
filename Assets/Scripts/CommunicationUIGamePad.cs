@@ -70,7 +70,8 @@ public class CommunicationUIGamePad : MonoBehaviour
         if (uiButtons.Length == 0 || !gameObject.activeInHierarchy || controls == null) return;
 
 
-        if (keyboardMenuCanvas != null && keyboardMenuCanvas.activeSelf)
+        GameObject lobbyPanel = GameObject.Find("LobbyPanel");
+        if ((keyboardMenuCanvas != null && keyboardMenuCanvas.activeSelf) || (lobbyPanel != null && lobbyPanel.activeSelf))
         {
             isHolding = false;
             moveTimer = 0f;
@@ -112,10 +113,12 @@ public class CommunicationUIGamePad : MonoBehaviour
     // 決定ボタンが押されたとき
     public void OnSubmit(InputAction.CallbackContext context)
     {
+        if (!context.performed) return;
+
         if (keyboardMenuCanvas != null && keyboardMenuCanvas.activeSelf) return;
 
-        // 入力が完全に成立した1フレーム(performed)だけ処理を通すガード
-        if (!context.performed) return;
+        GameObject lobbyPanel = GameObject.Find("LobbyPanel");
+        if (lobbyPanel != null && lobbyPanel.activeSelf) return;
 
         if (uiButtons.Length == 0 || uiButtons[currentSelectedIndex] == null) return;
 
