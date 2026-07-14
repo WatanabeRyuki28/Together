@@ -298,7 +298,7 @@ MonoBehaviour:
   offsetChangeSpeed: 2
   fallThresholdY: 1.5
   minX: -2.4
-  maxX: 40
+  maxX: 40.4
   minY: 2
   maxY: 30
 --- !u!1001 &181074033
@@ -3355,6 +3355,22 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e1b1ace89aaf44147bf0b482ada14885, type: 3}
+--- !u!1 &357794051 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2084153858432741409, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1746665922}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &362039073 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4675478934570379441, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1746665922}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &375630182
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16279,6 +16295,9 @@ MonoBehaviour:
   confirmationButtons:
   - {fileID: 753409082}
   - {fileID: 1165254606}
+  panel: {fileID: 357794051}
+  Image: {fileID: 917094050}
+  stageNameText: {fileID: 362039073}
 --- !u!1001 &846994241
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16393,6 +16412,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5603f73fdf16d3f49852d2a0c4bd6952, type: 3}
+--- !u!1 &917094050 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8373884344215466822, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1746665922}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &950724901
 GameObject:
   m_ObjectHideFlags: 0
@@ -16997,6 +17021,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: CancelExit
       objectReference: {fileID: 0}
+    - target: {fileID: 2084153858432741409, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4790488398940560249, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -17115,6 +17143,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8269753767565732256, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8373884344215466822, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

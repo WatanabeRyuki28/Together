@@ -150,6 +150,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: CancelExit
       objectReference: {fileID: 0}
+    - target: {fileID: 2084153858432741409, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4790488398940560249, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -272,6 +276,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8269753767565732256, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8373884344215466822, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -14127,6 +14135,27 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!114 &805659838 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4675478934570379441, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 158643904}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &805659839 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8373884344215466822, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 158643904}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &805659840 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2084153858432741409, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 158643904}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &929587771
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14409,6 +14438,9 @@ MonoBehaviour:
   confirmationButtons:
   - {fileID: 158643905}
   - {fileID: 158643908}
+  panel: {fileID: 805659840}
+  Image: {fileID: 805659839}
+  stageNameText: {fileID: 805659838}
 --- !u!4 &2070368484
 Transform:
   m_ObjectHideFlags: 0
