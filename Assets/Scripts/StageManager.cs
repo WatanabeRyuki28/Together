@@ -12,17 +12,17 @@ public class StageManager : MonoBehaviour
     [Header("ホストの選択枠（カーソル画像や太枠）")]
     [SerializeField] private RectTransform selectionCursor;
 
-    public GameObject confirmButton; // ホストの画面にだけ出る「開始」ボタン
+  
 
     [Header("アイテム表示用の設定")]
-    // ★ Image[] から SpriteRenderer[] に修正
+    //  Image[] から SpriteRenderer[] に修正
     [SerializeField] private SpriteRenderer[] itemIcons;
 
-    // ★追加：星の画像をインスペクターから登録できるようにする
+    // 星の画像をインスペクターから登録できるようにする
     [SerializeField] private Sprite obtainedStarSprite; // 獲得済みの星（黄色の星など）
     [SerializeField] private Sprite missingStarSprite;  // 未獲得の星（白い星など）
 
-    // ★修正：ヒエラルキーのオブジェクト名に合わせて「StarItem」に変更
+    // ヒエラルキーのオブジェクト名に合わせて「StarItem」に変更
     private const string StarObjectName = "StarItem";
 
     // マジックナンバーを避けるため、アイテムIDのベース名を定義
@@ -62,16 +62,12 @@ public class StageManager : MonoBehaviour
     {
         CheckHost();
 
-        // 起動時は開始ボタンを非表示にする
-        if (confirmButton != null)
-        {
-            confirmButton.SetActive(false);
-        }
+        
 
         // 初期カーソル位置の更新
         UpdateCursorPosition();
 
-        // ★セーブファイルから前回の確定セーブ状態をロードし直し、同期をリセットする
+        // セーブファイルから前回の確定セーブ状態をロードし直し、同期をリセットする
         if (SaveManager.Instance != null)
         {
             SaveManager.Instance.LoadGame();
@@ -134,8 +130,7 @@ public class StageManager : MonoBehaviour
         {
             UpdateCursorPosition();
 
-            // ホストの画面にも「開始」ボタンを出してあげる
-            if (confirmButton != null) confirmButton.SetActive(true);
+            
 
             // ゲストへ同期送信
             SendStageSelectNotification(currentStageIndex, false);
@@ -221,7 +216,7 @@ public class StageManager : MonoBehaviour
         }
     }
 
-    // ★追加：ボタンの奥深い子階層から名前でオブジェクトを検索するヘルパー関数
+    // ボタンの奥深い子階層から名前でオブジェクトを検索するヘルパー関数
     private Transform FindChildRecursive(Transform parent, string name)
     {
         foreach (Transform child in parent)

@@ -493,6 +493,15 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Menu"",
+                    ""type"": ""Button"",
+                    ""id"": ""cf48efb0-8b52-47f2-91e3-5cd5054dcd1f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -548,6 +557,17 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Tama"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""990bcf98-d8a2-41fe-8b49-c3290d3733b2"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Menu"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -648,6 +668,146 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""SecondMenu"",
+            ""id"": ""8b0bf378-acfc-4875-bf66-97141c984859"",
+            ""actions"": [
+                {
+                    ""name"": ""Maps"",
+                    ""type"": ""Value"",
+                    ""id"": ""8700a4a7-b186-42cb-bcde-930bada38dc4"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Submit"",
+                    ""type"": ""Button"",
+                    ""id"": ""24dcd1df-28cd-4940-8d12-ee6626688acb"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": ""Navigate"",
+                    ""id"": ""5634f181-62af-46c7-81e3-884fe4b00f0c"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Maps"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""02d07f2f-5abb-4da0-bbe0-7eaa6092a3fb"",
+                    ""path"": ""<Gamepad>/leftStick/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Maps"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""bb295e13-62b8-4915-a4e0-be58f4ade1d0"",
+                    ""path"": ""<Gamepad>/leftStick/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Maps"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c298a495-3bf3-48d5-b23b-8ca0b70ff781"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Submit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""FinalMenu"",
+            ""id"": ""ebe05352-d39e-4b9f-9aac-1597e33499b5"",
+            ""actions"": [
+                {
+                    ""name"": ""Maps"",
+                    ""type"": ""Value"",
+                    ""id"": ""8d7258d5-dedc-41fa-ab50-88af5929da63"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Submit"",
+                    ""type"": ""Button"",
+                    ""id"": ""345e6977-38db-481e-96d8-14ea6d49347a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""9ce3944f-c009-4d69-a521-bdd7f70e8ac3"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Submit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Navigate"",
+                    ""id"": ""5e8293dd-b73e-4957-82f6-b3a119b59ebb"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Maps"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""f8690b89-338c-4b03-98d4-e16a5e5094c5"",
+                    ""path"": ""<Gamepad>/leftStick/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Maps"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""17dfd562-8429-4660-bfe5-3ccbef183fc6"",
+                    ""path"": ""<Gamepad>/leftStick/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Maps"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -681,6 +841,7 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Tama = m_Player.FindAction("Tama", throwIfNotFound: true);
+        m_Player_Menu = m_Player.FindAction("Menu", throwIfNotFound: true);
         // GameClear
         m_GameClear = asset.FindActionMap("GameClear", throwIfNotFound: true);
         m_GameClear_Up = m_GameClear.FindAction("Up", throwIfNotFound: true);
@@ -689,6 +850,14 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
         // Tital
         m_Tital = asset.FindActionMap("Tital", throwIfNotFound: true);
         m_Tital_Submit = m_Tital.FindAction("Submit", throwIfNotFound: true);
+        // SecondMenu
+        m_SecondMenu = asset.FindActionMap("SecondMenu", throwIfNotFound: true);
+        m_SecondMenu_Maps = m_SecondMenu.FindAction("Maps", throwIfNotFound: true);
+        m_SecondMenu_Submit = m_SecondMenu.FindAction("Submit", throwIfNotFound: true);
+        // FinalMenu
+        m_FinalMenu = asset.FindActionMap("FinalMenu", throwIfNotFound: true);
+        m_FinalMenu_Maps = m_FinalMenu.FindAction("Maps", throwIfNotFound: true);
+        m_FinalMenu_Submit = m_FinalMenu.FindAction("Submit", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1033,6 +1202,7 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Tama;
+    private readonly InputAction m_Player_Menu;
     public struct PlayerActions
     {
         private @CommunicationUI m_Wrapper;
@@ -1040,6 +1210,7 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
         public InputAction @Move => m_Wrapper.m_Player_Move;
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @Tama => m_Wrapper.m_Player_Tama;
+        public InputAction @Menu => m_Wrapper.m_Player_Menu;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1058,6 +1229,9 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
             @Tama.started += instance.OnTama;
             @Tama.performed += instance.OnTama;
             @Tama.canceled += instance.OnTama;
+            @Menu.started += instance.OnMenu;
+            @Menu.performed += instance.OnMenu;
+            @Menu.canceled += instance.OnMenu;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1071,6 +1245,9 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
             @Tama.started -= instance.OnTama;
             @Tama.performed -= instance.OnTama;
             @Tama.canceled -= instance.OnTama;
+            @Menu.started -= instance.OnMenu;
+            @Menu.performed -= instance.OnMenu;
+            @Menu.canceled -= instance.OnMenu;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1196,6 +1373,114 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
         }
     }
     public TitalActions @Tital => new TitalActions(this);
+
+    // SecondMenu
+    private readonly InputActionMap m_SecondMenu;
+    private List<ISecondMenuActions> m_SecondMenuActionsCallbackInterfaces = new List<ISecondMenuActions>();
+    private readonly InputAction m_SecondMenu_Maps;
+    private readonly InputAction m_SecondMenu_Submit;
+    public struct SecondMenuActions
+    {
+        private @CommunicationUI m_Wrapper;
+        public SecondMenuActions(@CommunicationUI wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Maps => m_Wrapper.m_SecondMenu_Maps;
+        public InputAction @Submit => m_Wrapper.m_SecondMenu_Submit;
+        public InputActionMap Get() { return m_Wrapper.m_SecondMenu; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(SecondMenuActions set) { return set.Get(); }
+        public void AddCallbacks(ISecondMenuActions instance)
+        {
+            if (instance == null || m_Wrapper.m_SecondMenuActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_SecondMenuActionsCallbackInterfaces.Add(instance);
+            @Maps.started += instance.OnMaps;
+            @Maps.performed += instance.OnMaps;
+            @Maps.canceled += instance.OnMaps;
+            @Submit.started += instance.OnSubmit;
+            @Submit.performed += instance.OnSubmit;
+            @Submit.canceled += instance.OnSubmit;
+        }
+
+        private void UnregisterCallbacks(ISecondMenuActions instance)
+        {
+            @Maps.started -= instance.OnMaps;
+            @Maps.performed -= instance.OnMaps;
+            @Maps.canceled -= instance.OnMaps;
+            @Submit.started -= instance.OnSubmit;
+            @Submit.performed -= instance.OnSubmit;
+            @Submit.canceled -= instance.OnSubmit;
+        }
+
+        public void RemoveCallbacks(ISecondMenuActions instance)
+        {
+            if (m_Wrapper.m_SecondMenuActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(ISecondMenuActions instance)
+        {
+            foreach (var item in m_Wrapper.m_SecondMenuActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_SecondMenuActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public SecondMenuActions @SecondMenu => new SecondMenuActions(this);
+
+    // FinalMenu
+    private readonly InputActionMap m_FinalMenu;
+    private List<IFinalMenuActions> m_FinalMenuActionsCallbackInterfaces = new List<IFinalMenuActions>();
+    private readonly InputAction m_FinalMenu_Maps;
+    private readonly InputAction m_FinalMenu_Submit;
+    public struct FinalMenuActions
+    {
+        private @CommunicationUI m_Wrapper;
+        public FinalMenuActions(@CommunicationUI wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Maps => m_Wrapper.m_FinalMenu_Maps;
+        public InputAction @Submit => m_Wrapper.m_FinalMenu_Submit;
+        public InputActionMap Get() { return m_Wrapper.m_FinalMenu; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(FinalMenuActions set) { return set.Get(); }
+        public void AddCallbacks(IFinalMenuActions instance)
+        {
+            if (instance == null || m_Wrapper.m_FinalMenuActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_FinalMenuActionsCallbackInterfaces.Add(instance);
+            @Maps.started += instance.OnMaps;
+            @Maps.performed += instance.OnMaps;
+            @Maps.canceled += instance.OnMaps;
+            @Submit.started += instance.OnSubmit;
+            @Submit.performed += instance.OnSubmit;
+            @Submit.canceled += instance.OnSubmit;
+        }
+
+        private void UnregisterCallbacks(IFinalMenuActions instance)
+        {
+            @Maps.started -= instance.OnMaps;
+            @Maps.performed -= instance.OnMaps;
+            @Maps.canceled -= instance.OnMaps;
+            @Submit.started -= instance.OnSubmit;
+            @Submit.performed -= instance.OnSubmit;
+            @Submit.canceled -= instance.OnSubmit;
+        }
+
+        public void RemoveCallbacks(IFinalMenuActions instance)
+        {
+            if (m_Wrapper.m_FinalMenuActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IFinalMenuActions instance)
+        {
+            foreach (var item in m_Wrapper.m_FinalMenuActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_FinalMenuActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public FinalMenuActions @FinalMenu => new FinalMenuActions(this);
     public interface IUIActions
     {
         void OnMove(InputAction.CallbackContext context);
@@ -1229,6 +1514,7 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnTama(InputAction.CallbackContext context);
+        void OnMenu(InputAction.CallbackContext context);
     }
     public interface IGameClearActions
     {
@@ -1238,6 +1524,16 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
     }
     public interface ITitalActions
     {
+        void OnSubmit(InputAction.CallbackContext context);
+    }
+    public interface ISecondMenuActions
+    {
+        void OnMaps(InputAction.CallbackContext context);
+        void OnSubmit(InputAction.CallbackContext context);
+    }
+    public interface IFinalMenuActions
+    {
+        void OnMaps(InputAction.CallbackContext context);
         void OnSubmit(InputAction.CallbackContext context);
     }
 }

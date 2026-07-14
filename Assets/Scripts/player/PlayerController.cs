@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool useKeyboard = true;  // キーボードを使うか
     [SerializeField] private bool useGamepad = false;  // ゲームパッドを使うか
 
-    // ★【方法Aのための追加】インスペクターから1Pか2Pかを設定する変数
+    // 【方法Aのための追加】インスペクターから1Pか2Pかを設定する変数
     [Header("プレイヤー番号の設定")]
     [Tooltip("1Pなら1、2Pなら2を設定してください")]
     public int playerNumber = 1;
@@ -164,7 +164,20 @@ public class PlayerController : MonoBehaviour
             return; 
         }
 
-        // ────────── 以下は「自分のキャラ（IsLocalPlayer == true）」だけの処理 ──────────
+        if (StageMenuManager.Instance != null && StageMenuManager.Instance.isMenuOpen)
+        {
+            // 移動速度をゼロにしてその場に立ち止まらせる
+            rb.velocity = new Vector2(0f, rb.velocity.y);
+            UpdateAnimationParameters(rb.velocity);
+
+            // 足音を止める
+            if (audioSource.isPlaying && audioSource.clip == walkSound)
+            {
+                audioSource.Stop();
+            }
+            return; // これ以降の操作入力を一切無視する
+        }
+
 
         if (CanMove)
         {
@@ -192,6 +205,17 @@ public class PlayerController : MonoBehaviour
                 }
 
                 Shoot();
+            }
+
+            bool keyboardMenu = useKeyboard && Input.GetKeyDown(KeyCode.Escape); // キーボードのEscキーなど
+            bool gamepadMenu = useGamepad && controls.Player.Menu.triggered;    
+
+            if (keyboardMenu || gamepadMenu)
+            {
+                if (StageMenuManager.Instance != null)
+                {
+                    StageMenuManager.Instance.ToggleMenu();
+                }
             }
         }
 

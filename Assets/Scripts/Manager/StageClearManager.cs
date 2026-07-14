@@ -15,6 +15,8 @@ public class StageClearManager : MonoBehaviour
     [SerializeField] private Button stageSelectButton;   // ⑤ ステージ選択に戻る
     [SerializeField] private Button retryButton;         // ⑥ リトライ
 
+    private Button[] uiButtons;
+
     [Header("クリア画面の星のUI設定")]
     [SerializeField] private Image clearStarImage;       // クリア画面中央にある星のImageコンポーネント
     [SerializeField] private Sprite obtainedStarSprite;   // 獲得した時の星の画像（黄色の星）
@@ -47,6 +49,8 @@ public class StageClearManager : MonoBehaviour
     void Awake()
     {
         controls = new CommunicationUI();
+
+        uiButtons = new Button[] { nextStageButton, stageSelectButton, retryButton };
     }
 
     void OnEnable()
@@ -137,54 +141,41 @@ public class StageClearManager : MonoBehaviour
         UpdateCursorPosition();
     }
 
-    private bool HasAxis(string axisName)
-    {
-        try { Input.GetAxisRaw(axisName); return true; }
-        catch (System.ArgumentException) { return false; }
-    }
 
     private void ApplyButtonFocus()
     {
-        if (EventSystem.current == null) return;
+        if (uiButtons == null || uiButtons.Length == 0) return;
 
-        Button targetButton = null;
-        switch (currentSelectedIndex)
-        {
-            case 0: targetButton = nextStageButton; break;
-            case 1: targetButton = stageSelectButton; break;
-            case 2: targetButton = retryButton; break;
-            default: return;
-        }
-
+        Button targetButton = uiButtons[currentSelectedIndex];
         if (targetButton == null) return;
 
+        // 【ここが重要】ワールド座標からの変換をやめ、親子関係のローカル座標で位置を計算する
         RectTransform buttonRect = targetButton.GetComponent<RectTransform>();
         if (buttonRect != null && cursorImage != null)
         {
             RectTransform cursorParent = cursorImage.parent as RectTransform;
             if (cursorParent != null)
             {
-                Vector3 buttonWorldPos = buttonRect.transform.position;
-                cursorTargetPosition = cursorParent.InverseTransformPoint(buttonWorldPos);
+                // カーソルの親を基準にしたボタンの「ローカル座標」を正しく取得
+                Vector3 buttonLocalPos = cursorParent.InverseTransformPoint(buttonRect.position);
+
+                // X軸にオフセットを適用して目標位置を設定
+                cursorTargetPosition = new Vector2(buttonLocalPos.x , buttonLocalPos.y);
             }
         }
 
-        // EventSystemの同期
-        targetButton.Select();
+        
     }
 
     private void ExecuteCurrentSelectedButton()
     {
-        if (EventSystem.current == null) return;
-        GameObject currentSelected = EventSystem.current.currentSelectedGameObject;
-        if (currentSelected != null)
+        if (uiButtons == null || uiButtons.Length == 0) return;
+
+        Button targetButton = uiButtons[currentSelectedIndex];
+        if (targetButton != null && targetButton.interactable && targetButton.onClick != null)
         {
-            Button button = currentSelected.GetComponent<Button>();
-            if (button != null && button.onClick != null)
-            {
-                Debug.Log($"【UIログ】ボタン「{currentSelected.name}」のOnClickを呼び出します。");
-                button.onClick.Invoke();
-            }
+            Debug.Log($"【UIログ】ボタン「{targetButton.name}」のOnClickを呼び出します。");
+            targetButton.onClick.Invoke();
         }
     }
 
