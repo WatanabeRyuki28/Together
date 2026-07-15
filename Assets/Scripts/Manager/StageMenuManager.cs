@@ -127,10 +127,12 @@ public class StageMenuManager : MonoBehaviour
             Image.SetActive(true);
             panel.SetActive(true);
 
+            int displayStageNumber = currentStageStageIndex + 1;
+            stageNameText.text = $"ステージ {displayStageNumber}";
+
             StartCoroutine(AnimateStageNameRoutine());
 
-            // 3秒待って消す魔法（コルーチン）を呼び出す
-            StartCoroutine(HideStageNameAfterDelay(3f));
+           
         }
 
     }
@@ -695,6 +697,8 @@ public class StageMenuManager : MonoBehaviour
     // テキストアニメーション
     private IEnumerator AnimateStageNameRoutine()
     {
+        yield return new WaitForSecondsRealtime(0.5f);
+
         int displayStageNumber = currentStageStageIndex + 1;
         string baseText = $"ステージ {displayStageNumber}"; // ベースとなる文字
 
@@ -711,7 +715,7 @@ public class StageMenuManager : MonoBehaviour
             string dots = new string('.', dotCount);
             stageNameText.text = baseText + dots;
 
-            // 0.5秒待つ（ポーズ中もカウントが進むようにRealtimeにしています）
+            // 0.3秒待つ
             yield return new WaitForSecondsRealtime(interval);
             elapsedTime += interval;
 
@@ -719,8 +723,13 @@ public class StageMenuManager : MonoBehaviour
             dotCount = (dotCount + 1) % 4;
         }
 
+        stageNameText.text = baseText + "...";
+        yield return new WaitForSecondsRealtime(0.3f);
+
         // 3秒経ったらテキストオブジェクトごと非表示にする
         stageNameText.gameObject.SetActive(false);
+        Image.SetActive(false);
+        panel.SetActive(false);
         Debug.Log("3秒間のアニメーションが終了したため、テキストを非表示にしました。");
     }
 
