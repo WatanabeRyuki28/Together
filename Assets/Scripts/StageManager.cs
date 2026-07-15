@@ -300,25 +300,15 @@ public class StageManager : MonoBehaviour
         else if (stageIndex == 0) SceneManager.LoadScene("Stage1");
         else if (stageIndex == 1) SceneManager.LoadScene("Stage2");
         else if (stageIndex == 2) SceneManager.LoadScene("Stage3");
-
+        else if (stageIndex == 3) SceneManager.LoadScene("Stage4");
+        else if (stageIndex == 4) SceneManager.LoadScene("Stage5");
+        else if (stageIndex == 5) SceneManager.LoadScene("Stage6");
 
         if (controls != null)
         {
             controls.StageSelect.Disable();
-        }
+        }              
 
-            if (stageIndex == -1) SceneManager.LoadScene("TutorialStageScene_Backup"); 
-        else if (stageIndex == 0) SceneManager.LoadScene("Stage1");               
-        else if (stageIndex == 1) SceneManager.LoadScene("Stage2");               
-        else if (stageIndex == 2) SceneManager.LoadScene("Stage3");              
-       
-
-
-        if (stageIndex == -1) SceneManager.LoadScene("TutorialStageScene_Backup");
-
-        else if (stageIndex == 0) SceneManager.LoadScene("Stage1");
-        else if (stageIndex == 1) SceneManager.LoadScene("Stage2");
-        else if (stageIndex == 2) SceneManager.LoadScene("Stage3");
 
     }
   
