@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using Unity.VisualScripting;
+using System;
 
 public class TopViewClient : MonoBehaviour
 {
@@ -23,6 +24,8 @@ public class TopViewClient : MonoBehaviour
     public GameObject HostText;
     public GameObject GestText;
 
+    [SerializeField] private GameObject WaitingForGuestText;
+
 
     private string remotePlayer;
 
@@ -33,6 +36,8 @@ public class TopViewClient : MonoBehaviour
         Init(true, false);
         HostText.SetActive(false);
         GestText.SetActive(false);
+        WaitingForGuestText.SetActive(false);
+
         Startflag = false;
         controls = new CommunicationUI();
 
@@ -214,17 +219,35 @@ public class TopViewClient : MonoBehaviour
         bool isP1Ready = !string.IsNullOrEmpty(P1Text.text) && P1Text.text != "待機中...";
         bool isP2Ready = !string.IsNullOrEmpty(P2Text.text) && P2Text.text != "待機中...";
 
-        // 自分がホスト（Index 0）かつ、両方準備できたらボタン表示
-        if (NetworkManager.Instance.myPlayerIndex == 0 && isP1Ready && isP2Ready)
+
+        int myIndex = NetworkManager.Instance.myPlayerIndex;
+        // 自分がホスト（P1）の場合
+        if (myIndex == 0)
         {
-            HostText.SetActive(true);
             GestText.SetActive(false);
-            Startflag = true;
+
+            if (isP1Ready && isP2Ready)
+            {
+                
+                HostText.SetActive(true);
+                if (WaitingForGuestText != null) WaitingForGuestText.SetActive(false);
+                Startflag = true;
+            }
+            else
+            {
+                // 自分はいるけど、ゲストがまだ来ていない
+                HostText.SetActive(false);
+                if (WaitingForGuestText != null) WaitingForGuestText.SetActive(true); // ★「ゲストの参加を待ってます」を表示
+                Startflag = false;
+            }
         }
+        //　自分がゲスト（P2）の場合
         else
         {
             HostText.SetActive(false);
-            GestText.SetActive(true);
+            if (WaitingForGuestText != null) WaitingForGuestText.SetActive(false); // ゲストなのでホスト用待機表示は出さない
+            GestText.SetActive(true); // 「ホストの開始を待っています」を表示
+            Startflag = false;
         }
     }
 

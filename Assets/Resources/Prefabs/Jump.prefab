@@ -122,7 +122,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jumpForce: 10
-  launchSound: {fileID: 0}
+  launchSound: {fileID: 8300000, guid: 6e2efba68f309654ab1d43dc9675e1d6, type: 3}
 --- !u!61 &8502391028843026184
 BoxCollider2D:
   m_ObjectHideFlags: 0

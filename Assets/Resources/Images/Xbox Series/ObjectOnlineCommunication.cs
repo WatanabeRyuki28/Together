@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ObjectOnlineCommunication : MonoBehaviour
 {
@@ -31,15 +32,45 @@ public class ObjectOnlineCommunication : MonoBehaviour
             Vector3 myStartPos = Vector3.zero;
             Vector3 opponentStartPos = Vector3.zero;
 
+            string currentSceneName = SceneManager.GetActiveScene().name;
+
             if (myColorIndex == 0)
             {
-                myStartPos = new Vector3(-10f, -1.5f, 0f);
-                opponentStartPos = new Vector3(-7f, -1.5f, 0f);
+                if (currentSceneName == "Stage1"
+                        || currentSceneName == "Stage2"
+                        || currentSceneName == "Stage3"
+                        || currentSceneName == "Stage4"
+                        || currentSceneName == "Stage5")
+                {
+                    myStartPos = new Vector3(-12f, -1.5f, 0f);
+                    opponentStartPos = new Vector3(-7f, -1.5f, 0f);
+                }
+                else if (currentSceneName == "Stage6")
+                {
+                    myStartPos = new Vector3(-1.5f, -1.5f, 0f);
+                    opponentStartPos = new Vector3(1.5f, -1.5f, 0f);
+                }
+
+                   
             }
             else
             {
-                myStartPos = new Vector3(-7f, -1.5f, 0f);
-                opponentStartPos = new Vector3(-10f, -1.5f, 0f);
+                if (currentSceneName == "Stage1"
+                        || currentSceneName == "Stage2"
+                        || currentSceneName == "Stage3"
+                        || currentSceneName == "Stage4"
+                        || currentSceneName == "Stage5")
+                {
+                    myStartPos = new Vector3(-7f, -1.5f, 0f);
+                    opponentStartPos = new Vector3(-12f, -1.5f, 0f);
+
+                }
+                else if (currentSceneName == "Stage6")
+                {
+                    myStartPos = new Vector3(1.5f, -1.5f, 0f);
+                    opponentStartPos = new Vector3(-1.5f, -1.5f, 0f);
+
+                }
             }
 
             CreatePlayer(myColorIndex, myStartPos, true);

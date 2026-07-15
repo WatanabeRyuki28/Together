@@ -77,7 +77,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 50
   m_Sprite: {fileID: 1694325009, guid: 27ec43d2211f8224292ebd8e8f400c1c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -136,8 +136,8 @@ MonoBehaviour:
   pushSpeedMultiplier: 0.5
   jumpForce: 8
   fireRate: 1
-  jumpSound: {fileID: 0}
-  shootSound: {fileID: 0}
+  jumpSound: {fileID: 8300000, guid: 6e2efba68f309654ab1d43dc9675e1d6, type: 3}
+  shootSound: {fileID: 8300000, guid: 43777e74804c2394fa979b97a1b697c9, type: 3}
   walkSound: {fileID: 0}
   projectilePrefab: {fileID: 109283890417617540, guid: e070b531c5d3da740b448b207ac74b89, type: 3}
   firePoint: {fileID: 7035981683803161156}

@@ -15,6 +15,8 @@ public class StageClearManager : MonoBehaviour
     [SerializeField] private Button stageSelectButton;   // ⑤ ステージ選択に戻る
     [SerializeField] private Button retryButton;         // ⑥ リトライ
 
+    private Button[] uiButtons;
+
     [Header("クリア画面の星のUI設定")]
     [SerializeField] private Image clearStarImage;       // クリア画面中央にある星のImageコンポーネント
     [SerializeField] private Sprite obtainedStarSprite;   // 獲得した時の星の画像（黄色の星）
@@ -38,9 +40,17 @@ public class StageClearManager : MonoBehaviour
     private const string ItemIdPrefix = "Stage_";
     private const string CurrentStageKey = "CurrentStageIndex";
 
+    [Header("カーソル設定")]
+    [SerializeField] private RectTransform cursorImage;
+    [Tooltip("カーソルの移動速度（大きいほどキレよく動き、1.0で完全同期）")]
+    [SerializeField] private float cursorMoveSpeed = 0.4f;
+    private Vector2 cursorTargetPosition;
+
     void Awake()
     {
         controls = new CommunicationUI();
+
+        uiButtons = new Button[] { nextStageButton, stageSelectButton, retryButton };
     }
 
     void OnEnable()
@@ -57,16 +67,22 @@ public class StageClearManager : MonoBehaviour
     {
         CheckHost();
         currentSelectedIndex = 0;
+
+        // 最初に対象ボタンの目標座標を計算する
         ApplyButtonFocus();
+
+        // 最初だけは滑らかに移動せず、一瞬で初期位置にカーソルを合わせる
+        if (cursorImage != null)
+        {
+            cursorImage.anchoredPosition = cursorTargetPosition;
+        }
+
         if (GestPanel != null) GestPanel.SetActive(false);
 
         // 星の表示切り替え
         UpdateClearStarDisplay();
     }
 
-    /// <summary>
-    /// PlayerPrefsから現在のステージ番号を取得し、SaveManagerから星の獲得状況を判定する
-    /// </summary>
     private void UpdateClearStarDisplay()
     {
         if (clearStarImage == null || obtainedStarSprite == null || missingStarSprite == null)
@@ -75,11 +91,9 @@ public class StageClearManager : MonoBehaviour
             return;
         }
 
-        // 直前のステージが保存した「ステージ番号」を読み出す（デフォルトは0）
         int currentStageIndex = PlayerPrefs.GetInt(CurrentStageKey, 0);
         string targetItemId = ItemIdPrefix + currentStageIndex;
 
-        // SaveManagerのメモリ上にこのステージの星が存在するかチェック
         if (SaveManager.Instance != null && SaveManager.Instance.HasItem(targetItemId))
         {
             clearStarImage.sprite = obtainedStarSprite;
@@ -96,17 +110,25 @@ public class StageClearManager : MonoBehaviour
     {
         if (IsHost())
         {
-            if (controls.GameClear.Down.triggered)
+            // 時間ベースの入力遅延（チャタリング・2個飛ばし防止）
+            if (Time.time >= nextInputTime)
             {
-                currentSelectedIndex = (currentSelectedIndex + 1) % TotalButtons;
-                ApplyButtonFocus();
+                if (controls.GameClear.Down.triggered)
+                {
+                    currentSelectedIndex = (currentSelectedIndex + 1) % TotalButtons;
+                    ApplyButtonFocus();
+                    nextInputTime = Time.time + inputDelay; // 次の入力可能時間までロック
+                }
+                else if (controls.GameClear.Up.triggered)
+                {
+                    currentSelectedIndex = (currentSelectedIndex - 1 + TotalButtons) % TotalButtons;
+                    ApplyButtonFocus();
+                    nextInputTime = Time.time + inputDelay; // 次の入力可能時間までロック
+                }
             }
-            else if (controls.GameClear.Up.triggered)
-            {
-                currentSelectedIndex = (currentSelectedIndex - 1 + TotalButtons) % TotalButtons;
-                ApplyButtonFocus();
-            }
-            else if (controls.GameClear.Submit.triggered)
+
+            // 決定はディレイに関係なくいつでも実行可能にする
+            if (controls.GameClear.Submit.triggered)
             {
                 ExecuteCurrentSelectedButton();
             }
@@ -115,37 +137,45 @@ public class StageClearManager : MonoBehaviour
         {
             if (GestPanel != null) GestPanel.SetActive(true);
         }
+
+        UpdateCursorPosition();
     }
 
-    private bool HasAxis(string axisName)
-    {
-        try { Input.GetAxisRaw(axisName); return true; }
-        catch (System.ArgumentException) { return false; }
-    }
 
     private void ApplyButtonFocus()
     {
-        if (EventSystem.current == null) return;
-        switch (currentSelectedIndex)
+        if (uiButtons == null || uiButtons.Length == 0) return;
+
+        Button targetButton = uiButtons[currentSelectedIndex];
+        if (targetButton == null) return;
+
+        // 【ここが重要】ワールド座標からの変換をやめ、親子関係のローカル座標で位置を計算する
+        RectTransform buttonRect = targetButton.GetComponent<RectTransform>();
+        if (buttonRect != null && cursorImage != null)
         {
-            case 0: if (nextStageButton != null) nextStageButton.Select(); break;
-            case 1: if (stageSelectButton != null) stageSelectButton.Select(); break;
-            case 2: if (retryButton != null) retryButton.Select(); break;
+            RectTransform cursorParent = cursorImage.parent as RectTransform;
+            if (cursorParent != null)
+            {
+                // カーソルの親を基準にしたボタンの「ローカル座標」を正しく取得
+                Vector3 buttonLocalPos = cursorParent.InverseTransformPoint(buttonRect.position);
+
+                // X軸にオフセットを適用して目標位置を設定
+                cursorTargetPosition = new Vector2(buttonLocalPos.x , buttonLocalPos.y);
+            }
         }
+
+        
     }
 
     private void ExecuteCurrentSelectedButton()
     {
-        if (EventSystem.current == null) return;
-        GameObject currentSelected = EventSystem.current.currentSelectedGameObject;
-        if (currentSelected != null)
+        if (uiButtons == null || uiButtons.Length == 0) return;
+
+        Button targetButton = uiButtons[currentSelectedIndex];
+        if (targetButton != null && targetButton.interactable && targetButton.onClick != null)
         {
-            Button button = currentSelected.GetComponent<Button>();
-            if (button != null && button.onClick != null)
-            {
-                Debug.Log($"【UIログ】ボタン「{currentSelected.name}」のOnClickを呼び出します。");
-                button.onClick.Invoke();
-            }
+            Debug.Log($"【UIログ】ボタン「{targetButton.name}」のOnClickを呼び出します。");
+            targetButton.onClick.Invoke();
         }
     }
 
@@ -227,5 +257,17 @@ public class StageClearManager : MonoBehaviour
         if (NetworkManager.Instance == null) return;
         if (NetworkManager.Instance.myPlayerIndex == 0) Debug.Log("あなたはホストです。");
         else Debug.Log("あなたはゲストです。");
+    }
+
+    private void UpdateCursorPosition()
+    {
+        if (cursorImage == null) return;
+
+        // 速度をインスペクターからいじれるように cursorMoveSpeed に変更（デフォルト0.4f）
+        cursorImage.anchoredPosition = Vector2.Lerp(
+            cursorImage.anchoredPosition,
+            cursorTargetPosition,
+            cursorMoveSpeed
+        );
     }
 }
