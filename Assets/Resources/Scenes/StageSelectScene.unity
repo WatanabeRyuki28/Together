@@ -157,7 +157,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -129.1, y: 0}
+  m_AnchoredPosition: {x: -129.10004, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 1, y: 0}
 --- !u!1 &143903187
@@ -197,7 +197,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -285.00214, y: -99.00018}
+  m_AnchoredPosition: {x: -285.00214, y: -99.0002}
   m_SizeDelta: {x: -705.89, y: -339.72998}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &143903189
@@ -243,7 +243,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 143903190}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1886058340}
+        m_TargetAssemblyTypeName: StageManager, Assembly-CSharp
+        m_MethodName: ConfirmStageSelection
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &143903190
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -545,7 +557,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -99.00018}
+  m_AnchoredPosition: {x: 0, y: -99.0002}
   m_SizeDelta: {x: -705.89, y: -339.72998}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &293250753
@@ -1562,7 +1574,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 142.00006, y: -98.00043}
+  m_AnchoredPosition: {x: 142.00006, y: -98.00044}
   m_SizeDelta: {x: -705.89, y: -339.72998}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &596823198
@@ -3125,7 +3137,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -144.00092, y: -99.00018}
+  m_AnchoredPosition: {x: -144.00092, y: -99.0002}
   m_SizeDelta: {x: -705.89, y: -339.72998}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &649519068
@@ -3248,7 +3260,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 280.0014, y: -99.00018}
+  m_AnchoredPosition: {x: 280.0014, y: -99.0002}
   m_SizeDelta: {x: -705.89, y: -339.72998}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &658585944
@@ -4231,7 +4243,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1037046388}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1886058340}
+        m_TargetAssemblyTypeName: StageManager, Assembly-CSharp
+        m_MethodName: ConfirmStageSelection
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1037046388
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6016,7 +6040,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1770212551}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1886058340}
+        m_TargetAssemblyTypeName: StageManager, Assembly-CSharp
+        m_MethodName: ConfirmStageSelection
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1770212551
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6237,7 +6273,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -213.7, y: -0.000019073486}
+  m_AnchoredPosition: {x: -213.70001, y: -0.000019073486}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!212 &1917804408
@@ -6700,7 +6736,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2044400685}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1886058340}
+        m_TargetAssemblyTypeName: StageManager, Assembly-CSharp
+        m_MethodName: ConfirmStageSelection
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2044400685
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7059,10 +7107,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1886058340}
         m_TargetAssemblyTypeName: StageManager, Assembly-CSharp
-        m_MethodName: SelectStage
-        m_Mode: 3
+        m_MethodName: ConfirmStageSelection
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
