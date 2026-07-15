@@ -14078,8 +14078,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   menuPanel: {fileID: 375904478}
   exitButton: {fileID: 120736782}
-  closeButton: {fileID: 0}
-  mainMenuCursor: {fileID: 0}
+  closeButton: {fileID: 1657272056}
+  mainMenuCursor: {fileID: 1746665926}
   mainMenuCursorOffsetX: -130
   confirmationPanel: {fileID: 162880852}
   yesButton: {fileID: 0}
@@ -14403,7 +14403,14 @@ MonoBehaviour:
   audioSource: {fileID: 1353408622}
   bgm2: {fileID: 8300000, guid: a281efc92257e74429b66e55d235d8ae, type: 3}
   sameBgmScenes:
+  - Stage1
+  - Stage2
   - Stage3
+  - Stage4
+  - Stage5
+  - Stage6
+  destroyMeScenes:
+  - StageSelectScene
   - ClearScene
 --- !u!4 &1353408624
 Transform:
@@ -14784,6 +14791,11 @@ GameObject:
 --- !u!1 &1746665925 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2084153858432741409, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1746665922}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &1746665926 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5185901645623303168, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
   m_PrefabInstance: {fileID: 1746665922}
   m_PrefabAsset: {fileID: 0}
 --- !u!224 &1859704139 stripped

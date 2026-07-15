@@ -40084,10 +40084,17 @@ MonoBehaviour:
   audioSource: {fileID: 1507563782}
   bgm2: {fileID: 8300000, guid: d629676968e2a0a4fbccc5d8690d1e02, type: 3}
   sameBgmScenes:
-  - TaitlScene
   - SecondScene
   - CharacterSelectScene
   - StageSelectScene
+  destroyMeScenes:
+  - TaitlScene
+  - Stage1
+  - Stage2
+  - Stage3
+  - Stage4
+  - Stage5
+  - Stage6
 --- !u!4 &1507563781
 Transform:
   m_ObjectHideFlags: 0

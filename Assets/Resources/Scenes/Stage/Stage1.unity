@@ -18253,6 +18253,13 @@ MonoBehaviour:
   bgm2: {fileID: 8300000, guid: a281efc92257e74429b66e55d235d8ae, type: 3}
   sameBgmScenes:
   - Stage1
+  - Stage2
+  - Stage3
+  - Stage4
+  - Stage5
+  - Stage6
+  destroyMeScenes:
+  - StageSelectScene
   - ClearScene
 --- !u!4 &1672676355
 Transform:
