@@ -78,12 +78,24 @@ public class ObjectOnlineCommunication : MonoBehaviour
         }
 
         // ========================================================
-        // 自分が動かすキャラ（ローカルプレイヤー）だった場合、カメラに追従させる
+        // 自分が動かすキャラ（ローカルプレイヤー）だった場合
         // ========================================================
-        
-       
-
         if (!isLocal)
+        {
+            OffScreenIndicator indicator = FindFirstObjectByType<OffScreenIndicator>(FindObjectsInactive.Include);
+            if (indicator != null)
+            {
+                indicator.gameObject.SetActive(true);
+                indicator.SetupTarget(player.transform); // 相手を登録！
+                Debug.Log($"[成功] OffScreenIndicator に相手プレイヤー({player.name})をターゲットとして自動登録しました。");
+            }
+        
+        else
+            {
+                Debug.LogError("[エラー] シーン内に OffScreenIndicator が見つかりませんでした。ヒエラルキーに配置されているか確認してください。");
+            }
+        }
+        else // 自分以外のプレイヤーだった場合
         {
             var rb = player.GetComponent<Rigidbody2D>();
             if (rb != null)
@@ -100,8 +112,6 @@ public class ObjectOnlineCommunication : MonoBehaviour
                 ghostObjects[charaindex] = ghost;
             }
         }
-
-        
     }
 
     public void HandleWebSocketMessage(string msg)

@@ -212,6 +212,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: 'P1_Indicator_Icon  '
       objectReference: {fileID: 0}
+    - target: {fileID: 5794701569291318620, guid: 6447ba3f4feaafb4b9f12fa14c4433cc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8181535596296161801, guid: 6447ba3f4feaafb4b9f12fa14c4433cc, type: 3}
       propertyPath: m_LocalPosition.x
       value: 4.307604
