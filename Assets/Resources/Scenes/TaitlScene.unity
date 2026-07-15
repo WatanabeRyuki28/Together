@@ -6891,9 +6891,9 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: d629676968e2a0a4fbccc5d8690d1e02, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.33
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -6991,6 +6991,9 @@ MonoBehaviour:
   bgm2: {fileID: 8300000, guid: d629676968e2a0a4fbccc5d8690d1e02, type: 3}
   sameBgmScenes:
   - TaitlScene
+  - SecondScene
+  - CharacterSelectScene
+  - StageSelectScene
 --- !u!4 &908836822
 Transform:
   m_ObjectHideFlags: 0

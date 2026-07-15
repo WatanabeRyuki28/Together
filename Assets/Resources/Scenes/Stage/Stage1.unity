@@ -18147,11 +18147,11 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: a281efc92257e74429b66e55d235d8ae, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.33
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -18246,9 +18246,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioSource: {fileID: 1672676353}
-  bgm2: {fileID: 0}
+  bgm2: {fileID: 8300000, guid: a281efc92257e74429b66e55d235d8ae, type: 3}
   sameBgmScenes:
   - Stage1
+  - ClearScene
 --- !u!4 &1672676355
 Transform:
   m_ObjectHideFlags: 0
@@ -18274,11 +18275,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 172164606897759493, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
       propertyPath: m_LocalScale.x
-      value: 2.1573098
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 172164606897759493, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
       propertyPath: m_LocalScale.y
-      value: 2.2374878
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 172164606897759493, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
       propertyPath: m_LocalPosition.x

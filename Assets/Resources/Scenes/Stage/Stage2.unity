@@ -2613,11 +2613,11 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: a281efc92257e74429b66e55d235d8ae, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.33
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -2712,9 +2712,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioSource: {fileID: 512202247}
-  bgm2: {fileID: 0}
+  bgm2: {fileID: 8300000, guid: a281efc92257e74429b66e55d235d8ae, type: 3}
   sameBgmScenes:
   - Stage2
+  - ClearScene
 --- !u!4 &512202249
 Transform:
   m_ObjectHideFlags: 0
@@ -14330,6 +14331,71 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0db7ca45bd4a7fc4ca31700863f7e185, type: 3}
+--- !u!1001 &1674257823
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 172164606897759493, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 172164606897759493, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 172164606897759493, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 5.13
+      objectReference: {fileID: 0}
+    - target: {fileID: 172164606897759493, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 3.22
+      objectReference: {fileID: 0}
+    - target: {fileID: 172164606897759493, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 172164606897759493, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 172164606897759493, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 172164606897759493, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 172164606897759493, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 172164606897759493, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 172164606897759493, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 172164606897759493, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6452149468633875155, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
+      propertyPath: m_Name
+      value: StarItem
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
 --- !u!1001 &1678821379
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14422,11 +14488,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   menuPanel: {fileID: 158643912}
-  confirmationPanel: {fileID: 158643911}
-  menuOpenButton: {fileID: 158643910}
   exitButton: {fileID: 158643909}
-  yesButtonText: {fileID: 0}
+  closeButton: {fileID: 0}
+  mainMenuCursor: {fileID: 0}
+  mainMenuCursorOffsetX: -130
+  confirmationPanel: {fileID: 158643911}
+  yesButton: {fileID: 0}
   noButton: {fileID: 158643908}
+  confirmCursor: {fileID: 0}
+  confirmCursorOffsetX: -100
+  menuOpenButton: {fileID: 158643910}
+  yesButtonText: {fileID: 0}
   starUIPanel: {fileID: 158643907}
   starIconPrefab: {fileID: 1868734858400582071, guid: b2b8438d7cb322f4c8fdb9ac492244eb, type: 3}
   missingStarIconPrefab: {fileID: 1868734858400582071, guid: a646b1b08fcb2544d9f1f0d8d0d4cf52, type: 3}
@@ -14860,6 +14932,7 @@ SceneRoots:
   - {fileID: 404178534}
   - {fileID: 598082029}
   - {fileID: 711217531}
+  - {fileID: 1674257823}
   - {fileID: 435272294}
   - {fileID: 2070368484}
   - {fileID: 598600583}

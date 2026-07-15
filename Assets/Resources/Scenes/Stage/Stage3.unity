@@ -14077,11 +14077,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   menuPanel: {fileID: 375904478}
-  confirmationPanel: {fileID: 162880852}
-  menuOpenButton: {fileID: 1376205269}
   exitButton: {fileID: 120736782}
-  yesButtonText: {fileID: 0}
+  closeButton: {fileID: 0}
+  mainMenuCursor: {fileID: 0}
+  mainMenuCursorOffsetX: -130
+  confirmationPanel: {fileID: 162880852}
+  yesButton: {fileID: 0}
   noButton: {fileID: 1165254606}
+  confirmCursor: {fileID: 0}
+  confirmCursorOffsetX: -100
+  menuOpenButton: {fileID: 1376205269}
+  yesButtonText: {fileID: 0}
   starUIPanel: {fileID: 1859704139}
   starIconPrefab: {fileID: 1868734858400582071, guid: b2b8438d7cb322f4c8fdb9ac492244eb, type: 3}
   missingStarIconPrefab: {fileID: 1868734858400582071, guid: a646b1b08fcb2544d9f1f0d8d0d4cf52, type: 3}
@@ -14296,11 +14302,11 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: a281efc92257e74429b66e55d235d8ae, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.33
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -14395,9 +14401,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioSource: {fileID: 1353408622}
-  bgm2: {fileID: 0}
+  bgm2: {fileID: 8300000, guid: a281efc92257e74429b66e55d235d8ae, type: 3}
   sameBgmScenes:
   - Stage3
+  - ClearScene
 --- !u!4 &1353408624
 Transform:
   m_ObjectHideFlags: 0
@@ -14413,6 +14420,71 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1359135940
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 172164606897759493, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 172164606897759493, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 172164606897759493, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 10.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 172164606897759493, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 5.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 172164606897759493, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 172164606897759493, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 172164606897759493, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 172164606897759493, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 172164606897759493, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 172164606897759493, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 172164606897759493, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 172164606897759493, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6452149468633875155, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
+      propertyPath: m_Name
+      value: StarItem
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
 --- !u!114 &1376205269 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6354151605826017661, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
@@ -15039,6 +15111,7 @@ SceneRoots:
   - {fileID: 303285642}
   - {fileID: 51132125}
   - {fileID: 1123204823}
+  - {fileID: 1359135940}
   - {fileID: 328375570}
   - {fileID: 1909705852}
   - {fileID: 950724903}

@@ -127,7 +127,7 @@ MonoBehaviour:
   pressedColor: {r: 0.5018867, g: 0.5018867, b: 0.5018867, a: 1}
   normalSprite: {fileID: 207831650, guid: 1241a20938df35c4486e83b7faf9095b, type: 3}
   pressedSprite: {fileID: -2120575774, guid: 1241a20938df35c4486e83b7faf9095b, type: 3}
-  switchOnSound: {fileID: 0}
+  switchOnSound: {fileID: 8300000, guid: 1502e36fb16aabb469bceb5d262f8971, type: 3}
 --- !u!61 &2205709773367431944
 BoxCollider2D:
   m_ObjectHideFlags: 0
