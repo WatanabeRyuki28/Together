@@ -1833,11 +1833,11 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: a281efc92257e74429b66e55d235d8ae, type: 3}
+  m_audioClip: {fileID: 8300000, guid: d629676968e2a0a4fbccc5d8690d1e02, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.33
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -1932,8 +1932,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioSource: {fileID: 1125770268}
-  bgm2: {fileID: 8300000, guid: a281efc92257e74429b66e55d235d8ae, type: 3}
+  bgm2: {fileID: 8300000, guid: d629676968e2a0a4fbccc5d8690d1e02, type: 3}
   sameBgmScenes:
+  - TaitlScene
   - SecondScene
   - CharacterSelectScene
   - StageSelectScene

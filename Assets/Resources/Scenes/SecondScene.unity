@@ -683,7 +683,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 68e22c6d022ca814d8736f5a0d4fb5e6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: fbe03c5fc3ca1b147b4ff1151670f4c3, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -40082,8 +40082,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioSource: {fileID: 1507563782}
-  bgm2: {fileID: 8300000, guid: a281efc92257e74429b66e55d235d8ae, type: 3}
+  bgm2: {fileID: 8300000, guid: d629676968e2a0a4fbccc5d8690d1e02, type: 3}
   sameBgmScenes:
+  - TaitlScene
   - SecondScene
   - CharacterSelectScene
   - StageSelectScene
@@ -40112,11 +40113,11 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: a281efc92257e74429b66e55d235d8ae, type: 3}
+  m_audioClip: {fileID: 8300000, guid: d629676968e2a0a4fbccc5d8690d1e02, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.33
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -58545,7 +58546,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 844338fc6a5d8c549a580c78f4ee003b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 68e0b15189b73c646bb0ea2b6512393b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
