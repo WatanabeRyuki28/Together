@@ -698,7 +698,7 @@ public class StageMenuManager : MonoBehaviour
     private IEnumerator AnimateStageNameRoutine()
     {
         yield return new WaitForSecondsRealtime(0.5f);
-
+        
         int displayStageNumber = currentStageStageIndex + 1;
         string baseText = $"ステージ {displayStageNumber}"; // ベースとなる文字
 
