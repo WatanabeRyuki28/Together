@@ -95,7 +95,7 @@ public class ObjectOnlineCommunication : MonoBehaviour
         }
     }
 
-    public void CreatePlayer(int charaindex, Vector3 pos, bool isLocal)
+ /*   public void CreatePlayer(int charaindex, Vector3 pos, bool isLocal)
     {
         var player = Instantiate(playersPrefab[charaindex], pos, Quaternion.identity);
 
@@ -144,7 +144,62 @@ public class ObjectOnlineCommunication : MonoBehaviour
             }
         }
     }
+*/
+    public void CreatePlayer(int charaindex, Vector3 pos, bool isLocal)
+    {
+        var player = Instantiate(playersPrefab[charaindex], pos, Quaternion.identity);
 
+        // キャラクターの種類（0:赤、1:青）をキーにして辞書に保存
+        players[charaindex] = player;
+
+        var controller = player.GetComponent<PlayerController>();
+        if (controller != null)
+        {
+            controller.IsLocalPlayer = isLocal;
+        }
+
+        // ========================================================
+        // 【修正】ローカルプレイヤー（自分）の場合
+        // ========================================================
+        if (isLocal)
+        {
+            // 自分の画面用：もし必要ならカメラ等の処理をここに書く（現状は空でもOK）
+        }
+        // ========================================================
+        // 【修正】リモートプレイヤー（相手）の場合
+        // ========================================================
+        else
+        {
+            // 相手キャラの物理演算を止める（Kinematicにする）
+            var rb = player.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.bodyType = RigidbodyType2D.Kinematic;
+                rb.velocity = Vector2.zero;
+            }
+
+            // ゴーストを生成して辞書に保存
+            if (ghostPrefab != null)
+            {
+                var ghost = Instantiate(ghostPrefab, pos, Quaternion.identity);
+                ghost.name = $"Ghost_Player_{charaindex}";
+                ghostObjects[charaindex] = ghost;
+            }
+
+            // 画面外インジケーターに相手を登録
+            OffScreenIndicator indicator = FindFirstObjectByType<OffScreenIndicator>(FindObjectsInactive.Include);
+            if (indicator != null)
+            {
+                indicator.gameObject.SetActive(true);
+                indicator.SetupTarget(player.transform); // 相手を登録！
+                Debug.Log($"[成功] OffScreenIndicator に相手プレイヤー({player.name})をターゲットとして自動登録しました。");
+            }
+            else
+            {
+                Debug.LogError("[エラー] シーン内に OffScreenIndicator が見つかりませんでした。");
+            }
+        }
+    }
     public void HandleWebSocketMessage(string msg)
     {
         if (msg.Contains("\"type\":\"menu_toggle\"") || msg.Contains("\"type\":\"menu_exit_ready\""))
