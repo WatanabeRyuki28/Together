@@ -17,39 +17,47 @@ public class BGMManager : MonoBehaviour
 
     private void Awake()
     {
-        // シングルトンのパターンの実装（重複防止）
-        if (Instance != null)
+        // もし自分が、今読み込まれたシーンで「最初から退場すべきシーン」にいるなら即自爆
+        string currentScene = SceneManager.GetActiveScene().name;
+        if (ShouldDestroy(currentScene))
         {
             Destroy(gameObject);
             return;
         }
 
-        Instance = this;
-        DontDestroyOnLoad(gameObject); // シーン遷移してもオブジェクトを破壊しない
-
-        // 最初のシーン移動のイベント登録
-        SceneManager.sceneLoaded += OnSceneLoaded;
-    }
-
-    private void Start()
-    {
-        // 起動時に現在のシーン名が退場シーンなら自爆、そうでなければ再生を試みる
-        string currentScene = SceneManager.GetActiveScene().name;
-        if (ShouldDestroy(currentScene))
+        // シングルトンの重複チェック
+        if (Instance != null)
         {
-            SelfDestroy();
-            return;
+            // 【修正】もし新しいシーンのManagerが読み込まれた場合、
+            // 古い方のManagerが「このシーンで退場するべき古いやつ」なら、古い方を消して新しい自分を優先する
+            if (Instance.ShouldDestroy(currentScene))
+            {
+                Instance.SelfDestroy(); // 古い方を安全に消去
+                Instance = this;        // 自分を新しい主役にする
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject); // そうでなければ、新しい自分を消去
+                return;
+            }
+        }
+        else
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
 
-        TryPlayBGM(currentScene);
+        // シーン移動のイベント登録
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // ★【追加】もし退場させたいシーンに入った場合は、BGMManagerを完全に消滅させる
+        // 自分自身が退場すべきシーンに入った場合は自爆する
         if (ShouldDestroy(scene.name))
         {
-            Debug.Log($"【退場】{scene.name}に入ったため、BGMManagerを削除してリセットします。");
+            Debug.Log($"【退場】{scene.name}に入ったため、古いBGMManagerを削除します。");
             SelfDestroy();
             return;
         }
