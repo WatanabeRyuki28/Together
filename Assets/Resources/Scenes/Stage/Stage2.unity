@@ -2494,7 +2494,6 @@ MonoBehaviour:
   - Stage2
   destroyMeScenes:
   - StageSelectScene
-  - ClearScene
 --- !u!4 &512202249
 Transform:
   m_ObjectHideFlags: 0
