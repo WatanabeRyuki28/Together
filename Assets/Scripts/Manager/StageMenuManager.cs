@@ -73,6 +73,7 @@ public class StageMenuManager : MonoBehaviour
     [SerializeField] private GameObject panel;
     [SerializeField] private GameObject Image;
     [SerializeField] private Text stageNameText;
+    [SerializeField] private Text LoadText;
 
     private void Awake()
     {
@@ -112,11 +113,13 @@ public class StageMenuManager : MonoBehaviour
         if (stageNameText != null)
         {
             stageNameText.gameObject.SetActive(true);
+            LoadText.gameObject.SetActive(true);
             Image.SetActive(true);
             panel.SetActive(true);
 
             int displayStageNumber = currentStageStageIndex + 1;
             stageNameText.text = $"ステージ {displayStageNumber}";
+            LoadText.text = "読み込み中";
 
             StartCoroutine(AnimateStageNameRoutine());
         }
@@ -523,6 +526,7 @@ public class StageMenuManager : MonoBehaviour
 
         int displayStageNumber = currentStageStageIndex + 1;
         string baseText = $"ステージ {displayStageNumber}";
+        string lText = "読み込み中";
 
         float duration = 3f;
         float interval = 0.3f;
@@ -532,7 +536,7 @@ public class StageMenuManager : MonoBehaviour
         while (elapsedTime < duration)
         {
             string dots = new string('.', dotCount);
-            stageNameText.text = baseText + dots;
+            LoadText.text = lText + dots;
 
             yield return new WaitForSecondsRealtime(interval);
             elapsedTime += interval;
@@ -540,10 +544,13 @@ public class StageMenuManager : MonoBehaviour
             dotCount = (dotCount + 1) % 4;
         }
 
-        stageNameText.text = baseText + "...";
+        stageNameText.text = baseText;
+        LoadText.text = lText + "...";
         yield return new WaitForSecondsRealtime(0.3f);
 
         stageNameText.gameObject.SetActive(false);
+        LoadText.gameObject.SetActive(false);
+
         Image.SetActive(false);
         panel.SetActive(false);
         Debug.Log("3秒間のアニメーションが終了したため、テキストを非表示にしました。");

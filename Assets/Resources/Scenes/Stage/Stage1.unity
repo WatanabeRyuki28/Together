@@ -3780,6 +3780,7 @@ MonoBehaviour:
   panel: {fileID: 1398359767}
   Image: {fileID: 1396323313}
   stageNameText: {fileID: 931527600}
+  LoadText: {fileID: 0}
 --- !u!4 &601447396
 Transform:
   m_ObjectHideFlags: 0
