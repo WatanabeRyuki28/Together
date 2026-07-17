@@ -210,12 +210,12 @@ public class ObjectOnlineCommunication : MonoBehaviour
 
                 if (menuData.type == "menu_toggle" && StageMenuManager.Instance != null)
                 {
-                    StageMenuManager.Instance.ReceiveMenuToggle(menuData.position_x, menuData.char_index);
+                    StageMenuManager.Instance.ReceiveExitReady(menuData.char_index);
                     return;
                 }
                 else if (menuData.type == "menu_exit_ready" && StageMenuManager.Instance != null)
                 {
-                    StageMenuManager.Instance.ReceiveExitReady(menuData.char_index);
+                    StageMenuManager.Instance.ReceiveExitCancel(menuData.char_index);
                     return;
                 }
             }
