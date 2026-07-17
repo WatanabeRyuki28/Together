@@ -7079,8 +7079,7 @@ MonoBehaviour:
   - SecondScene
   - CharacterSelectScene
   - StageSelectScene
-  destroyMeScenes:
-  - SecondScene
+  destroyMeScenes: []
 --- !u!4 &908836822
 Transform:
   m_ObjectHideFlags: 0

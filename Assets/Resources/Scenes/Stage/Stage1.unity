@@ -18253,6 +18253,7 @@ MonoBehaviour:
   bgm2: {fileID: 8300000, guid: a281efc92257e74429b66e55d235d8ae, type: 3}
   sameBgmScenes:
   - Stage1
+  - ClearScene
   destroyMeScenes:
   - StageSelectScene
 --- !u!4 &1672676355

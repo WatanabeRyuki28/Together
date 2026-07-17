@@ -3478,6 +3478,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Indicator_P1
       objectReference: {fileID: 0}
+    - target: {fileID: 2292985827828192104, guid: e1b1ace89aaf44147bf0b482ada14885, type: 3}
+      propertyPath: targetPlayer
+      value: 
+      objectReference: {fileID: 7035981683803161156, guid: 34b52b810d553624a9d96e0f1fdb5b61, type: 3}
+    - target: {fileID: 2292985827828192104, guid: e1b1ace89aaf44147bf0b482ada14885, type: 3}
+      propertyPath: indicatorSprite
+      value: 
+      objectReference: {fileID: 1261880584}
     - target: {fileID: 6387928576844244135, guid: e1b1ace89aaf44147bf0b482ada14885, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.558667
@@ -14274,6 +14282,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6447ba3f4feaafb4b9f12fa14c4433cc, type: 3}
+--- !u!212 &1261880584 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 8200077787780953917, guid: 6447ba3f4feaafb4b9f12fa14c4433cc, type: 3}
+  m_PrefabInstance: {fileID: 1261880583}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1353408621
 GameObject:
   m_ObjectHideFlags: 0
@@ -14404,6 +14417,7 @@ MonoBehaviour:
   bgm2: {fileID: 8300000, guid: a281efc92257e74429b66e55d235d8ae, type: 3}
   sameBgmScenes:
   - Stage3
+  - ClearScene
   destroyMeScenes:
   - StageSelectScene
 --- !u!4 &1353408624
@@ -14554,6 +14568,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 65f9f62d891cb2248b56d7d9ae4f3aec, type: 3}
+--- !u!212 &1478297510 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 8200077787780953917, guid: 65f9f62d891cb2248b56d7d9ae4f3aec, type: 3}
+  m_PrefabInstance: {fileID: 1478297509}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1580909392
 GameObject:
   m_ObjectHideFlags: 0
@@ -14809,6 +14828,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Indicator_P2
       objectReference: {fileID: 0}
+    - target: {fileID: 4015298300594984093, guid: 0db7ca45bd4a7fc4ca31700863f7e185, type: 3}
+      propertyPath: targetPlayer
+      value: 
+      objectReference: {fileID: 5717610557424801763, guid: eac79c4a988ed454b9a679259ee86c58, type: 3}
+    - target: {fileID: 4015298300594984093, guid: 0db7ca45bd4a7fc4ca31700863f7e185, type: 3}
+      propertyPath: indicatorSprite
+      value: 
+      objectReference: {fileID: 1478297510}
     - target: {fileID: 6889655507543713752, guid: 0db7ca45bd4a7fc4ca31700863f7e185, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.8194498
