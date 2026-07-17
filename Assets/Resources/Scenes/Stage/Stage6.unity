@@ -123,17 +123,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!114 &120736782 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7681446784170099318, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1746665922}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &162880852 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1070606867426754357, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
@@ -2275,8 +2264,8 @@ Tilemap:
   - first: {x: 20, y: 4, z: 0}
     second:
       serializedVersion: 2
-      m_TileIndex: 9
-      m_TileSpriteIndex: 9
+      m_TileIndex: 2
+      m_TileSpriteIndex: 2
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -2778,7 +2767,7 @@ Tilemap:
     m_Data: {fileID: 11400000, guid: 35171fa83ae6a7448b43f941f048359a, type: 2}
   - m_RefCount: 8
     m_Data: {fileID: 11400000, guid: 70b07281bd99d0442aaba0b08040c758, type: 2}
-  - m_RefCount: 12
+  - m_RefCount: 13
     m_Data: {fileID: 11400000, guid: 4dd0cf1c13f04974db5bdfc423d981f7, type: 2}
   - m_RefCount: 33
     m_Data: {fileID: 11400000, guid: 7a841598d00b06948aa4c5a835591479, type: 2}
@@ -2792,7 +2781,7 @@ Tilemap:
     m_Data: {fileID: 11400000, guid: 0bd600e061eaf6c4db13dc6b01523732, type: 2}
   - m_RefCount: 1
     m_Data: {fileID: 11400000, guid: f55991cb55a99cc4f8bf6c4b0a71bbfb, type: 2}
-  - m_RefCount: 78
+  - m_RefCount: 77
     m_Data: {fileID: 11400000, guid: 959b27d38a42ca7438c81eed89f394ef, type: 2}
   - m_RefCount: 2
     m_Data: {fileID: 11400000, guid: a7fe0dff44b04914386fbf80a39977d0, type: 2}
@@ -2817,7 +2806,7 @@ Tilemap:
     m_Data: {fileID: 1816050153, guid: 28ccf0f0f70445840a58513c919a2887, type: 3}
   - m_RefCount: 8
     m_Data: {fileID: -1315282914, guid: 28ccf0f0f70445840a58513c919a2887, type: 3}
-  - m_RefCount: 12
+  - m_RefCount: 13
     m_Data: {fileID: 808944544, guid: 28ccf0f0f70445840a58513c919a2887, type: 3}
   - m_RefCount: 33
     m_Data: {fileID: 2049846467, guid: 28ccf0f0f70445840a58513c919a2887, type: 3}
@@ -2831,7 +2820,7 @@ Tilemap:
     m_Data: {fileID: 799882765, guid: 28ccf0f0f70445840a58513c919a2887, type: 3}
   - m_RefCount: 16
     m_Data: {fileID: 359178325, guid: 28ccf0f0f70445840a58513c919a2887, type: 3}
-  - m_RefCount: 78
+  - m_RefCount: 77
     m_Data: {fileID: -1517946497, guid: 28ccf0f0f70445840a58513c919a2887, type: 3}
   - m_RefCount: 1
     m_Data: {fileID: 54401145, guid: 28ccf0f0f70445840a58513c919a2887, type: 3}
@@ -3302,11 +3291,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bf1692042cd765148a6d50fdd9d5b397, type: 3}
---- !u!1 &375904478 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3222774241285195604, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1746665922}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &404178534
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16097,17 +16081,6 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
---- !u!114 &753409082 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6250065380526804848, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1746665922}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &828724423
 GameObject:
   m_ObjectHideFlags: 0
@@ -16152,16 +16125,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fad03a7ab2083f041acbad8693920813, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menuPanel: {fileID: 375904478}
-  exitButton: {fileID: 120736782}
-  closeButton: {fileID: 0}
-  mainMenuCursor: {fileID: 0}
-  mainMenuCursorOffsetX: -130
+  firstmenuPanel: {fileID: 0}
+  firstMenuCursor: {fileID: 0}
+  exitButtonTransform: {fileID: 0}
+  closeButtonTransform: {fileID: 0}
   confirmationPanel: {fileID: 162880852}
-  yesButton: {fileID: 0}
-  noButton: {fileID: 1165254606}
   confirmCursor: {fileID: 0}
-  confirmCursorOffsetX: -100
+  yesButtonTransform: {fileID: 0}
+  noButtonTransform: {fileID: 0}
+  cursorOffsetX: -120
   menuOpenButton: {fileID: 1376205269}
   yesButtonText: {fileID: 0}
   starUIPanel: {fileID: 1859704139}
@@ -16169,12 +16141,6 @@ MonoBehaviour:
   missingStarIconPrefab: {fileID: 1868734858400582071, guid: a646b1b08fcb2544d9f1f0d8d0d4cf52, type: 3}
   currentStageStageIndex: 0
   stageSelectSceneName: StageSelect
-  menuButtons:
-  - {fileID: 120736782}
-  - {fileID: 1657272056}
-  confirmationButtons:
-  - {fileID: 753409082}
-  - {fileID: 1165254606}
   panel: {fileID: 357794051}
   Image: {fileID: 917094050}
   stageNameText: {fileID: 362039073}
@@ -16564,17 +16530,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7979d5a1207fc4c4aab8f1ee8a5ce408, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1165254606 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1302114278909916858, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1746665922}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1261880583
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16887,17 +16842,6 @@ MonoBehaviour:
   projectilePrefabs:
   - {fileID: 109283890417617540, guid: e070b531c5d3da740b448b207ac74b89, type: 3}
   - {fileID: 1470277367932372552, guid: 9a7087fc1a3459340b36e7d0b85e9e3a, type: 3}
---- !u!114 &1657272056 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4790488398940560249, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1746665922}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1746665922
 PrefabInstance:
   m_ObjectHideFlags: 0
