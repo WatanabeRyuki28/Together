@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 public class StageMenuManager : MonoBehaviour
 {
@@ -123,6 +124,14 @@ public class StageMenuManager : MonoBehaviour
 
     private void Update()
     {
+      
+
+        if (InputSystem.GetDevice<Gamepad>() != null && Gamepad.current.startButton.wasPressedThisFrame)
+        {
+            ToggleMenu();
+            return; // メニューを開閉したフレームはこれ以上の処理をスキップ
+        }
+
         if (currentMenuState == MenuState.Closed) return;
 
         if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject != null)
@@ -149,6 +158,7 @@ public class StageMenuManager : MonoBehaviour
         if (controls.SecondMenu.Submit.triggered)
         {
             ExecuteSelection();
+            return;
         }
     }
 
@@ -253,8 +263,8 @@ public class StageMenuManager : MonoBehaviour
 
         UpdateYesButtonText();
 
-        controls.SecondMenu.Enable();
-        controls.FinalMenu.Disable();
+        controls.SecondMenu.Disable(); // 1枚目の入力をオフに
+        controls.FinalMenu.Enable();  // 2枚目の入力をオンに
 
         currentConfirmIndex = 1; // 初期位置は安全のため「いいえ」
         UpdateCursorPositions();
@@ -272,8 +282,9 @@ public class StageMenuManager : MonoBehaviour
                 RectTransform targetTransform = (currentFirstIndex == 0) ? exitButtonTransform : closeButtonTransform;
                 if (targetTransform != null)
                 {
-                    Vector3 targetPos = targetTransform.position;
-                    firstMenuCursor.position = new Vector3(targetPos.x + cursorOffsetX, targetPos.y, targetPos.z);
+                    // position ではなく anchoredPosition (UIのローカル座標) を使用する
+                    Vector2 targetAnchorPos = targetTransform.anchoredPosition;
+                    firstMenuCursor.anchoredPosition = new Vector2(targetAnchorPos.x  +10, targetAnchorPos.y -10);
                 }
             }
             if (confirmCursor != null) confirmCursor.gameObject.SetActive(false);
@@ -287,8 +298,9 @@ public class StageMenuManager : MonoBehaviour
                 RectTransform targetTransform = (currentConfirmIndex == 0) ? yesButtonTransform : noButtonTransform;
                 if (targetTransform != null)
                 {
-                    Vector3 targetPos = targetTransform.position;
-                    confirmCursor.position = new Vector3(targetPos.x + cursorOffsetX, targetPos.y, targetPos.z);
+                    // anchoredPosition を使用
+                    Vector2 targetAnchorPos = targetTransform.anchoredPosition;
+                    confirmCursor.anchoredPosition = new Vector2(targetAnchorPos.x + cursorOffsetX, targetAnchorPos.y);
                 }
             }
             if (firstMenuCursor != null) firstMenuCursor.gameObject.SetActive(false);
