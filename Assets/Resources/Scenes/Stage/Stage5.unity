@@ -296,17 +296,6 @@ MonoBehaviour:
   maxX: 54
   minY: 2
   maxY: 15
---- !u!114 &193679532 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4790488398940560249, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1113877097}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &224090263
 GameObject:
   m_ObjectHideFlags: 0
@@ -2139,8 +2128,8 @@ Tilemap:
   - first: {x: 7, y: 1, z: 0}
     second:
       serializedVersion: 2
-      m_TileIndex: 8
-      m_TileSpriteIndex: 8
+      m_TileIndex: 10
+      m_TileSpriteIndex: 13
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -2240,7 +2229,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 10
-      m_TileSpriteIndex: 10
+      m_TileSpriteIndex: 13
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -2360,7 +2349,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 2
-      m_TileSpriteIndex: 2
+      m_TileSpriteIndex: 12
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -7424,19 +7413,25 @@ Tilemap:
     m_Data: {fileID: 11400000, guid: 54632a9194a4a4f469095ca61ae90f5f, type: 2}
   - m_RefCount: 2
     m_Data: {fileID: 11400000, guid: 30f755de9a7e5a546b87c093b57576c7, type: 2}
-  - m_RefCount: 9
+  - m_RefCount: 8
     m_Data: {fileID: 11400000, guid: 065f684d32bed454a9ce91621b8bd8bf, type: 2}
   - m_RefCount: 504
     m_Data: {fileID: 11400000, guid: 959b27d38a42ca7438c81eed89f394ef, type: 2}
-  - m_RefCount: 1
+  - m_RefCount: 2
     m_Data: {fileID: 11400000, guid: 96f94d3cd39adfd4f8306b16b611b829, type: 2}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
   m_TileSpriteArray:
   - m_RefCount: 0
     m_Data: {fileID: 0}
   - m_RefCount: 10
     m_Data: {fileID: 808944544, guid: 28ccf0f0f70445840a58513c919a2887, type: 3}
-  - m_RefCount: 1
-    m_Data: {fileID: -1810060764, guid: 28ccf0f0f70445840a58513c919a2887, type: 3}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
   - m_RefCount: 36
     m_Data: {fileID: 2049846467, guid: 28ccf0f0f70445840a58513c919a2887, type: 3}
   - m_RefCount: 42
@@ -7447,11 +7442,17 @@ Tilemap:
     m_Data: {fileID: -251593925, guid: 28ccf0f0f70445840a58513c919a2887, type: 3}
   - m_RefCount: 2
     m_Data: {fileID: -267444843, guid: 28ccf0f0f70445840a58513c919a2887, type: 3}
-  - m_RefCount: 9
+  - m_RefCount: 8
     m_Data: {fileID: 1439545113, guid: 28ccf0f0f70445840a58513c919a2887, type: 3}
   - m_RefCount: 504
     m_Data: {fileID: -1517946497, guid: 28ccf0f0f70445840a58513c919a2887, type: 3}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
   - m_RefCount: 1
+    m_Data: {fileID: -1810060764, guid: 28ccf0f0f70445840a58513c919a2887, type: 3}
+  - m_RefCount: 2
     m_Data: {fileID: 508092019, guid: 28ccf0f0f70445840a58513c919a2887, type: 3}
   m_TileMatrixArray:
   - m_RefCount: 680
@@ -22897,17 +22898,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 8373884344215466822, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
   m_PrefabInstance: {fileID: 1113877097}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1798697368 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7681446784170099318, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1113877097}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1809136232
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22916,6 +22906,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 438171134733523738, guid: 69b652f7d6823fa42b4681b0c662516f, type: 3}
+      propertyPath: m_SortingOrder
+      value: -2
+      objectReference: {fileID: 0}
     - target: {fileID: 2474750212574735927, guid: 69b652f7d6823fa42b4681b0c662516f, type: 3}
       propertyPath: m_LocalScale.x
       value: 13.5
@@ -22930,7 +22924,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2474750212574735927, guid: 69b652f7d6823fa42b4681b0c662516f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.867
+      value: 1.85
       objectReference: {fileID: 0}
     - target: {fileID: 2474750212574735927, guid: 69b652f7d6823fa42b4681b0c662516f, type: 3}
       propertyPath: m_LocalPosition.z
@@ -22973,17 +22967,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 69b652f7d6823fa42b4681b0c662516f, type: 3}
---- !u!114 &1846588556 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6250065380526804848, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1113877097}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1848865148
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -23127,16 +23110,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fad03a7ab2083f041acbad8693920813, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menuPanel: {fileID: 2126158029}
-  exitButton: {fileID: 1798697368}
-  closeButton: {fileID: 0}
-  mainMenuCursor: {fileID: 0}
-  mainMenuCursorOffsetX: -130
+  firstmenuPanel: {fileID: 0}
+  firstMenuCursor: {fileID: 0}
+  exitButtonTransform: {fileID: 0}
+  closeButtonTransform: {fileID: 0}
   confirmationPanel: {fileID: 1580715929}
-  yesButton: {fileID: 0}
-  noButton: {fileID: 2052598215}
   confirmCursor: {fileID: 0}
-  confirmCursorOffsetX: -100
+  yesButtonTransform: {fileID: 0}
+  noButtonTransform: {fileID: 0}
+  cursorOffsetX: -120
   menuOpenButton: {fileID: 156525406}
   yesButtonText: {fileID: 0}
   starUIPanel: {fileID: 1696261321}
@@ -23144,12 +23126,6 @@ MonoBehaviour:
   missingStarIconPrefab: {fileID: 1868734858400582071, guid: a646b1b08fcb2544d9f1f0d8d0d4cf52, type: 3}
   currentStageStageIndex: 4
   stageSelectSceneName: StageSelect
-  menuButtons:
-  - {fileID: 1798697368}
-  - {fileID: 193679532}
-  confirmationButtons:
-  - {fileID: 1846588556}
-  - {fileID: 2052598215}
   panel: {fileID: 710415563}
   Image: {fileID: 1714140241}
   stageNameText: {fileID: 931539133}
@@ -23280,17 +23256,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 614c7732c49756e41b64e594de91d68c, type: 3}
---- !u!114 &2052598215 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1302114278909916858, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1113877097}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &2104318172
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -23352,11 +23317,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f4f6aa65bc670724782700be9957acf3, type: 3}
---- !u!1 &2126158029 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3222774241285195604, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1113877097}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2140951325
 GameObject:
   m_ObjectHideFlags: 0
