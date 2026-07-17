@@ -563,7 +563,7 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""990bcf98-d8a2-41fe-8b49-c3290d3733b2"",
-                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""path"": ""<Gamepad>/start"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",

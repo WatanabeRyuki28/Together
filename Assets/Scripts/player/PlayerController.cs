@@ -244,7 +244,7 @@ public class PlayerController : MonoBehaviour
             if (Input.GetKey(rightKey)) moveInput += 1f;
         }
 
-        // ゲームパッドの入力を加算 (両方ONならスティックもキーボードも両方効きます)
+        // ゲームパッドの入力を加算
         if (useGamepad && controls != null)
         {
             float gamepadInput = controls.Player.Move.ReadValue<float>();
@@ -262,34 +262,34 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        // 入力値を -1 から 1 の間に収める
         moveInput = Mathf.Clamp(moveInput, -1f, 1f);
 
-        // 「箱に触れている」かつ「箱がある方向にキーを入力している」時だけ、本当に押していると判定
-        bool isActuallyPushing = isPushing && IsInputtingTowardsBox(moveInput);
-
-        // 押し状態なら速度を下げ、そうでなければ通常の速度を適用
-        float currentSpeed = isActuallyPushing ? moveSpeed * pushSpeedMultiplier : moveSpeed;
-
-        // 左右の速度を設定（y軸は現在の物理挙動を維持）
-        rb.velocity = new Vector2(moveInput * currentSpeed, rb.velocity.y);
-
-
+        // 入力がほとんどない（停止状態）場合の処理
         if (Mathf.Abs(moveInput) < 0.01f)
         {
             rb.velocity = new Vector2(0f, rb.velocity.y);
         }
         else
         {
+            // 「箱に触れている」かつ「箱がある方向にキーを入力している」時だけ、本当に押していると判定
+            bool isActuallyPushing = isPushing && IsInputtingTowardsBox(moveInput);
+
+            // 押し状態なら速度を下げ、そうでなければ通常の速度を適用
+            float currentSpeed = isActuallyPushing ? moveSpeed * pushSpeedMultiplier : moveSpeed;
+
+            // 左右の速度を確定させる（※ここで一回だけ設定すればOKです）
             rb.velocity = new Vector2(moveInput * currentSpeed, rb.velocity.y);
         }
 
+        // スプライトの向き（左右反転）の処理
         if (moveInput > 0.1f)
         {
-            spriteRenderer.flipX = false;
+            spriteRenderer.flipX = false; // 右を向く
         }
         else if (moveInput < -0.1f)
         {
-            spriteRenderer.flipX = true;
+            spriteRenderer.flipX = true;  // 左を向く
         }
     }
 

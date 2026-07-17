@@ -148,4 +148,4 @@ MonoBehaviour:
   breakSound: {fileID: 0}
   layerHitSound: {fileID: 0}
   failSound: {fileID: 0}
-  breakEffectPrefab: {fileID: 0}
+  breakEffectPrefab: {fileID: 4272629078293390519, guid: b7a0dc6857794cc4baacd992b4a13b0a, type: 3}
