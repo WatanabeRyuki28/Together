@@ -3,34 +3,37 @@ using UnityEngine.Video;
 
 public class VideoAreaTrigger : MonoBehaviour
 {
-    [Header("表示するRawImageオブジェクト")]
-    [SerializeField] private GameObject videoUIObject;
+    [Header("表示する操作説明パネル（動画を入れた親オブジェクト）")]
+    [SerializeField] private GameObject guidePanelObject;
 
     [Header("VideoPlayerコンポーネント")]
     [SerializeField] private VideoPlayer videoPlayer;
+
+    [Header("表示したいコントローラー画像（看板付き）のプレハブ")]
+    [SerializeField] private GameObject controllerImagePrefab;
 
     [Header("一度だけ再生するかどうか")]
     [SerializeField] private bool playOnlyOnce = true;
 
     private bool hasPlayed = false;
+    private GameObject spawnedControllerInstance = null; // 生成したプレハブを保持する変数
 
     private void Start()
     {
-        // 事前に非表示・停止であることを確認
-        if (videoUIObject != null) videoUIObject.SetActive(false);
+        // 起動時はパネルを非表示、動画を停止しておく
+        if (guidePanelObject != null) guidePanelObject.SetActive(false);
         if (videoPlayer != null) videoPlayer.Stop();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // プレイヤーが触れたか判定 (PlayerControllerを持っているか、またはTagがPlayerか)
+        // プレイヤーが触れたか判定
         var player = other.GetComponent<PlayerController>();
         if (player == null) return;
 
         // すでに再生済みで、一度きりの設定なら無視
         if (playOnlyOnce && hasPlayed) return;
 
-        // 動画再生処理
         PlayVideo();
     }
 
@@ -38,27 +41,48 @@ public class VideoAreaTrigger : MonoBehaviour
     {
         hasPlayed = true;
 
-        if (videoUIObject != null && videoPlayer != null)
+        if (guidePanelObject != null && videoPlayer != null)
         {
-            // UIを表示して動画を再生
-            videoUIObject.SetActive(true);
+            // パネルを表示
+            guidePanelObject.SetActive(true);
+
+            // 看板付きコントローラー画像のプレハブを生成し、パネルの子要素にする
+            if (controllerImagePrefab != null)
+            {
+                spawnedControllerInstance = Instantiate(controllerImagePrefab, guidePanelObject.transform);
+
+                // 位置の微調整（動画の下に表示されるように座標を調整する）
+                RectTransform rectTransform = spawnedControllerInstance.GetComponent<RectTransform>();
+                if (rectTransform != null)
+                {
+                    rectTransform.anchoredPosition = new Vector2(0f, -250f); // 好みの高さに調整してください
+                }
+            }
+
+            // 動画を再生
             videoPlayer.Play();
 
-            // 動画が終了した時のイベントを登録
+            // 動画が最後まで流れたら OnVideoEnd を呼ぶようにイベントを登録
             videoPlayer.loopPointReached += OnVideoEnd;
         }
     }
 
-    // 動画が最後まで再生し終わったら呼ばれる
+    // 動画が最後まで再生し終わったら自動で呼ばれる
     private void OnVideoEnd(VideoPlayer vp)
     {
-        // イベントの登録解除
         videoPlayer.loopPointReached -= OnVideoEnd;
 
-        // UIを非表示にして停止する
-        if (videoUIObject != null)
+        // 生成した看板付きコントローラー画像を削除する
+        if (spawnedControllerInstance != null)
         {
-            videoUIObject.SetActive(false);
+            Destroy(spawnedControllerInstance);
+            spawnedControllerInstance = null;
+        }
+
+        // パネルを非表示にする
+        if (guidePanelObject != null)
+        {
+            guidePanelObject.SetActive(false);
         }
     }
 }
