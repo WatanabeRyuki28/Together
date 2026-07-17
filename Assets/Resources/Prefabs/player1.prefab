@@ -129,7 +129,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   useKeyboard: 1
-  useGamepad: 0
+  useGamepad: 1
   playerNumber: 1
   element: 0
   moveSpeed: 5
