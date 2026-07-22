@@ -186,17 +186,16 @@ public class ObjectOnlineCommunication : MonoBehaviour
                 ghostObjects[charaindex] = ghost;
             }
 
-            // 画面外インジケーターに相手を登録
+            // OffScreenIndicator に相手を登録する部分（CreatePlayer メソッド内）
             OffScreenIndicator indicator = FindFirstObjectByType<OffScreenIndicator>(FindObjectsInactive.Include);
             if (indicator != null)
             {
                 indicator.gameObject.SetActive(true);
-                indicator.SetupTarget(player.transform); // 相手を登録！
-                Debug.Log($"[成功] OffScreenIndicator に相手プレイヤー({player.name})をターゲットとして自動登録しました。");
-            }
-            else
-            {
-                Debug.LogError("[エラー] シーン内に OffScreenIndicator が見つかりませんでした。");
+
+                // ★ charaindex（0:赤, 1:青）も一緒に渡す！
+                indicator.SetupTarget(player.transform, charaindex);
+
+                Debug.Log($"[成功] OffScreenIndicator に相手プレイヤー({player.name} / CharaIndex:{charaindex})をターゲットとして自動登録しました。");
             }
         }
     }

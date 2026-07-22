@@ -123,11 +123,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!224 &74092204 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 3668774164826154907, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1090039521}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &161063048
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -148,6 +143,18 @@ PrefabInstance:
       propertyPath: indicatorSprite
       value: 
       objectReference: {fileID: 1257551573}
+    - target: {fileID: 4015298300594984093, guid: 0db7ca45bd4a7fc4ca31700863f7e185, type: 3}
+      propertyPath: indicatorSprites.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4015298300594984093, guid: 0db7ca45bd4a7fc4ca31700863f7e185, type: 3}
+      propertyPath: indicatorSprites.Array.data[0]
+      value: 
+      objectReference: {fileID: 1694325009, guid: 27ec43d2211f8224292ebd8e8f400c1c, type: 3}
+    - target: {fileID: 4015298300594984093, guid: 0db7ca45bd4a7fc4ca31700863f7e185, type: 3}
+      propertyPath: indicatorSprites.Array.data[1]
+      value: 
+      objectReference: {fileID: -1767292558, guid: 7cdce1df22cf5604d8ee9c43b54edc4d, type: 3}
     - target: {fileID: 6889655507543713752, guid: 0db7ca45bd4a7fc4ca31700863f7e185, type: 3}
       propertyPath: m_LocalPosition.x
       value: 13.154951
@@ -386,6 +393,18 @@ PrefabInstance:
       propertyPath: indicatorSprite
       value: 
       objectReference: {fileID: 1357000735}
+    - target: {fileID: 2292985827828192104, guid: e1b1ace89aaf44147bf0b482ada14885, type: 3}
+      propertyPath: indicatorSprites.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2292985827828192104, guid: e1b1ace89aaf44147bf0b482ada14885, type: 3}
+      propertyPath: indicatorSprites.Array.data[0]
+      value: 
+      objectReference: {fileID: 1694325009, guid: 27ec43d2211f8224292ebd8e8f400c1c, type: 3}
+    - target: {fileID: 2292985827828192104, guid: e1b1ace89aaf44147bf0b482ada14885, type: 3}
+      propertyPath: indicatorSprites.Array.data[1]
+      value: 
+      objectReference: {fileID: -1767292558, guid: 7cdce1df22cf5604d8ee9c43b54edc4d, type: 3}
     - target: {fileID: 6387928576844244135, guid: e1b1ace89aaf44147bf0b482ada14885, type: 3}
       propertyPath: m_LocalPosition.x
       value: 6.0640955
@@ -4404,17 +4423,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &712958189 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4447238579261255502, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1090039521}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &726988440
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15948,11 +15956,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6447ba3f4feaafb4b9f12fa14c4433cc, type: 3}
---- !u!224 &799175025 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 5303249752128002005, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1090039521}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &886660584
 GameObject:
   m_ObjectHideFlags: 0
@@ -16034,11 +16037,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   firstmenuPanel: {fileID: 469022816}
-  firstMenuCursor: {fileID: 74092204}
+  firstMenuCursor: {fileID: 0}
   exitButtonTransform: {fileID: 1154468081}
   closeButtonTransform: {fileID: 1853767666}
   confirmationPanel: {fileID: 1105912702}
-  confirmCursor: {fileID: 799175025}
+  confirmCursor: {fileID: 0}
   yesButtonTransform: {fileID: 1342752604}
   noButtonTransform: {fileID: 1279439733}
   cursorOffsetX: 0
@@ -16052,9 +16055,6 @@ MonoBehaviour:
   panel: {fileID: 1090039524}
   Image: {fileID: 1090039523}
   stageNameText: {fileID: 1090039522}
-  LoadText: {fileID: 712958189}
-  exitStatusText: {fileID: 1856176305}
-  yesButton: {fileID: 0}
 --- !u!4 &909431768
 Transform:
   m_ObjectHideFlags: 0
@@ -16600,17 +16600,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2209355337208804374, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
   m_PrefabInstance: {fileID: 1090039521}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1856176305 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1825377750089810030, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1090039521}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1935359380 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7138431650641959195, guid: e3db2ec7c2302db4289af537d3fb4c54, type: 3}

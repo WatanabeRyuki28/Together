@@ -3173,6 +3173,18 @@ PrefabInstance:
       propertyPath: indicatorSprite
       value: 
       objectReference: {fileID: 1261880584}
+    - target: {fileID: 2292985827828192104, guid: e1b1ace89aaf44147bf0b482ada14885, type: 3}
+      propertyPath: indicatorSprites.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2292985827828192104, guid: e1b1ace89aaf44147bf0b482ada14885, type: 3}
+      propertyPath: indicatorSprites.Array.data[0]
+      value: 
+      objectReference: {fileID: 1694325009, guid: 27ec43d2211f8224292ebd8e8f400c1c, type: 3}
+    - target: {fileID: 2292985827828192104, guid: e1b1ace89aaf44147bf0b482ada14885, type: 3}
+      propertyPath: indicatorSprites.Array.data[1]
+      value: 
+      objectReference: {fileID: -1767292558, guid: 7cdce1df22cf5604d8ee9c43b54edc4d, type: 3}
     - target: {fileID: 6387928576844244135, guid: e1b1ace89aaf44147bf0b482ada14885, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.558667
@@ -16126,11 +16138,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   firstmenuPanel: {fileID: 1746665931}
-  firstMenuCursor: {fileID: 1746665930}
+  firstMenuCursor: {fileID: 0}
   exitButtonTransform: {fileID: 1746665929}
   closeButtonTransform: {fileID: 1746665928}
   confirmationPanel: {fileID: 162880852}
-  confirmCursor: {fileID: 1746665927}
+  confirmCursor: {fileID: 0}
   yesButtonTransform: {fileID: 1746665926}
   noButtonTransform: {fileID: 1746665925}
   cursorOffsetX: 0
@@ -16144,9 +16156,6 @@ MonoBehaviour:
   panel: {fileID: 357794051}
   Image: {fileID: 917094050}
   stageNameText: {fileID: 362039073}
-  LoadText: {fileID: 1746665924}
-  exitStatusText: {fileID: 1746665923}
-  yesButton: {fileID: 0}
 --- !u!1001 &846994241
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16998,28 +17007,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
---- !u!114 &1746665923 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1825377750089810030, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1746665922}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1746665924 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4447238579261255502, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1746665922}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!224 &1746665925 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 315223446627861720, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
@@ -17030,11 +17017,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3915684155841700695, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
   m_PrefabInstance: {fileID: 1746665922}
   m_PrefabAsset: {fileID: 0}
---- !u!224 &1746665927 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 5303249752128002005, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1746665922}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &1746665928 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2209355337208804374, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
@@ -17043,11 +17025,6 @@ RectTransform:
 --- !u!224 &1746665929 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7840526398259052393, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1746665922}
-  m_PrefabAsset: {fileID: 0}
---- !u!224 &1746665930 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 3668774164826154907, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
   m_PrefabInstance: {fileID: 1746665922}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1746665931 stripped
@@ -17141,6 +17118,18 @@ PrefabInstance:
       propertyPath: indicatorSprite
       value: 
       objectReference: {fileID: 1478297510}
+    - target: {fileID: 4015298300594984093, guid: 0db7ca45bd4a7fc4ca31700863f7e185, type: 3}
+      propertyPath: indicatorSprites.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4015298300594984093, guid: 0db7ca45bd4a7fc4ca31700863f7e185, type: 3}
+      propertyPath: indicatorSprites.Array.data[0]
+      value: 
+      objectReference: {fileID: 1694325009, guid: 27ec43d2211f8224292ebd8e8f400c1c, type: 3}
+    - target: {fileID: 4015298300594984093, guid: 0db7ca45bd4a7fc4ca31700863f7e185, type: 3}
+      propertyPath: indicatorSprites.Array.data[1]
+      value: 
+      objectReference: {fileID: -1767292558, guid: 7cdce1df22cf5604d8ee9c43b54edc4d, type: 3}
     - target: {fileID: 6889655507543713752, guid: 0db7ca45bd4a7fc4ca31700863f7e185, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.8194498

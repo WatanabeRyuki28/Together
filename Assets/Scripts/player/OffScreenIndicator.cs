@@ -8,6 +8,10 @@ public class OffScreenIndicator : MonoBehaviour
     [Header("表示するアイコン（SpriteRendererを持つオブジェクト）")]
     [SerializeField] private SpriteRenderer indicatorSprite;
 
+    // ★追加: 0:赤アイコン, 1:青アイコン などを割り当てる配列
+    [Header("ターゲットの色に応じたアイコン画像（0:赤, 1:青）")]
+    [SerializeField] private Sprite[] indicatorSprites;
+
     [Header("画面の端からどれくらい内側に固定するか（ワールド単位）")]
     [SerializeField] private float margin = 0.5f;
 
@@ -30,7 +34,6 @@ public class OffScreenIndicator : MonoBehaviour
     {
         mainCamera = Camera.main;
 
-        // 初期状態ではアイコンを隠しておく
         if (indicatorSprite != null)
         {
             indicatorSprite.gameObject.SetActive(false);
@@ -42,23 +45,31 @@ public class OffScreenIndicator : MonoBehaviour
         }
     }
 
-    // 生成スクリプトからこれを呼び出してターゲットを登録する
-    public void SetupTarget(Transform target)
+    // ★修正: charaIndex を追加で受け取るように変更
+    public void SetupTarget(Transform target, int charaIndex = -1)
     {
         targetPlayer = target;
+
+        // ★相手のキャラ番号（0:赤, 1:青）に合わせてアイコン画像を差し替える
+        if (charaIndex >= 0 && indicatorSprites != null && charaIndex < indicatorSprites.Length)
+        {
+            if (indicatorSprite != null && indicatorSprites[charaIndex] != null)
+            {
+                indicatorSprite.sprite = indicatorSprites[charaIndex];
+            }
+        }
+
         if (targetPlayer != null)
         {
             playerSpriteRenderer = targetPlayer.GetComponent<SpriteRenderer>();
-            // ターゲットが設定されたら、メインカメラを再取得して準備を確実にする
             if (mainCamera == null) mainCamera = Camera.main;
 
-            Debug.Log($"[OffScreenIndicator] ターゲット '{target.name}' を正常に認識しました。");
+            Debug.Log($"[OffScreenIndicator] ターゲット '{target.name}' (Index:{charaIndex}) を正常に認識しました。");
         }
     }
 
     private void FixedUpdate()
     {
-        // ターゲットがいない、または非アクティブならインジケーターを消して終了
         if (targetPlayer == null || !targetPlayer.gameObject.activeInHierarchy || indicatorSprite == null || mainCamera == null)
         {
             if (indicatorSprite != null && indicatorSprite.gameObject.activeSelf)
@@ -72,8 +83,6 @@ public class OffScreenIndicator : MonoBehaviour
         float camHalfHeight = mainCamera.orthographicSize;
         float camHalfWidth = camHalfHeight * mainCamera.aspect;
 
-        // ★改善：プレイヤーのサイズ自動取得を廃止し、中心点の座標だけでシンプルに判定する
-        // わずかに画面の内側に入ったら消えるように、マージン分（0.1fなど）だけ余裕を持たせます
         float offsetBuffer = 0.1f;
 
         bool isOffScreenNow = targetPlayer.position.x < (camPos.x - camHalfWidth - offsetBuffer) ||
@@ -83,25 +92,20 @@ public class OffScreenIndicator : MonoBehaviour
 
         if (isOffScreenNow)
         {
-            // 画面外のときだけアクティブにする
             if (!indicatorSprite.gameObject.activeSelf)
             {
                 indicatorSprite.gameObject.SetActive(true);
-                Debug.Log($"[OffScreenIndicator] ターゲットが画面外に出たため、アイコンを呼び出しました！位置: {targetPlayer.position}");
             }
 
             float edgeX = camHalfWidth - margin;
             float edgeY = camHalfHeight - margin;
 
-            // 【位置・回転の共通基準】高さを底上げした中心点
             Vector3 centerOffsetPos = camPos;
             centerOffsetPos.y += offsetY;
 
-            // 共通の基準点からターゲットへのベクトル
             Vector3 playerDir = targetPlayer.position - centerOffsetPos;
             playerDir.z = 0f;
 
-            // 交点計算
             float mX = Mathf.Infinity;
             float mY = Mathf.Infinity;
 
@@ -118,7 +122,6 @@ public class OffScreenIndicator : MonoBehaviour
 
             indicatorSprite.transform.position = indicatorPos;
 
-            // --- 回転と反転の計算 ---
             bool isPlayerOnLeft = playerDir.x < 0;
 
             if (rotateIcon)
@@ -138,11 +141,9 @@ public class OffScreenIndicator : MonoBehaviour
         }
         else
         {
-            // 画面内にいるときは非アクティブにする
             if (indicatorSprite.gameObject.activeSelf)
             {
                 indicatorSprite.gameObject.SetActive(false);
-                Debug.Log("[OffScreenIndicator] ターゲットが画面内に戻ったため、アイコンを非表示にしました。");
             }
         }
     }
