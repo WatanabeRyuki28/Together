@@ -93,6 +93,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6669819385464792212}
     m_Modifications:
+    - target: {fileID: 771566799716151086, guid: 02dcecde74212ca47aa9f5166cc6fbd3, type: 3}
+      propertyPath: m_SortingOrder
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 1663800422498473990, guid: 02dcecde74212ca47aa9f5166cc6fbd3, type: 3}
+      propertyPath: m_SortingOrder
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 1677369483197922570, guid: 02dcecde74212ca47aa9f5166cc6fbd3, type: 3}
+      propertyPath: m_SortingOrder
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 3010445783510924268, guid: 02dcecde74212ca47aa9f5166cc6fbd3, type: 3}
+      propertyPath: m_SortingOrder
+      value: 12
+      objectReference: {fileID: 0}
     - target: {fileID: 6863589566719209431, guid: 02dcecde74212ca47aa9f5166cc6fbd3, type: 3}
       propertyPath: m_Name
       value: controller_xboxone
@@ -148,6 +164,10 @@ PrefabInstance:
     - target: {fileID: 7809210071381353045, guid: 02dcecde74212ca47aa9f5166cc6fbd3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8345752666282857394, guid: 02dcecde74212ca47aa9f5166cc6fbd3, type: 3}
+      propertyPath: m_SortingOrder
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
