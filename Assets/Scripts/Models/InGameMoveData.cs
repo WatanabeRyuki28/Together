@@ -47,3 +47,9 @@ public class ClearSelectData : InitResponse
 }
 
 
+[Serializable]
+public class StageExitSelectData : InitResponse
+{
+    
+    public bool is_ready; // ‚Í‚¢i‘Şo“¯ˆÓj‚ğ‰Ÿ‚µ‚½‚©‚Ç‚¤‚©
+}

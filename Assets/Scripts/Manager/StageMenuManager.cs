@@ -75,6 +75,16 @@ public class StageMenuManager : MonoBehaviour
     [SerializeField] private Text stageNameText;
     [SerializeField] private Text LoadText;
 
+    [Header("退出同期用の変数（追記）")]
+    private bool myExitVote = false;      // 自分が「はい」を押したか
+    private bool remoteExitVote = false;  // 相手が「はい」を押したか
+    private bool isExitingScene = false;   // 二重遷移防止フラグ
+
+    [SerializeField] private Text exitStatusText;
+
+    [SerializeField] private Button yesButton;
+    public bool isIntroPlaying { get; private set; } = true;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -121,21 +131,39 @@ public class StageMenuManager : MonoBehaviour
             stageNameText.text = $"ステージ {displayStageNumber}";
             LoadText.text = "読み込み中";
 
+            
             StartCoroutine(AnimateStageNameRoutine());
         }
     }
 
     private void Update()
     {
-      
+
 
         if (InputSystem.GetDevice<Gamepad>() != null && Gamepad.current.startButton.wasPressedThisFrame)
         {
-            ToggleMenu();
-            return; // メニューを開閉したフレームはこれ以上の処理をスキップ
+            if (currentMenuState == MenuState.Closed)
+            {
+                // プレイ画面のときだけ、メニューを開く
+                ToggleMenu();
+                return;
+            }
+            else if (currentMenuState == MenuState.FirstMenu)
+            {
+                // もし「1枚目のメニュー」を開いているときにスタートボタンを押したら閉じるようにしたい場合はここに入れる
+                ToggleMenu();
+                return;
+            }
+            else if (currentMenuState == MenuState.FinalMenu)
+            {
+                // 「2枚目の確認パネル」のときは、スタートボタンを押しても何もさせない
+                return;
+            }
         }
 
         if (currentMenuState == MenuState.Closed) return;
+
+        if (myExitVote || isExitingScene) return;
 
         if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject != null)
         {
@@ -160,11 +188,15 @@ public class StageMenuManager : MonoBehaviour
         // 決定ボタン（Aボタン）
         if (controls.SecondMenu.Submit.triggered)
         {
-            ExecuteSelection();
+            StartCoroutine(ExecuteSelectionWithDelay());
             return;
         }
     }
-
+    private IEnumerator ExecuteSelectionWithDelay()
+    {
+        yield return null; // 1フレーム待つ
+        ExecuteSelection();
+    }
     // 横移動の数値に基づいてカーソルを切り替える
     private void HandleHorizontalNavigation(float direction)
     {
@@ -266,8 +298,8 @@ public class StageMenuManager : MonoBehaviour
 
         UpdateYesButtonText();
 
-        controls.SecondMenu.Disable(); // 1枚目の入力をオフに
-        controls.FinalMenu.Enable();  // 2枚目の入力をオンに
+        controls.SecondMenu.Enable();
+        //controls.FinalMenu.Enable();  // 2枚目の入力をオンに
 
         currentConfirmIndex = 1; // 初期位置は安全のため「いいえ」
         UpdateCursorPositions();
@@ -317,31 +349,90 @@ public class StageMenuManager : MonoBehaviour
 
     public async void PressYesByClick()
     {
-        if (hasPressedYes) return;
-        hasPressedYes = true;
+        if (myExitVote || isExitingScene) return;
+   
 
-        int myIndex = (NetworkManager.Instance != null) ? NetworkManager.Instance.myCharaIndex : 0;
-        SetPlayerReady(myIndex);
+        myExitVote = true;
+        if (yesButton != null)
+        {
+            yesButton.interactable = false;
+        }
+
+        UpdateExitStatusUI();
 
         if (NetworkManager.Instance != null)
         {
             InGameMoveData exitMsg = new InGameMoveData();
-            exitMsg.type = "menu_exit_ready";
+            exitMsg.type = "menu_toggle";
             exitMsg.dataType = "";
             exitMsg.room_id = NetworkManager.Instance.myRoomID;
-            exitMsg.char_index = myIndex;
+            exitMsg.char_index = NetworkManager.Instance.myPlayerIndex;
 
             string json = JsonUtility.ToJson(exitMsg);
             await NetworkManager.Instance.SendMessageAsync(json);
 
             Debug.Log("退出同意を送信しました。");
         }
+
+        CheckBothPlayersReadyToExit();
     }
 
     public void ReceiveExitReady(int senderIndex)
     {
-        Debug.Log($"【同期】インデックス {senderIndex} のプレイヤーから退出同意を受信しました。");
-        SetPlayerReady(senderIndex);
+        remoteExitVote = true; // 相手が押したフラグを立てる
+
+        // UIを更新する 
+        UpdateExitStatusUI();
+
+        // 判定
+        CheckBothPlayersReadyToExit();
+    }
+
+    public void ReceiveExitCancel(int senderIndex)
+    {
+
+        remoteExitVote = false;
+        UpdateExitStatusUI();
+    }
+
+    private void UpdateExitStatusUI()
+    {
+        if (exitStatusText == null || isExitingScene) return;
+
+        int voteCount = 0;
+        if (myExitVote) voteCount++;
+        if (remoteExitVote) voteCount++;
+
+        exitStatusText.text = $"はい {voteCount}/2";
+    }
+
+    private void CheckBothPlayersReadyToExit()
+    {
+        if (myExitVote && remoteExitVote && !isExitingScene)
+        {
+            isExitingScene = true;
+            
+
+            // 獲得スターの取り消し処理
+            if (SaveManager.Instance != null)
+            {
+                string targetItemId = ItemIdPrefix + currentStageStageIndex;
+                if (SaveManager.Instance.CurrentSaveData?.obtainedItemIds != null)
+                {
+                    SaveManager.Instance.CurrentSaveData.obtainedItemIds.Remove(targetItemId);
+                }
+                SaveManager.Instance.LoadGame();
+            }
+
+            // 1.5秒後にステージ選択へ
+            Invoke("LoadStageSelectScene", 1.5f);
+        }
+    }
+
+    private void LoadStageSelectScene()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(stageSelectSceneName);
     }
 
     private void SetPlayerReady(int index)
@@ -399,7 +490,7 @@ public class StageMenuManager : MonoBehaviour
 
         controls.Player.Disable();
         controls.SecondMenu.Enable();
-        controls.FinalMenu.Disable();
+        //controls.FinalMenu.Disable();
 
         currentFirstIndex = 0;
         UpdateCursorPositions();
@@ -510,18 +601,12 @@ public class StageMenuManager : MonoBehaviour
         }
     }
 
-    public void ReceiveExitCancel(int senderIndex)
-    {
-        Debug.Log($"【同期】インデックス {senderIndex} のプレイヤーが退出同意をキャンセルしました。");
-
-        if (senderIndex == 0) player0Ready = false;
-        if (senderIndex == 1) player1Ready = false;
-
-        UpdateYesButtonText();
-    }
+   
 
     private IEnumerator AnimateStageNameRoutine()
     {
+
+        isIntroPlaying = true;
         yield return new WaitForSecondsRealtime(0.5f);
 
         int displayStageNumber = currentStageStageIndex + 1;
@@ -553,6 +638,10 @@ public class StageMenuManager : MonoBehaviour
 
         Image.SetActive(false);
         panel.SetActive(false);
+
+      isIntroPlaying = false;
+      
+
         Debug.Log("3秒間のアニメーションが終了したため、テキストを非表示にしました。");
     }
 
