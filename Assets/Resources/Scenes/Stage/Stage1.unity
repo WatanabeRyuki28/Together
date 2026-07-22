@@ -199,6 +199,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: VideoTrigger
       objectReference: {fileID: 0}
+    - target: {fileID: 6214193718065814466, guid: bf8ebb0bd5ff5484bbc23140c9bda89b, type: 3}
+      propertyPath: m_Layer
+      value: 17
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -297,6 +301,7 @@ GameObject:
   - component: {fileID: 22763693}
   - component: {fileID: 22763692}
   - component: {fileID: 22763691}
+  - component: {fileID: 22763694}
   m_Layer: 5
   m_Name: JumpVideo
   m_TagString: Untagged
@@ -348,7 +353,7 @@ VideoPlayer:
   m_TargetAudioSources:
   - {fileID: 0}
   m_DirectAudioVolumes:
-  - 1
+  - 0
   m_Url: 
   m_EnabledAudioTracks: 01
   m_DirectAudioMutes: 00
@@ -394,6 +399,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 22763689}
   m_CullTransparentMesh: 1
+--- !u!114 &22763694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 22763689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
+  m_EffectDistance: {x: 0.1, y: -0.1}
+  m_UseGraphicAlpha: 1
 --- !u!1001 &27225462
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19143,6 +19163,7 @@ GameObject:
   - component: {fileID: 887354587}
   - component: {fileID: 887354586}
   - component: {fileID: 887354585}
+  - component: {fileID: 887354588}
   m_Layer: 5
   m_Name: MoveBoxVideo
   m_TagString: Untagged
@@ -19194,7 +19215,7 @@ VideoPlayer:
   m_TargetAudioSources:
   - {fileID: 0}
   m_DirectAudioVolumes:
-  - 1
+  - 0
   m_Url: 
   m_EnabledAudioTracks: 01
   m_DirectAudioMutes: 00
@@ -19240,6 +19261,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 887354583}
   m_CullTransparentMesh: 1
+--- !u!114 &887354588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 887354583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
+  m_EffectDistance: {x: 0.1, y: -0.1}
+  m_UseGraphicAlpha: 1
 --- !u!114 &931527600 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4675478934570379441, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
@@ -19679,6 +19715,7 @@ GameObject:
   - component: {fileID: 1810823347}
   - component: {fileID: 1810823346}
   - component: {fileID: 1810823345}
+  - component: {fileID: 1810823348}
   m_Layer: 5
   m_Name: MoveVideo
   m_TagString: Untagged
@@ -19730,7 +19767,7 @@ VideoPlayer:
   m_TargetAudioSources:
   - {fileID: 0}
   m_DirectAudioVolumes:
-  - 1
+  - 0
   m_Url: 
   m_EnabledAudioTracks: 01
   m_DirectAudioMutes: 00
@@ -19776,6 +19813,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1810823343}
   m_CullTransparentMesh: 1
+--- !u!114 &1810823348
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1810823343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0.12452829, g: 0.08247062, b: 0.08247062, a: 1}
+  m_EffectDistance: {x: 0.1, y: -0.1}
+  m_UseGraphicAlpha: 1
 --- !u!224 &1812329884 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 315223446627861720, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}

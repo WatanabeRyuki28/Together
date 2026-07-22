@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3721689261055584908}
   - component: {fileID: 2132957604775532830}
   - component: {fileID: 215384225963521750}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: VideoTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -91,6 +91,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   guidePanelObject: {fileID: 0}
-  videoPlayer: {fileID: 0}
-  controllerImagePrefab: {fileID: 0}
+  kanbanObject: {fileID: 0}
   playOnlyOnce: 1
