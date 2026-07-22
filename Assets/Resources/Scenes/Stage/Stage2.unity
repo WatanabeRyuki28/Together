@@ -14406,7 +14406,7 @@ MonoBehaviour:
   starIconPrefab: {fileID: 1868734858400582071, guid: b2b8438d7cb322f4c8fdb9ac492244eb, type: 3}
   missingStarIconPrefab: {fileID: 1868734858400582071, guid: a646b1b08fcb2544d9f1f0d8d0d4cf52, type: 3}
   currentStageStageIndex: 1
-  stageSelectSceneName: StageSelect
+  stageSelectSceneName: StageSelectScene
   panel: {fileID: 1887758382}
   Image: {fileID: 1887758381}
   stageNameText: {fileID: 2010951262}

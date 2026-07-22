@@ -57,7 +57,7 @@ public class StageMenuManager : MonoBehaviour
     [SerializeField] private int currentStageStageIndex = 0;
 
     [Header("ステージ選択画面のシーン名")]
-    [SerializeField] private string stageSelectSceneName = "StageSelect";
+    [SerializeField] private string stageSelectSceneName = "StageSelectScene";
 
     // Input System用のコントローラー
     private CommunicationUI controls;
