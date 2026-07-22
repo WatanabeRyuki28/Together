@@ -449,10 +449,10 @@ MonoBehaviour:
   - {fileID: 1942306318}
   selectionCursor: {fileID: 2121449246}
   remoteSelectionCursor: {fileID: 878077607}
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  confirmedColor: {r: 0, g: 0, b: 0, a: 1}
   myInfoText: {fileID: 1448512626}
   otherInfoText: {fileID: 1458739669}
-  Cur1: {fileID: 21300000, guid: c90a4cfee96d8544992b8af35242a10a, type: 3}
-  Cur2: {fileID: 21300000, guid: 384f74a3d8318f943ac2c8ac74042bd6, type: 3}
 --- !u!4 &342586762
 Transform:
   m_ObjectHideFlags: 0
@@ -1294,7 +1294,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 7bbcc4ffeedebe84d8ca70e7d1cfd8ce, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 384f74a3d8318f943ac2c8ac74042bd6, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4481,7 +4481,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 53cc3611dea27264c8450a7cd3821f83, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c90a4cfee96d8544992b8af35242a10a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

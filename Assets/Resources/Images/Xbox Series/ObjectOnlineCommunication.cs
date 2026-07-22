@@ -202,43 +202,21 @@ public class ObjectOnlineCommunication : MonoBehaviour
     }
     public void HandleWebSocketMessage(string msg)
     {
-
-
-        if (msg.Contains("\"type\":\"menu_toggle\"") || msg.Contains("\"type\":\"menu_exit_cancel\""))
+        if (msg.Contains("\"type\":\"menu_toggle\"") || msg.Contains("\"type\":\"menu_exit_ready\""))
         {
             try
             {
                 InGameMoveData menuData = JsonUtility.FromJson<InGameMoveData>(msg);
 
-                if (NetworkManager.Instance != null && StageMenuManager.Instance != null)
+                if (menuData.type == "menu_toggle" && StageMenuManager.Instance != null)
                 {
-                    // 自分が送信したメッセージなら無視する！
-                    int myRealColor = NetworkManager.Instance.myRealSelectedChar;
-                    if (myRealColor == -1) myRealColor = NetworkManager.Instance.myCharaIndex;
-
-                    if (menuData.char_index == myRealColor)
-                    {
-                        return; // 自分からの通知は処理しない
-                    }
-
-                    // 部屋IDが違う場合も無視
-                    if (menuData.room_id != NetworkManager.Instance.myRoomID)
-                    {
-                        return;
-                    }
-
-                    // 相手が「はい」を押した時 (menu_toggle)
-                    if (menuData.type == "menu_toggle")
-                    {
-                        StageMenuManager.Instance.ReceiveExitReady(menuData.char_index);
-                        return;
-                    }
-                    // 相手がキャンセルした時 (menu_exit_cancel)
-                    else if (menuData.type == "menu_exit_cancel")
-                    {
-                        StageMenuManager.Instance.ReceiveExitCancel(menuData.char_index);
-                        return;
-                    }
+                    StageMenuManager.Instance.ReceiveExitReady(menuData.char_index);
+                    return;
+                }
+                else if (menuData.type == "menu_exit_ready" && StageMenuManager.Instance != null)
+                {
+                    StageMenuManager.Instance.ReceiveExitCancel(menuData.char_index);
+                    return;
                 }
             }
             catch (System.Exception e)
