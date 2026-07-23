@@ -182,13 +182,19 @@ public class StageClearManager : MonoBehaviour
     public async void OnNextStagePressed()
     {
         if (!IsHost()) return;
+
+        // 送信する前に0.5秒待つ場合
+        await Task.Delay(500);
         int clearindex = 0;
+
         await SendStageClear(clearindex);
     }
 
     public async void OnBackToSelectPressed()
     {
         if (!IsHost()) return;
+        // 送信する前に0.5秒待つ場合
+        await Task.Delay(500);
         int clearindex = 1;
         await SendStageClear(clearindex);
     }
@@ -196,6 +202,9 @@ public class StageClearManager : MonoBehaviour
     public async void OnRetryPressed()
     {
         if (!IsHost()) return;
+
+        // 送信する前に0.5秒待つ場合
+        await Task.Delay(500);
         int clearindex = 2;
         await SendStageClear(clearindex);
     }

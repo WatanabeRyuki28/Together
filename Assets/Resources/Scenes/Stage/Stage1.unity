@@ -19538,7 +19538,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1672676355}
-  - component: {fileID: 1672676354}
   - component: {fileID: 1672676353}
   m_Layer: 0
   m_Name: BGMManager
@@ -19643,25 +19642,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &1672676354
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1672676352}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d86dc549c93c24049998144d2ef430fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  audioSource: {fileID: 1672676353}
-  bgm2: {fileID: 8300000, guid: a281efc92257e74429b66e55d235d8ae, type: 3}
-  sameBgmScenes:
-  - Stage1
-  - ClearScene
-  destroyMeScenes:
-  - StageSelectScene
 --- !u!4 &1672676355
 Transform:
   m_ObjectHideFlags: 0
