@@ -17490,6 +17490,7 @@ GameObject:
   - component: {fileID: 730087644}
   - component: {fileID: 730087643}
   - component: {fileID: 730087645}
+  - component: {fileID: 730087646}
   m_Layer: 5
   m_Name: Shutter
   m_TagString: Untagged
@@ -17587,6 +17588,21 @@ VideoPlayer:
   m_WaitForFirstFrame: 1
   m_FrameReadyEventEnabled: 0
   m_VideoShaders: []
+--- !u!114 &730087646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 730087641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
+  m_EffectDistance: {x: 0.1, y: -0.1}
+  m_UseGraphicAlpha: 1
 --- !u!224 &738209690 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2209355337208804374, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
@@ -30544,10 +30560,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9060189110159064293, guid: b2d65fa80dfb47c459b7ffcd2df74291, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9060189110159064293, guid: b2d65fa80dfb47c459b7ffcd2df74291, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9060189110159064293, guid: b2d65fa80dfb47c459b7ffcd2df74291, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6012656688759668165, guid: b2d65fa80dfb47c459b7ffcd2df74291, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1642905139}
   m_SourcePrefab: {fileID: 100100000, guid: b2d65fa80dfb47c459b7ffcd2df74291, type: 3}
 --- !u!1001 &1123204823
 PrefabInstance:
@@ -31180,6 +31211,32 @@ MonoBehaviour:
   projectilePrefabs:
   - {fileID: 109283890417617540, guid: e070b531c5d3da740b448b207ac74b89, type: 3}
   - {fileID: 1470277367932372552, guid: 9a7087fc1a3459340b36e7d0b85e9e3a, type: 3}
+--- !u!1 &1642905136 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6012656688759668165, guid: b2d65fa80dfb47c459b7ffcd2df74291, type: 3}
+  m_PrefabInstance: {fileID: 1060074643}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &1642905139
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1642905136}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 9563cf7caf686d34489438092c87e887, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!224 &1698188510 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 315223446627861720, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
@@ -31193,6 +31250,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 324680613532280298, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: e6e85709b7e90544ca4f42fcc3b40069, type: 3}
     - target: {fileID: 1070606867426754357, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
       propertyPath: m_IsActive
       value: 0

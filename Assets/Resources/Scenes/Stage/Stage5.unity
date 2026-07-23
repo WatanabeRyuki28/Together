@@ -140,6 +140,7 @@ GameObject:
   - component: {fileID: 138109651}
   - component: {fileID: 138109650}
   - component: {fileID: 138109649}
+  - component: {fileID: 138109653}
   m_Layer: 5
   m_Name: RawImage
   m_TagString: Untagged
@@ -237,6 +238,21 @@ RectTransform:
   m_AnchoredPosition: {x: -949.16, y: -537.84}
   m_SizeDelta: {x: 4.0339, y: 2.3857}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &138109653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 138109648}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 0.1, y: -0.1}
+  m_UseGraphicAlpha: 1
 --- !u!114 &156525406 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6354151605826017661, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
@@ -23044,6 +23060,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 324680613532280298, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: e6e85709b7e90544ca4f42fcc3b40069, type: 3}
     - target: {fileID: 1070606867426754357, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
       propertyPath: m_IsActive
       value: 0
