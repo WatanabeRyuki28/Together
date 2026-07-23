@@ -8,9 +8,6 @@ using NativeWebSocket;
 [RequireComponent(typeof(AudioSource))]
 public class PlayerController : MonoBehaviour
 {
-
-  
-
     [Header("操作方法の設定 (チェックONで有効)")]
     [SerializeField] private bool useKeyboard = true;  // キーボードを使うか
     [SerializeField] private bool useGamepad = false;  // ゲームパッドを使うか
@@ -38,11 +35,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private AudioClip shootSound;   // 射撃音
     [SerializeField] private AudioClip walkSound;    // 足音（ループ用）
 
-    // 使用するキーをコード側で固定
-    private KeyCode leftKey = KeyCode.A;        // 左移動
-    private KeyCode rightKey = KeyCode.D;       // 右移動
-    private KeyCode jumpKey = KeyCode.Space;    // ジャンプ
-    private KeyCode fireKey = KeyCode.Return;   // 攻撃をスペースキーに固定（マウス左クリックなら KeyCode.Mouse0）
+    // ★【Input Manager完全排除】使用するキーをコード側で固定
+    private KeyCode leftKey = KeyCode.A;       // 左移動
+    private KeyCode rightKey = KeyCode.D;      // 右移動
+    private KeyCode jumpKey = KeyCode.Space;       // ジャンプ
+    private KeyCode fireKey = KeyCode.Return;   // ★【変更】攻撃をスペースキーに固定（マウス左クリックなら KeyCode.Mouse0）
 
     [Header("各種参照設定")]
     [SerializeField] private GameObject projectilePrefab; // 発射する弾のプレハブ
@@ -50,9 +47,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;       // 地面判定を行う対象レイヤー
     [SerializeField] private LayerMask pushableLayer;      // 押し出し可能なオブジェクトのレイヤー
 
-
-    public bool CanMove = true;
-
+    public bool CanMove { get; set; } = true;
 
     private Rigidbody2D rb;
     private Animator anim;                 // アニメーター用
@@ -84,7 +79,7 @@ public class PlayerController : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         audioSource = GetComponent<AudioSource>(); // 取得
 
-        // AudioSourceの初期設定
+        // AudioSourceの初期設定（3Dサウンドではなく2Dとして手軽にハッキリ鳴らす）
         audioSource.playOnAwake = false;
         audioSource.spatialBlend = 0f;
 
@@ -132,46 +127,18 @@ public class PlayerController : MonoBehaviour
             cameraFollow.AssignPlayer(cameraIndex, this.transform);
             string playerType = IsLocalPlayer ? "【自分（ローカル）】" : "【相手（リモート）】";
             Debug.Log($"[カメラ登録ログ] オブジェクト名: {gameObject.name} | 属性: {playerType} ➔ カメラ番号 {cameraIndex} 番に登録しました！");
-
+        
         }
-
-        if (spriteRenderer != null)
-        {
-            if (IsLocalPlayer)
-            {
-                spriteRenderer.sortingOrder = 51;  // 自分のキャラを前面にする
-            }
-            else
-            {
-                spriteRenderer.sortingOrder = 50;  // 相手のキャラを少し後ろにする
-            }
-        }
-
     }
 
     void Update()
     {
-        bool isMenuOpen = StageMenuManager.Instance != null && StageMenuManager.Instance.isMenuOpen;
-        bool isIntro = StageMenuManager.Instance != null && StageMenuManager.Instance.isIntroPlaying;
-
-        if (isMenuOpen || isIntro)
-        {
-            if (rb != null)
-            {
-                rb.velocity = new Vector2(0f, rb.velocity.y);
-            }
-            UpdateAnimationParameters(rb != null ? rb.velocity : Vector2.zero);
-
-            if (audioSource.isPlaying && audioSource.clip == walkSound)
-            {
-                audioSource.Stop();
-            }
-            return; // 以降の操作や Lerp 同期も完全に一時ストップ
-        }
-
-        // 相手（リモート）のキャラクターの場合の処理
+        // 相手（リモート）のキャラクターの場合
         if (!IsLocalPlayer)
         {
+
+            Debug.Log($"現在の接地状態: {isGrounded}");
+
             if (rb != null)
             {
                 rb.velocity = Vector2.zero; // 物理干渉による荒ぶりを完全カット
@@ -180,7 +147,7 @@ public class PlayerController : MonoBehaviour
             // 移動する前の座標を一時保存（アニメーションの速度計算用）
             Vector3 previousPosition = transform.position;
 
-            // 線形補間で位置を同期（消えていた元の同期処理を完全に復活）
+            // 線形補間で位置を同期
             transform.position = Vector3.Lerp(transform.position, TargetPosition, 0.05f);
 
             // 実際の移動距離から、相手の擬似的な速度を計算して Animator に反映する
@@ -194,56 +161,75 @@ public class PlayerController : MonoBehaviour
             {
                 audioSource.Stop();
             }
-            return;
+            return; 
         }
 
-
-        // 毎フレーム移動処理を呼び出し
-        Move();
-
-        // ジャンプ判定 (キーボード or ゲームパッド)
-        bool keyboardJump = useKeyboard && Input.GetKeyDown(jumpKey);
-        bool gamepadJump = useGamepad && controls.Player.Jump.triggered;
-
-        if ((keyboardJump || gamepadJump) && isGrounded)
+        if (StageMenuManager.Instance != null && StageMenuManager.Instance.isMenuOpen)
         {
-            Jump();
-        }
+            // 移動速度をゼロにしてその場に立ち止まらせる
+            rb.velocity = new Vector2(0f, rb.velocity.y);
+            UpdateAnimationParameters(rb.velocity);
 
-        // 攻撃判定 (キーボード or ゲームパッド)
-        bool keyboardFire = useKeyboard && Input.GetKeyDown(fireKey);
-        bool gamepadFire = useGamepad && controls.Player.Tama.triggered;
-
-        if (keyboardFire || gamepadFire)
-        {
-            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            // 足音を止める
+            if (audioSource.isPlaying && audioSource.clip == walkSound)
             {
-                return;
+                audioSource.Stop();
             }
-            Shoot();
+            return; // これ以降の操作入力を一切無視する
         }
 
-        // メニュー開閉確認
-        bool keyboardMenu = useKeyboard && Input.GetKeyDown(KeyCode.Escape);
-        bool gamepadMenu = useGamepad && controls.Player.Menu.triggered;
 
-        if (keyboardMenu || gamepadMenu)
+        if (CanMove)
         {
-            if (StageMenuManager.Instance != null)
+            // 毎フレーム移動処理を呼び出し
+            Move();
+
+            // ジャンプ判定 (キーボード or ゲームパッド)
+            bool keyboardJump = useKeyboard && Input.GetKeyDown(jumpKey);
+            bool gamepadJump = useGamepad && controls.Player.Jump.triggered;
+
+            if ((keyboardJump || gamepadJump) && isGrounded)
             {
-                StageMenuManager.Instance.ToggleMenu();
+                Jump();
+            }
+
+            // 攻撃判定 (キーボード or ゲームパッド)
+            bool keyboardFire = useKeyboard && Input.GetKeyDown(fireKey);
+            bool gamepadFire = useGamepad && controls.Player.Tama.triggered;
+
+            if (keyboardFire || gamepadFire)
+            {
+                if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+                {
+                    return;
+                }
+
+                Shoot();
+            }
+
+            bool keyboardMenu = useKeyboard && Input.GetKeyDown(KeyCode.Escape); // キーボードのEscキーなど
+            bool gamepadMenu = useGamepad && controls.Player.Menu.triggered;    
+
+            if (keyboardMenu || gamepadMenu)
+            {
+                if (StageMenuManager.Instance != null)
+                {
+                    StageMenuManager.Instance.ToggleMenu();
+                }
             }
         }
 
-        // 最新の状態をAnimatorに送信
+        // 毎フレーム最新の状態をAnimatorに送信
         UpdateAnimationParameters(rb.velocity);
+        // 足音の再生コントロール
         HandleWalkSound();
 
-        // 座標変更の送信
-        if (networkManager != null && Vector2.Distance(transform.position, lastPosition) > 0.01f)
+        bool groundStateChanged = isGrounded != anim.GetBool("isGround");
+
+        if (Vector2.Distance(transform.position, lastPosition) > 0.01f)
         {
             SendPlayerData(transform.position, isGrounded);
-            lastPosition = transform.position;
+            lastPosition = transform.position; // 記録を更新
         }
     }
 
@@ -307,7 +293,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // 入力した方向に箱があるかどうかを確認する判定
+    // 入力した方向に箱があるかどうかを確認する判定（Raycastを使用）
     private bool IsInputtingTowardsBox(float moveInput)
     {
         if (moveInput == 0) return false;
@@ -423,7 +409,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
+   
 
     // 衝突開始時の判定
     private void OnCollisionEnter2D(Collision2D collision) => CheckContact(collision, true);
