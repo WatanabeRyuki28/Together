@@ -164,20 +164,30 @@ public class PlayerController : MonoBehaviour
             return; 
         }
 
-        if (StageMenuManager.Instance != null && StageMenuManager.Instance.isMenuOpen)
+        if (StageMenuManager.Instance != null && StageMenuManager.Instance.isIntroPlaying)
         {
-            // 移動速度をゼロにしてその場に立ち止まらせる
             rb.velocity = new Vector2(0f, rb.velocity.y);
             UpdateAnimationParameters(rb.velocity);
 
-            // 足音を止める
             if (audioSource.isPlaying && audioSource.clip == walkSound)
             {
                 audioSource.Stop();
             }
-            return; // これ以降の操作入力を一切無視する
+            return; // 演出中は以降の移動・ジャンプ・攻撃の入力を受け付けない
         }
 
+        // メニューが開いている時も無効化
+        if (StageMenuManager.Instance != null && StageMenuManager.Instance.isMenuOpen)
+        {
+            rb.velocity = new Vector2(0f, rb.velocity.y);
+            UpdateAnimationParameters(rb.velocity);
+
+            if (audioSource.isPlaying && audioSource.clip == walkSound)
+            {
+                audioSource.Stop();
+            }
+            return;
+        }
 
         if (CanMove)
         {

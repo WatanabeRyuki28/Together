@@ -142,7 +142,7 @@ GameObject:
   - component: {fileID: 138109649}
   - component: {fileID: 138109653}
   m_Layer: 5
-  m_Name: RawImage
+  m_Name: Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -160,7 +160,7 @@ VideoPlayer:
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
-  m_TargetTexture: {fileID: 8400000, guid: e0cbc7481a653df499534bb58a6effb5, type: 2}
+  m_TargetTexture: {fileID: 8400000, guid: 3bb85ff792fa0604bba5bedf45ebe16a, type: 2}
   m_TimeReference: 0
   m_TargetMaterialRenderer: {fileID: 0}
   m_TargetMaterialProperty: <noninit>
@@ -204,7 +204,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 8400000, guid: e0cbc7481a653df499534bb58a6effb5, type: 2}
+  m_Texture: {fileID: 8400000, guid: 3bb85ff792fa0604bba5bedf45ebe16a, type: 2}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -250,7 +250,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
   m_EffectDistance: {x: 0.1, y: -0.1}
   m_UseGraphicAlpha: 1
 --- !u!114 &156525406 stripped
@@ -8308,17 +8308,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &600500298 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4447238579261255502, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1113877097}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &710415563 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2084153858432741409, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
@@ -23214,6 +23203,27 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+--- !u!114 &1113877098 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1181659085904901811, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1113877097}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!224 &1113877099 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3981461391433363417, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1113877097}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &1113877100 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1898153842121743557, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1113877097}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1126331523
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -23287,11 +23297,6 @@ SpriteRenderer:
 --- !u!224 &1141879615 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3915684155841700695, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1113877097}
-  m_PrefabAsset: {fileID: 0}
---- !u!224 &1176078540 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 5303249752128002005, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
   m_PrefabInstance: {fileID: 1113877097}
   m_PrefabAsset: {fileID: 0}
 --- !u!224 &1263095463 stripped
@@ -38149,11 +38154,6 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
---- !u!224 &1630536986 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 3668774164826154907, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1113877097}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &1696261321 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4971157896824544463, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
@@ -38455,11 +38455,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   firstmenuPanel: {fileID: 24911473}
-  firstMenuCursor: {fileID: 1630536986}
+  firstMenuCursor: {fileID: 1113877100}
   exitButtonTransform: {fileID: 1263095463}
   closeButtonTransform: {fileID: 2016613366}
   confirmationPanel: {fileID: 1580715929}
-  confirmCursor: {fileID: 1176078540}
+  confirmCursor: {fileID: 1113877099}
   yesButtonTransform: {fileID: 1141879615}
   noButtonTransform: {fileID: 1712302039}
   cursorOffsetX: 0
@@ -38473,7 +38473,7 @@ MonoBehaviour:
   panel: {fileID: 710415563}
   Image: {fileID: 1714140241}
   stageNameText: {fileID: 931539133}
-  LoadText: {fileID: 600500298}
+  LoadText: {fileID: 1113877098}
   exitStatusText: {fileID: 887991102}
   yesButton: {fileID: 0}
 --- !u!4 &1871761196

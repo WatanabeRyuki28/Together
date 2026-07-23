@@ -314,12 +314,17 @@ public class StageMenuManager : MonoBehaviour
             if (firstMenuCursor != null)
             {
                 firstMenuCursor.gameObject.SetActive(true);
-                RectTransform targetTransform = (currentFirstIndex == 0) ? exitButtonTransform : closeButtonTransform;
-                if (targetTransform != null)
+
+                // インデックス（選択中のボタン）に応じて指定の座標へ移動させる
+                if (currentFirstIndex == 0)
                 {
-                    // position ではなく anchoredPosition (UIのローカル座標) を使用する
-                    Vector2 targetAnchorPos = targetTransform.anchoredPosition;
-                    firstMenuCursor.anchoredPosition = new Vector2(targetAnchorPos.x  +10, targetAnchorPos.y -10);
+                    // ステージ退出ボタンの座標 
+                    firstMenuCursor.anchoredPosition = new Vector2(420.0001f, -460f);
+                }
+                else
+                {
+                    // 閉じるボタンの座標
+                    firstMenuCursor.anchoredPosition = new Vector2(770f, -460f);
                 }
             }
             if (confirmCursor != null) confirmCursor.gameObject.SetActive(false);

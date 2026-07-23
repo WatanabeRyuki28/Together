@@ -340,7 +340,7 @@ VideoPlayer:
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
-  m_TargetTexture: {fileID: 8400000, guid: 853bc9a52bbd748498e5c9b46f8dc4be, type: 2}
+  m_TargetTexture: {fileID: 8400000, guid: 94f1fdc55b628f54cbbfd31b990aa455, type: 2}
   m_TimeReference: 0
   m_TargetMaterialRenderer: {fileID: 0}
   m_TargetMaterialProperty: <noninit>
@@ -384,7 +384,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 8400000, guid: 853bc9a52bbd748498e5c9b46f8dc4be, type: 2}
+  m_Texture: {fileID: 8400000, guid: 94f1fdc55b628f54cbbfd31b990aa455, type: 2}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -4865,11 +4865,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   firstmenuPanel: {fileID: 2118910427}
-  firstMenuCursor: {fileID: 984152024}
+  firstMenuCursor: {fileID: 1738397066}
   exitButtonTransform: {fileID: 1832906755}
   closeButtonTransform: {fileID: 777345344}
   confirmationPanel: {fileID: 2118910424}
-  confirmCursor: {fileID: 1453168677}
+  confirmCursor: {fileID: 1076604194}
   yesButtonTransform: {fileID: 224845322}
   noButtonTransform: {fileID: 1812329884}
   cursorOffsetX: 0
@@ -4883,7 +4883,7 @@ MonoBehaviour:
   panel: {fileID: 1398359767}
   Image: {fileID: 1396323313}
   stageNameText: {fileID: 931527600}
-  LoadText: {fileID: 721687376}
+  LoadText: {fileID: 1493329294}
   exitStatusText: {fileID: 2118910422}
   yesButton: {fileID: 0}
 --- !u!4 &601447396
@@ -4952,17 +4952,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &721687376 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4447238579261255502, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 2118910421}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &747283489
 GameObject:
   m_ObjectHideFlags: 0
@@ -19202,7 +19191,7 @@ VideoPlayer:
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
-  m_TargetTexture: {fileID: 8400000, guid: 1ab16a79cb72d9a429a2add012a283ae, type: 2}
+  m_TargetTexture: {fileID: 8400000, guid: a310a246afe86cc478893275ed69549d, type: 2}
   m_TimeReference: 0
   m_TargetMaterialRenderer: {fileID: 0}
   m_TargetMaterialProperty: <noninit>
@@ -19246,7 +19235,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 8400000, guid: 1ab16a79cb72d9a429a2add012a283ae, type: 2}
+  m_Texture: {fileID: 8400000, guid: a310a246afe86cc478893275ed69549d, type: 2}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -19339,9 +19328,9 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6314236556976301940, guid: b2d65fa80dfb47c459b7ffcd2df74291, type: 3}
   m_PrefabInstance: {fileID: 2010665263}
   m_PrefabAsset: {fileID: 0}
---- !u!224 &984152024 stripped
+--- !u!224 &1076604194 stripped
 RectTransform:
-  m_CorrespondingSourceObject: {fileID: 3668774164826154907, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_CorrespondingSourceObject: {fileID: 3981461391433363417, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
   m_PrefabInstance: {fileID: 2118910421}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1305045813
@@ -19447,11 +19436,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2084153858432741409, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
   m_PrefabInstance: {fileID: 2118910421}
   m_PrefabAsset: {fileID: 0}
---- !u!224 &1453168677 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 5303249752128002005, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+--- !u!114 &1493329294 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1181659085904901811, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
   m_PrefabInstance: {fileID: 2118910421}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1631095622
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19683,6 +19678,11 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!224 &1738397066 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1898153842121743557, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 2118910421}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1810823343
 GameObject:
   m_ObjectHideFlags: 0
@@ -19734,7 +19734,7 @@ VideoPlayer:
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
-  m_TargetTexture: {fileID: 8400000, guid: 5bf5cb2186ff32542b4127816039b41d, type: 2}
+  m_TargetTexture: {fileID: 8400000, guid: 141702bf1e20d4d459d1a8b8ac6b160f, type: 2}
   m_TimeReference: 0
   m_TargetMaterialRenderer: {fileID: 0}
   m_TargetMaterialProperty: <noninit>
@@ -19778,7 +19778,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 8400000, guid: 5bf5cb2186ff32542b4127816039b41d, type: 2}
+  m_Texture: {fileID: 8400000, guid: 141702bf1e20d4d459d1a8b8ac6b160f, type: 2}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -20056,6 +20056,18 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: e6e85709b7e90544ca4f42fcc3b40069, type: 3}
+    - target: {fileID: 712796850551941141, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 712796850551941141, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 712796850551941141, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1070606867426754357, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -20064,6 +20076,26 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 601447395}
+    - target: {fileID: 1825377750089810030, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_Text
+      value: "\u306F\u3044 0/2"
+      objectReference: {fileID: 0}
+    - target: {fileID: 1898153842121743557, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 420.00006
+      objectReference: {fileID: 0}
+    - target: {fileID: 1898153842121743557, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -460
+      objectReference: {fileID: 0}
+    - target: {fileID: 2084153858432741409, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3222774241285195604, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4790488398940560249, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -20182,6 +20214,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8269753767565732256, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8373884344215466822, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
