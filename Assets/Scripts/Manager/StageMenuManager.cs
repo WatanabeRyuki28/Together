@@ -379,17 +379,27 @@ public class StageMenuManager : MonoBehaviour
 
     public void ReceiveExitReady(int senderIndex)
     {
-        remoteExitVote = true; // 相手が押したフラグを立てる
+        int myIndex = (NetworkManager.Instance != null) ? NetworkManager.Instance.myCharaIndex : -1;
+
+        // 自分自身の送信メッセージがループバックして届いた場合は無視する
+        if (senderIndex == myIndex) return;
+
+        remoteExitVote = true; // 相手が「はい」を押した場合のみ立てる
 
         // UIを更新する 
         UpdateExitStatusUI();
 
-        // 判定
+        // 全員揃ったか判定
         CheckBothPlayersReadyToExit();
     }
 
     public void ReceiveExitCancel(int senderIndex)
     {
+
+        int myIndex = (NetworkManager.Instance != null) ? NetworkManager.Instance.myCharaIndex : -1;
+
+        // 自分自身のメッセージなら無視
+        if (senderIndex == myIndex) return;
 
         remoteExitVote = false;
         UpdateExitStatusUI();
@@ -482,6 +492,7 @@ public class StageMenuManager : MonoBehaviour
     public async void CancelExit()
     {
         hasPressedYes = false;
+        myExitVote = false;
         ResetReadyStatus();
 
         currentMenuState = MenuState.FirstMenu;

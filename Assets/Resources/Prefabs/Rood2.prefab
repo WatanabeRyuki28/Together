@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 438171134733523738}
   - component: {fileID: 3892337173314415528}
   - component: {fileID: 4814783407965474676}
+  - component: {fileID: -141130009804421353}
   m_Layer: 9
   m_Name: Rood2
   m_TagString: Untagged
@@ -158,3 +159,21 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 7
+--- !u!114 &-141130009804421353
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5153301091300587627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ec24fc944242fa4ea2057e61ad50ce1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  breakableBy: 1
+  needsBoth: 0
+  breakSound: {fileID: 0}
+  layerHitSound: {fileID: 0}
+  failSound: {fileID: 0}
+  breakEffectPrefab: {fileID: 4272629078293390519, guid: b11ac241943c350488c6a8f63e3dc3b0, type: 3}

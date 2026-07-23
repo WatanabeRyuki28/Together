@@ -18,8 +18,9 @@ public class CharacterSelectManager : MonoBehaviour
 
     [Header("相手の選択枠（カーソル画像）")]
     public RectTransform remoteSelectionCursor;
-    private Sprite defaultMyCursorSprite;     // 自分の初期画像
-    private Sprite defaultRemoteCursorSprite; // 相手の初期画像
+
+    [SerializeField] private Color normalColor = Color.white;   
+    [SerializeField] private Color confirmedColor = Color.black;
 
     private int currentSelectIndex = 0; // 現在選んでいるキャラの番号 
 
@@ -34,9 +35,6 @@ public class CharacterSelectManager : MonoBehaviour
     private string remoteplayer;
 
     private bool isInputPressed = false;
-
-    [SerializeField] Sprite Cur1;
-    [SerializeField] Sprite Cur2;
 
     [SerializeField] private CommunicationUI controls;
 
@@ -149,15 +147,12 @@ public class CharacterSelectManager : MonoBehaviour
 
 
         }
-
         if (selectionCursor != null && selectionCursor.GetComponent<Image>() != null)
-        {
-            defaultMyCursorSprite = selectionCursor.GetComponent<Image>().sprite;
-        }
+            selectionCursor.GetComponent<Image>().color = normalColor;
+
         if (remoteSelectionCursor != null && remoteSelectionCursor.GetComponent<Image>() != null)
-        {
-            defaultRemoteCursorSprite = remoteSelectionCursor.GetComponent<Image>().sprite;
-        }
+            remoteSelectionCursor.GetComponent<Image>().color = normalColor;
+
         UpdateCursorPosition();
 
         //  初期状態から相手のカーソルを見せるために最初からTrueにする、またはSetActiveを制御
@@ -254,9 +249,9 @@ public class CharacterSelectManager : MonoBehaviour
 
         if (selectionCursor != null && selectionCursor.GetComponent<Image>() != null)
         {
-            int myIndex = NetworkManager.Instance != null ? NetworkManager.Instance.myPlayerIndex : 0;
-            selectionCursor.GetComponent<Image>().sprite = (myIndex == 0) ? Cur1 : Cur2;
+            selectionCursor.GetComponent<Image>().color = confirmedColor;
         }
+
         //  決定フラグを true にして送信
         SendCharacterState(index, true);
 
@@ -325,24 +320,16 @@ public class CharacterSelectManager : MonoBehaviour
                     Debug.Log($"【同期】相手がキャラ {remoteSelectedChar} 番で決定しました。");
                     CheckBothPlayersReady();
 
-                    if (remoteSelectionCursor != null)
+                    if (remoteSelectionCursor != null && remoteSelectionCursor.GetComponent<Image>() != null)
                     {
-                        Image img = remoteSelectionCursor.GetComponent<Image>();
-                        if (img != null)
-                        {
-                            img.sprite = (playerData.index == 0) ? Cur1 : Cur2;
-                        }
+                        remoteSelectionCursor.GetComponent<Image>().color = confirmedColor;
                     }
                 }
                 else
                 {
-                    if (remoteSelectionCursor != null && defaultRemoteCursorSprite != null)
+                    if (remoteSelectionCursor != null && remoteSelectionCursor.GetComponent<Image>() != null)
                     {
-                        Image img = remoteSelectionCursor.GetComponent<Image>();
-                        if (img != null)
-                        {
-                            img.sprite = defaultRemoteCursorSprite;
-                        }
+                        remoteSelectionCursor.GetComponent<Image>().color = normalColor;
                     }
                 }
             }
@@ -369,31 +356,14 @@ public class CharacterSelectManager : MonoBehaviour
                 isMySelectionConfirmed = false;
                 mySelectedChar = -1;
 
-                ResetCursorSprites();
+                if (selectionCursor != null && selectionCursor.GetComponent<Image>() != null)
+                    selectionCursor.GetComponent<Image>().color = normalColor;
 
-               
+                if (remoteSelectionCursor != null && remoteSelectionCursor.GetComponent<Image>() != null)
+                    remoteSelectionCursor.GetComponent<Image>().color = normalColor;
+
                 //  被ったので、相手側にも自分が「未確定（移動中）」に戻ったことを通知する
                 SendCharacterState(currentSelectIndex, false);
-            }
-        }
-    }
-    private void ResetCursorSprites()
-    {
-        if (selectionCursor != null && defaultMyCursorSprite != null)
-        {
-            Image img = selectionCursor.GetComponent<Image>();
-            if (img != null)
-            {
-                img.sprite = defaultMyCursorSprite;
-            }
-        }
-
-        if (remoteSelectionCursor != null && defaultRemoteCursorSprite != null)
-        {
-            Image img = remoteSelectionCursor.GetComponent<Image>();
-            if (img != null)
-            {
-                img.sprite = defaultRemoteCursorSprite;
             }
         }
     }

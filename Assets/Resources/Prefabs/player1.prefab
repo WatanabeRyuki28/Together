@@ -128,10 +128,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25e6c112875cde8489f3b95a58c86ed0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useKeyboard: 0
+  useKeyboard: 1
   useGamepad: 1
   playerNumber: 1
-  element: 0
+  element: 1
   moveSpeed: 5
   pushSpeedMultiplier: 0.5
   jumpForce: 8

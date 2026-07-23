@@ -373,6 +373,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7979d5a1207fc4c4aab8f1ee8a5ce408, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!224 &195693080 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3668774164826154907, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1090039521}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &210999548
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -450,6 +455,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e1b1ace89aaf44147bf0b482ada14885, type: 3}
+--- !u!224 &223457451 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5303249752128002005, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1090039521}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &235730928
 GameObject:
   m_ObjectHideFlags: 0
@@ -3968,7 +3978,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 269035714}
-  - component: {fileID: 269035713}
   - component: {fileID: 269035712}
   m_Layer: 0
   m_Name: BGMManager
@@ -4073,25 +4082,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &269035713
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 269035711}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d86dc549c93c24049998144d2ef430fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  audioSource: {fileID: 269035712}
-  bgm2: {fileID: 8300000, guid: a281efc92257e74429b66e55d235d8ae, type: 3}
-  sameBgmScenes:
-  - Stage4
-  - ClearScene
-  destroyMeScenes:
-  - StageSelectScene
 --- !u!4 &269035714
 Transform:
   m_ObjectHideFlags: 0
@@ -16037,11 +16027,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   firstmenuPanel: {fileID: 469022816}
-  firstMenuCursor: {fileID: 0}
+  firstMenuCursor: {fileID: 195693080}
   exitButtonTransform: {fileID: 1154468081}
   closeButtonTransform: {fileID: 1853767666}
   confirmationPanel: {fileID: 1105912702}
-  confirmCursor: {fileID: 0}
+  confirmCursor: {fileID: 223457451}
   yesButtonTransform: {fileID: 1342752604}
   noButtonTransform: {fileID: 1279439733}
   cursorOffsetX: 0
@@ -16055,8 +16045,8 @@ MonoBehaviour:
   panel: {fileID: 1090039524}
   Image: {fileID: 1090039523}
   stageNameText: {fileID: 1090039522}
-  LoadText: {fileID: 0}
-  exitStatusText: {fileID: 0}
+  LoadText: {fileID: 1981635967}
+  exitStatusText: {fileID: 2040759232}
   yesButton: {fileID: 0}
 --- !u!4 &909431768
 Transform:
@@ -16618,6 +16608,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7979d5a1207fc4c4aab8f1ee8a5ce408, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1981635967 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4447238579261255502, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1090039521}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1984582656
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16789,6 +16790,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 614c7732c49756e41b64e594de91d68c, type: 3}
+--- !u!114 &2040759232 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1825377750089810030, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1090039521}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2140951325
 GameObject:
   m_ObjectHideFlags: 0

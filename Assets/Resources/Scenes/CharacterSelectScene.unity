@@ -225,7 +225,7 @@ Transform:
   m_GameObject: {fileID: 214868923}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -9720}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 108, y: 108, z: 108}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -449,10 +449,10 @@ MonoBehaviour:
   - {fileID: 1942306318}
   selectionCursor: {fileID: 2121449246}
   remoteSelectionCursor: {fileID: 878077607}
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  confirmedColor: {r: 0, g: 0, b: 0, a: 1}
   myInfoText: {fileID: 1448512626}
   otherInfoText: {fileID: 1458739669}
-  Cur1: {fileID: 21300000, guid: c90a4cfee96d8544992b8af35242a10a, type: 3}
-  Cur2: {fileID: 21300000, guid: 384f74a3d8318f943ac2c8ac74042bd6, type: 3}
 --- !u!4 &342586762
 Transform:
   m_ObjectHideFlags: 0
@@ -639,6 +639,7 @@ GameObject:
   - component: {fileID: 580806192}
   - component: {fileID: 580806191}
   - component: {fileID: 580806190}
+  - component: {fileID: 580806193}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -686,10 +687,10 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 1000
+  far clip plane: 5000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 7
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -720,6 +721,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &580806193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 580806189}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_Version: 2
+  m_TaaSettings:
+    quality: 3
+    frameInfluence: 0.1
+    jitterScale: 1
+    mipBias: 0
+    varianceClampScale: 0.9
+    contrastAdaptiveSharpening: 0
 --- !u!1 &712484250
 GameObject:
   m_ObjectHideFlags: 0
@@ -1148,7 +1193,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -1233,7 +1278,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -22.024963, y: 0}
+  m_AnchoredPosition: {x: -22.024902, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 1, y: 0}
 --- !u!1 &878077606
@@ -1294,7 +1339,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 7bbcc4ffeedebe84d8ca70e7d1cfd8ce, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 384f74a3d8318f943ac2c8ac74042bd6, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1814,7 +1859,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1125770270}
-  - component: {fileID: 1125770269}
   - component: {fileID: 1125770268}
   m_Layer: 0
   m_Name: BGMManager
@@ -1919,32 +1963,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &1125770269
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1125770267}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d86dc549c93c24049998144d2ef430fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  audioSource: {fileID: 1125770268}
-  bgm2: {fileID: 8300000, guid: d629676968e2a0a4fbccc5d8690d1e02, type: 3}
-  sameBgmScenes:
-  - SecondScene
-  - CharacterSelectScene
-  - StageSelectScene
-  destroyMeScenes:
-  - TaitlScene
-  - Stage1
-  - Stage2
-  - Stage3
-  - Stage4
-  - Stage5
-  - Stage6
 --- !u!4 &1125770270
 Transform:
   m_ObjectHideFlags: 0
@@ -2233,7 +2251,7 @@ Transform:
   m_GameObject: {fileID: 1451539334}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -9720}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 180, y: 180, z: 180.36002}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2279,7 +2297,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 7251063249661647124, guid: b6d22afe5490be9459e2644ce02383fa, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -2654,7 +2672,7 @@ Transform:
   m_GameObject: {fileID: 1938642909}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -9720}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 180, y: 180, z: 176.22362}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2721,7 +2739,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: -1767292558, guid: 7cdce1df22cf5604d8ee9c43b54edc4d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -4481,7 +4499,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 53cc3611dea27264c8450a7cd3821f83, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c90a4cfee96d8544992b8af35242a10a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
