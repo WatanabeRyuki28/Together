@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -3.25, y: -3.9, z: 0}
-  m_LocalScale: {x: 0.6623, y: 0.6988, z: 1}
+  m_LocalScale: {x: 2.5, y: 2.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -145,6 +145,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sterSound: {fileID: 8300000, guid: 05b4bbf7843fd294486ed9dbe1940afc, type: 3}
+  pickupEffect: {fileID: 1590415177872986601, guid: acdb90624a404aa438447006f1026065, type: 3}
 --- !u!82 &-9021355550606040979
 AudioSource:
   m_ObjectHideFlags: 0

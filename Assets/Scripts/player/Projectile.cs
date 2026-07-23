@@ -12,6 +12,9 @@ public class Projectile : MonoBehaviour
     // インスペクターで「壁(Wall)」「床(Ground)」「箱(Pushable)」にチェックを入れる
     [SerializeField] private LayerMask collisionLayers;
 
+    [Header("HITエフェクト")]
+    [SerializeField] private GameObject hitEffect;
+
     private Rigidbody2D rb;
     private float moveDirection = 1f; // 飛ぶ方向（1なら右、-1なら左）
     private bool isInitialized = false; // 初期化が完了したかのフラグ
@@ -76,6 +79,19 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        // エフェクト生成
+        if (hitEffect != null)
+        {
+            GameObject effect = Instantiate(
+                hitEffect,
+                transform.position,
+                Quaternion.identity
+            );
+
+            // 1秒後にエフェクトを削除
+            Destroy(effect, 1f);
+        }
+
         // 1. ギミック（IInteractable）に当たった場合
         IInteractable target = other.GetComponent<IInteractable>();
         if (target != null)

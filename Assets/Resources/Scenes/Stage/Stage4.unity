@@ -373,11 +373,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7979d5a1207fc4c4aab8f1ee8a5ce408, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!224 &195693080 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 3668774164826154907, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1090039521}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &210999548
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -455,11 +450,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e1b1ace89aaf44147bf0b482ada14885, type: 3}
---- !u!224 &223457451 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 5303249752128002005, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1090039521}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &235730928
 GameObject:
   m_ObjectHideFlags: 0
@@ -3969,6 +3959,11 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!224 &249104441 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1898153842121743557, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1090039521}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &269035711
 GameObject:
   m_ObjectHideFlags: 0
@@ -4097,6 +4092,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!224 &269259992 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3981461391433363417, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1090039521}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &289675991
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16027,11 +16027,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   firstmenuPanel: {fileID: 469022816}
-  firstMenuCursor: {fileID: 195693080}
+  firstMenuCursor: {fileID: 249104441}
   exitButtonTransform: {fileID: 1154468081}
   closeButtonTransform: {fileID: 1853767666}
   confirmationPanel: {fileID: 1105912702}
-  confirmCursor: {fileID: 223457451}
+  confirmCursor: {fileID: 269259992}
   yesButtonTransform: {fileID: 1342752604}
   noButtonTransform: {fileID: 1279439733}
   cursorOffsetX: 0
@@ -16045,7 +16045,7 @@ MonoBehaviour:
   panel: {fileID: 1090039524}
   Image: {fileID: 1090039523}
   stageNameText: {fileID: 1090039522}
-  LoadText: {fileID: 1981635967}
+  LoadText: {fileID: 1424103217}
   exitStatusText: {fileID: 2040759232}
   yesButton: {fileID: 0}
 --- !u!4 &909431768
@@ -16466,6 +16466,17 @@ SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: 8200077787780953917, guid: 6447ba3f4feaafb4b9f12fa14c4433cc, type: 3}
   m_PrefabInstance: {fileID: 768997186}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1424103217 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1181659085904901811, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1090039521}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1452901477
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16606,17 +16617,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7979d5a1207fc4c4aab8f1ee8a5ce408, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1981635967 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4447238579261255502, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1090039521}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &1984582656
