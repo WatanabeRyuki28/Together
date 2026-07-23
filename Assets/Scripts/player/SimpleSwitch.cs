@@ -19,6 +19,9 @@ public class FloorSwitch : MonoBehaviour
     [Header("Audio Settings (効果音)")]
     [SerializeField] private AudioClip switchOnSound;  // スイッチが押された時の音
 
+    [Header("プッシュエフェクト")]
+    [SerializeField] private GameObject pressEffect;
+
     private SpriteRenderer spriteRenderer;
     private AudioSource audioSource;
 
@@ -92,6 +95,19 @@ public class FloorSwitch : MonoBehaviour
             audioSource.PlayOneShot(switchOnSound);
 
 
+        }
+
+        // エフェクト生成
+        if (pressEffect != null && isPressed != false)
+        {
+            GameObject effect = Instantiate(
+                pressEffect,
+                transform.position,
+                Quaternion.identity
+            );
+
+            // 1秒後にエフェクトを削除
+            Destroy(effect, 1f);
         }
 
 
