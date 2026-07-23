@@ -14887,11 +14887,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 315223446627861720, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
   m_PrefabInstance: {fileID: 1423251967}
   m_PrefabAsset: {fileID: 0}
---- !u!224 &1435470079 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 3668774164826154907, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1423251967}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1491109684
 GameObject:
   m_ObjectHideFlags: 0
@@ -15017,11 +15012,6 @@ MonoBehaviour:
   m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
   m_EffectDistance: {x: 0.1, y: -0.1}
   m_UseGraphicAlpha: 1
---- !u!224 &1494497710 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 5303249752128002005, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1423251967}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1598636413
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15261,17 +15251,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &1884339715 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4447238579261255502, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1423251967}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1887758381 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8373884344215466822, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
@@ -15328,11 +15307,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   firstmenuPanel: {fileID: 1423251970}
-  firstMenuCursor: {fileID: 1435470079}
+  firstMenuCursor: {fileID: 0}
   exitButtonTransform: {fileID: 818573331}
   closeButtonTransform: {fileID: 1914497905}
   confirmationPanel: {fileID: 1423251975}
-  confirmCursor: {fileID: 1494497710}
+  confirmCursor: {fileID: 0}
   yesButtonTransform: {fileID: 1732099551}
   noButtonTransform: {fileID: 1423251978}
   cursorOffsetX: 0
@@ -15346,7 +15325,7 @@ MonoBehaviour:
   panel: {fileID: 1887758382}
   Image: {fileID: 1887758381}
   stageNameText: {fileID: 2010951262}
-  LoadText: {fileID: 1884339715}
+  LoadText: {fileID: 0}
   exitStatusText: {fileID: 96941799}
   yesButton: {fileID: 0}
 --- !u!4 &2070368484

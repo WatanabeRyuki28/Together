@@ -4537,6 +4537,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Goal
       objectReference: {fileID: 0}
+    - target: {fileID: 3560544644992602699, guid: 5be6eb7f2ace38943a9b161fc09025a7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -4.57
+      objectReference: {fileID: 0}
+    - target: {fileID: 3717078905461725073, guid: 5be6eb7f2ace38943a9b161fc09025a7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -3.34
+      objectReference: {fileID: 0}
+    - target: {fileID: 7633356631088094743, guid: 5be6eb7f2ace38943a9b161fc09025a7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -3.46
+      objectReference: {fileID: 0}
     - target: {fileID: 8291407207088595474, guid: 5be6eb7f2ace38943a9b161fc09025a7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 97.87
@@ -4576,6 +4588,14 @@ PrefabInstance:
     - target: {fileID: 8291407207088595474, guid: 5be6eb7f2ace38943a9b161fc09025a7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8716937018330688278, guid: 5be6eb7f2ace38943a9b161fc09025a7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -3.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 9065150478515348448, guid: 5be6eb7f2ace38943a9b161fc09025a7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -3.85
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4865,11 +4885,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   firstmenuPanel: {fileID: 2118910427}
-  firstMenuCursor: {fileID: 984152024}
+  firstMenuCursor: {fileID: 0}
   exitButtonTransform: {fileID: 1832906755}
   closeButtonTransform: {fileID: 777345344}
   confirmationPanel: {fileID: 2118910424}
-  confirmCursor: {fileID: 1453168677}
+  confirmCursor: {fileID: 0}
   yesButtonTransform: {fileID: 224845322}
   noButtonTransform: {fileID: 1812329884}
   cursorOffsetX: 0
@@ -4883,7 +4903,7 @@ MonoBehaviour:
   panel: {fileID: 1398359767}
   Image: {fileID: 1396323313}
   stageNameText: {fileID: 931527600}
-  LoadText: {fileID: 721687376}
+  LoadText: {fileID: 0}
   exitStatusText: {fileID: 2118910422}
   yesButton: {fileID: 0}
 --- !u!4 &601447396
@@ -4952,17 +4972,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &721687376 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4447238579261255502, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 2118910421}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &747283489
 GameObject:
   m_ObjectHideFlags: 0
@@ -19339,11 +19348,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6314236556976301940, guid: b2d65fa80dfb47c459b7ffcd2df74291, type: 3}
   m_PrefabInstance: {fileID: 2010665263}
   m_PrefabAsset: {fileID: 0}
---- !u!224 &984152024 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 3668774164826154907, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 2118910421}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1305045813
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19445,11 +19449,6 @@ GameObject:
 --- !u!1 &1398359767 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2084153858432741409, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 2118910421}
-  m_PrefabAsset: {fileID: 0}
---- !u!224 &1453168677 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 5303249752128002005, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
   m_PrefabInstance: {fileID: 2118910421}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1631095622
@@ -19878,6 +19877,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: StarItem
       objectReference: {fileID: 0}
+    - target: {fileID: 8533975808540226986, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
+      propertyPath: pickupEffect
+      value: 
+      objectReference: {fileID: 1590415177872986601, guid: acdb90624a404aa438447006f1026065, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
