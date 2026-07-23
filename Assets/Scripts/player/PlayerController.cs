@@ -535,4 +535,19 @@ public class PlayerController : MonoBehaviour
 
         anim.SetFloat("yVelocity", simulatedVelocity.y);
     }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.name == "Goal")
+        {
+            // ぶつかった Goal オブジェクトから OtherScript を取得
+            FireWork firework = other.GetComponent<FireWork>();
+
+            if (firework != null)
+            {
+                StartCoroutine(firework.HanabiShot());
+            }
+
+        }
+    }
 }
