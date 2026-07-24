@@ -16164,11 +16164,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   firstmenuPanel: {fileID: 1746665931}
-  firstMenuCursor: {fileID: 0}
+  firstMenuCursor: {fileID: 1075428656}
   exitButtonTransform: {fileID: 1746665929}
   closeButtonTransform: {fileID: 1746665928}
   confirmationPanel: {fileID: 162880852}
-  confirmCursor: {fileID: 0}
+  confirmCursor: {fileID: 1561853320}
   yesButtonTransform: {fileID: 1746665926}
   noButtonTransform: {fileID: 1746665925}
   cursorOffsetX: 0
@@ -16182,7 +16182,7 @@ MonoBehaviour:
   panel: {fileID: 357794051}
   Image: {fileID: 917094050}
   stageNameText: {fileID: 362039073}
-  LoadText: {fileID: 0}
+  LoadText: {fileID: 1105543276}
   exitStatusText: {fileID: 372799724}
   yesButton: {fileID: 0}
 --- !u!1001 &846994241
@@ -16479,6 +16479,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!224 &1075428656 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1898153842121743557, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1746665922}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1095780099
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16540,6 +16545,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e3db2ec7c2302db4289af537d3fb4c54, type: 3}
+--- !u!114 &1105543276 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1181659085904901811, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1746665922}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1144417493 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7138431650641959195, guid: e3db2ec7c2302db4289af537d3fb4c54, type: 3}
@@ -16685,6 +16701,11 @@ PrefabInstance:
 SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: 8200077787780953917, guid: 65f9f62d891cb2248b56d7d9ae4f3aec, type: 3}
   m_PrefabInstance: {fileID: 1478297509}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &1561853320 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3981461391433363417, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1746665922}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1574448571
 PrefabInstance:
