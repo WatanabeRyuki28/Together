@@ -293,15 +293,21 @@ public class StageMenuManager : MonoBehaviour
     public void OpenConfirmation()
     {
         currentMenuState = MenuState.FinalMenu;
-        if (firstmenuPanel != null) firstmenuPanel.SetActive(false);
+        if (firstmenuPanel != null) firstmenuPanel.SetActive(true);
         if (confirmationPanel != null) confirmationPanel.SetActive(true);
 
-        UpdateYesButtonText();
+        
+        if (yesButton != null) yesButton.interactable = true;
+
+        //  自分がまだ押していないフラグ
+        myExitVote = false;
+
+        //  テキストを「0/2」
+        UpdateExitStatusUI();
 
         controls.SecondMenu.Enable();
-        //controls.FinalMenu.Enable();  // 2枚目の入力をオンに
 
-        currentConfirmIndex = 1; // 初期位置は安全のため「いいえ」
+        currentConfirmIndex = 1; // 初期位置は「いいえ」
         UpdateCursorPositions();
     }
 
@@ -315,16 +321,12 @@ public class StageMenuManager : MonoBehaviour
             {
                 firstMenuCursor.gameObject.SetActive(true);
 
-                // インデックス（選択中のボタン）に応じて指定の座標へ移動させる
-                if (currentFirstIndex == 0)
+                RectTransform targetButton = (currentFirstIndex == 0) ? exitButtonTransform : closeButtonTransform;
+
+                if (targetButton != null)
                 {
-                    // ステージ退出ボタンの座標 
-                    firstMenuCursor.anchoredPosition = new Vector2(420.0001f, -460f);
-                }
-                else
-                {
-                    // 閉じるボタンの座標
-                    firstMenuCursor.anchoredPosition = new Vector2(770f, -460f);
+                   
+                    firstMenuCursor.position = targetButton.position;
                 }
             }
             if (confirmCursor != null) confirmCursor.gameObject.SetActive(false);
@@ -355,9 +357,9 @@ public class StageMenuManager : MonoBehaviour
     public async void PressYesByClick()
     {
         if (myExitVote || isExitingScene) return;
-   
 
         myExitVote = true;
+
         if (yesButton != null)
         {
             yesButton.interactable = false;
@@ -367,16 +369,19 @@ public class StageMenuManager : MonoBehaviour
 
         if (NetworkManager.Instance != null)
         {
+            int myIndex = NetworkManager.Instance.myRealSelectedChar;
+            if (myIndex == -1) myIndex = NetworkManager.Instance.myCharaIndex;
+
             InGameMoveData exitMsg = new InGameMoveData();
             exitMsg.type = "menu_toggle";
             exitMsg.dataType = "";
             exitMsg.room_id = NetworkManager.Instance.myRoomID;
-            exitMsg.char_index = NetworkManager.Instance.myPlayerIndex;
+            exitMsg.char_index = myIndex; 
 
             string json = JsonUtility.ToJson(exitMsg);
             await NetworkManager.Instance.SendMessageAsync(json);
 
-            Debug.Log("退出同意を送信しました。");
+            Debug.Log($"[退出同意送信] char_index: {myIndex}");
         }
 
         CheckBothPlayersReadyToExit();
@@ -384,7 +389,12 @@ public class StageMenuManager : MonoBehaviour
 
     public void ReceiveExitReady(int senderIndex)
     {
-        int myIndex = (NetworkManager.Instance != null) ? NetworkManager.Instance.myCharaIndex : -1;
+        int myIndex = -1;
+        if (NetworkManager.Instance != null)
+        {
+            myIndex = NetworkManager.Instance.myRealSelectedChar;
+            if (myIndex == -1) myIndex = NetworkManager.Instance.myCharaIndex;
+        }
 
         // 自分自身の送信メッセージがループバックして届いた場合は無視する
         if (senderIndex == myIndex) return;
@@ -401,7 +411,12 @@ public class StageMenuManager : MonoBehaviour
     public void ReceiveExitCancel(int senderIndex)
     {
 
-        int myIndex = (NetworkManager.Instance != null) ? NetworkManager.Instance.myCharaIndex : -1;
+        int myIndex = -1;
+        if (NetworkManager.Instance != null)
+        {
+            myIndex = NetworkManager.Instance.myRealSelectedChar;
+            if (myIndex == -1) myIndex = NetworkManager.Instance.myCharaIndex;
+        }
 
         // 自分自身のメッセージなら無視
         if (senderIndex == myIndex) return;
@@ -418,7 +433,17 @@ public class StageMenuManager : MonoBehaviour
         if (myExitVote) voteCount++;
         if (remoteExitVote) voteCount++;
 
-        exitStatusText.text = $"はい {voteCount}/2";
+        string statusString = $"はい {voteCount}/2";
+
+        if (exitStatusText != null)
+        {
+            exitStatusText.text = statusString;
+        }
+
+        if (yesButtonText != null)
+        {
+            yesButtonText.text = statusString;
+        }
     }
 
     private void CheckBothPlayersReadyToExit()

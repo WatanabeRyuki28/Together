@@ -3096,17 +3096,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &265082201 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4447238579261255502, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1746665922}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &316768706
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3337,6 +3326,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Goal
       objectReference: {fileID: 0}
+    - target: {fileID: 5231743143991095096, guid: 5be6eb7f2ace38943a9b161fc09025a7, type: 3}
+      propertyPath: fireWork
+      value: 
+      objectReference: {fileID: 404178535}
     - target: {fileID: 8291407207088595474, guid: 5be6eb7f2ace38943a9b161fc09025a7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 44.22
@@ -3382,6 +3375,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5be6eb7f2ace38943a9b161fc09025a7, type: 3}
+--- !u!114 &404178535 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5826394861652869170, guid: 5be6eb7f2ace38943a9b161fc09025a7, type: 3}
+  m_PrefabInstance: {fileID: 404178534}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bac0cd0dc9aa0f459df580579cf728d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &478424466
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3439,11 +3443,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 855ff7dc2b4225b4381d46b94303ef83, type: 3}
---- !u!224 &514236594 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 3668774164826154907, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1746665922}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &522392090 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7138431650641959195, guid: e3db2ec7c2302db4289af537d3fb4c54, type: 3}
@@ -3588,11 +3587,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5f52f19b0a6387d44aa4db1116d988c5, type: 3}
---- !u!224 &707822580 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 5303249752128002005, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
-  m_PrefabInstance: {fileID: 1746665922}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &747283489
 GameObject:
   m_ObjectHideFlags: 0
@@ -16170,11 +16164,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   firstmenuPanel: {fileID: 1746665931}
-  firstMenuCursor: {fileID: 514236594}
+  firstMenuCursor: {fileID: 0}
   exitButtonTransform: {fileID: 1746665929}
   closeButtonTransform: {fileID: 1746665928}
   confirmationPanel: {fileID: 162880852}
-  confirmCursor: {fileID: 707822580}
+  confirmCursor: {fileID: 0}
   yesButtonTransform: {fileID: 1746665926}
   noButtonTransform: {fileID: 1746665925}
   cursorOffsetX: 0
@@ -16188,7 +16182,7 @@ MonoBehaviour:
   panel: {fileID: 357794051}
   Image: {fileID: 917094050}
   stageNameText: {fileID: 362039073}
-  LoadText: {fileID: 265082201}
+  LoadText: {fileID: 0}
   exitStatusText: {fileID: 372799724}
   yesButton: {fileID: 0}
 --- !u!1001 &846994241
@@ -16967,6 +16961,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8269753767565732256, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
       propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8269753767565732256, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8269753767565732256, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8269753767565732256, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_LocalScale.z
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8269753767565732256, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}

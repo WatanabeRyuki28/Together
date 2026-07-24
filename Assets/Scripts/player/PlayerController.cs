@@ -118,6 +118,12 @@ public class PlayerController : MonoBehaviour
 
         CameraFollow2D cameraFollow = FindFirstObjectByType<CameraFollow2D>();
 
+
+        if (spriteRenderer != null)
+        {
+        
+            spriteRenderer.sortingOrder = IsLocalPlayer ? 51 : 50;
+        }
         if (cameraFollow != null)
         {
             // 自分が操作するキャラ（IsLocalPlayer == true）なら 0番（プレイヤー1）
@@ -546,18 +552,5 @@ public class PlayerController : MonoBehaviour
         anim.SetFloat("yVelocity", simulatedVelocity.y);
     }
 
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.gameObject.name == "Goal")
-        {
-            // ぶつかった Goal オブジェクトから OtherScript を取得
-            FireWork firework = other.GetComponent<FireWork>();
-
-            if (firework != null)
-            {
-                StartCoroutine(firework.HanabiShot());
-            }
-
-        }
-    }
+   
 }

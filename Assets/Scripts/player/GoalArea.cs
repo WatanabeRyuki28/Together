@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections.Generic; // Listを使うために追加
+using System.Collections; // コルーチンを使うために必須
+using System.Collections.Generic;
 
 public class GoalArea : MonoBehaviour
 {
@@ -10,23 +11,31 @@ public class GoalArea : MonoBehaviour
     [Header("次に進むステージ（クリアシーン名）")]
     [SerializeField] private string nextStageSceneName = "ClearScene";
 
+    [Header("花火演出スクリプトの参照")]
+    [SerializeField] private FireWork fireWork; // 花火スクリプトをセットする
+
     // 二重カウントを防ぐため、エリア内にいる一意のプレイヤーをリストで管理
     private HashSet<PlayerController> playersInGoal = new HashSet<PlayerController>();
 
+    // 二重クリア処理防止フラグ
+    private bool isClearing = false;
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (isClearing) return; // すでにクリア処理中なら何もしない
+
         PlayerController player = collision.GetComponent<PlayerController>();
 
         if (player != null)
         {
-            // すでに登録済みのプレイヤーでなければ追加
             if (playersInGoal.Add(player))
             {
                 Debug.Log($"{player.name} がゴールエリアに入りました。");
 
                 if (playersInGoal.Count >= requiredPlayersToClear)
                 {
-                    ClearStage();
+                    // クリアコルーチンを開始
+                    StartCoroutine(ClearStageRoutine());
                 }
             }
         }
@@ -34,11 +43,12 @@ public class GoalArea : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
+        if (isClearing) return; // クリア処理に入っていたら退出カウントしない
+
         PlayerController player = collision.GetComponent<PlayerController>();
 
         if (player != null)
         {
-            // リストから削除（存在していた場合のみカウントが減る）
             if (playersInGoal.Remove(player))
             {
                 Debug.Log($"{player.name} がゴールエリアから出ました。");
@@ -46,22 +56,53 @@ public class GoalArea : MonoBehaviour
         }
     }
 
-    private void ClearStage()
+    private IEnumerator ClearStageRoutine()
     {
-        Debug.Log("全員到達！現在のステージ情報を引き渡し用データとして保存し、クリアシーンへ移行します。");
+        isClearing = true;
+        Debug.Log("全員到達！キャラを停止して花火演出を開始します。");
 
-        // クリア確定時に初めて全員の動きを止める
-        foreach (var player in playersInGoal)
+        PlayerController[] allPlayers = FindObjectsOfType<PlayerController>();
+        foreach (var player in allPlayers)
         {
             if (player != null)
             {
+                // 1. 操作不能にする
                 player.CanMove = false;
+
+                // 2. 慣性（移動速度）を強制的に 0 にしてその場でピタッと止める
+                Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
+                if (rb != null)
+                {
+                    rb.velocity = Vector2.zero;
+                    rb.angularVelocity = 0f;
+                }
+
+                // 3. アニメーション（走るモーション等）もアイドル（棒立ち）に戻す処理
+                Animator anim = player.GetComponent<Animator>();
+                if (anim != null)
+                {
+                    // もしアニメーターで Speed などのパラメータを使っていれば 0 にリセット
+                    anim.SetFloat("Speed", 0f);
+                    anim.SetBool("IsMoving", false);
+                }
             }
         }
 
-        // -------------------------------------------------------------
-        // ★ステージ情報の保存処理
-        // -------------------------------------------------------------
+        // 花火演出を実行し、すべての打ち上げが終わるまで待機
+        if (fireWork != null)
+        {
+            yield return StartCoroutine(fireWork.HanabiShot());
+        }
+        else
+        {
+            Debug.LogWarning("FireWork の参照がありません。演出をスキップします。");
+        }
+
+        yield return new WaitForSeconds(0.5f);
+
+        Debug.Log("花火演出終了。ステージ情報を保存してクリアシーンへ移行します。");
+
+        // ステージ情報の保存処理
         if (StageMenuManager.Instance != null)
         {
             StageMenuManager.Instance.PrepareClearSceneTransition();
@@ -77,9 +118,7 @@ public class GoalArea : MonoBehaviour
             PlayerPrefs.Save();
         }
 
-        // -------------------------------------------------------------
-        // ★星の獲得データを正式セーブ
-        // -------------------------------------------------------------
+        // 星の獲得データを正式セーブ
         if (SaveManager.Instance != null)
         {
             SaveManager.Instance.SaveGame();

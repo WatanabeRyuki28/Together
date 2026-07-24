@@ -36,6 +36,7 @@ public class OffScreenIndicator : MonoBehaviour
 
         if (indicatorSprite != null)
         {
+            indicatorSprite.sortingOrder = 20;
             indicatorSprite.gameObject.SetActive(false);
         }
 
