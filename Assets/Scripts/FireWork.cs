@@ -6,6 +6,7 @@ public class FireWork : MonoBehaviour
 {
     [SerializeField] GameObject[] myArray = new GameObject[5];
     [SerializeField] GameObject hanabi;
+    [SerializeField] private AudioSource hanabiSE; 
 
     public IEnumerator HanabiShot()
     {
@@ -13,6 +14,8 @@ public class FireWork : MonoBehaviour
         {
             Instantiate(hanabi, point.transform.position, Quaternion.identity);
             yield return new WaitForSeconds(0.5f);
+           
+            
         }
     }
 }
