@@ -183,6 +183,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredPlayersToClear: 2
   nextStageSceneName: ClearScene
+  fireWork: {fileID: 5826394861652869170}
 --- !u!114 &5826394861652869170
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -202,6 +203,7 @@ MonoBehaviour:
   - {fileID: 7359325791875932955}
   - {fileID: 5563465237272805102}
   hanabi: {fileID: 1978689737715041617, guid: afa54037ffe627545886e2741abb365d, type: 3}
+  hanabiSE: {fileID: 0}
 --- !u!1 &4471078129700162221
 GameObject:
   m_ObjectHideFlags: 0

@@ -19,8 +19,13 @@ public class CharacterSelectManager : MonoBehaviour
     [Header("相手の選択枠（カーソル画像）")]
     public RectTransform remoteSelectionCursor;
 
-    [SerializeField] private Color normalColor = Color.white;   
-    [SerializeField] private Color confirmedColor = Color.black;
+
+    [Header("決定時の専用画像")]
+    [SerializeField] private Sprite confirmedSelectionSprite; // 自分の決定時専用画像
+    [SerializeField] private Sprite confirmedRemoteSprite;
+
+    private Sprite defaultSelectionSprite;
+    private Sprite defaultRemoteSprite;
 
     private int currentSelectIndex = 0; // 現在選んでいるキャラの番号 
 
@@ -50,7 +55,7 @@ public class CharacterSelectManager : MonoBehaviour
         {
             controls.CharSelect.Enable();
 
-            // ★【追加】ボタンが押された瞬間のイベントを登録する
+            // ボタンが押された瞬間のイベントを登録する
             controls.CharSelect.Right.started += OnRightPressed;
             controls.CharSelect.Left.started += OnLeftPressed;
             controls.CharSelect.Submit.started += OnSubmitPressed;
@@ -100,6 +105,16 @@ public class CharacterSelectManager : MonoBehaviour
     }
     void Start()
     {
+
+        if (selectionCursor != null && selectionCursor.GetComponent<Image>() != null)
+        {
+            defaultSelectionSprite = selectionCursor.GetComponent<Image>().sprite;
+        }
+        if (remoteSelectionCursor != null && remoteSelectionCursor.GetComponent<Image>() != null)
+        {
+            defaultRemoteSprite = remoteSelectionCursor.GetComponent<Image>().sprite;
+        }
+
         int myIndex = 0;
         var myName = "";
 
@@ -135,6 +150,15 @@ public class CharacterSelectManager : MonoBehaviour
                 selectionCursor = remoteSelectionCursor;
                 remoteSelectionCursor = temp;
 
+                Sprite tempDefault = defaultSelectionSprite;
+                defaultSelectionSprite = defaultRemoteSprite;
+                defaultRemoteSprite = tempDefault;
+
+                Sprite tempConfirmed = confirmedSelectionSprite;
+                confirmedSelectionSprite = confirmedRemoteSprite;
+                confirmedRemoteSprite = tempConfirmed;
+
+
                 // 2Pの初期位置を1番にする
                 currentSelectIndex = 1;
             }
@@ -147,11 +171,7 @@ public class CharacterSelectManager : MonoBehaviour
 
 
         }
-        if (selectionCursor != null && selectionCursor.GetComponent<Image>() != null)
-            selectionCursor.GetComponent<Image>().color = normalColor;
-
-        if (remoteSelectionCursor != null && remoteSelectionCursor.GetComponent<Image>() != null)
-            remoteSelectionCursor.GetComponent<Image>().color = normalColor;
+     
 
         UpdateCursorPosition();
 
@@ -249,7 +269,7 @@ public class CharacterSelectManager : MonoBehaviour
 
         if (selectionCursor != null && selectionCursor.GetComponent<Image>() != null)
         {
-            selectionCursor.GetComponent<Image>().color = confirmedColor;
+            selectionCursor.GetComponent<Image>().sprite = confirmedSelectionSprite;
         }
 
         //  決定フラグを true にして送信
@@ -322,14 +342,14 @@ public class CharacterSelectManager : MonoBehaviour
 
                     if (remoteSelectionCursor != null && remoteSelectionCursor.GetComponent<Image>() != null)
                     {
-                        remoteSelectionCursor.GetComponent<Image>().color = confirmedColor;
+                        remoteSelectionCursor.GetComponent<Image>().sprite = confirmedRemoteSprite;
                     }
                 }
                 else
                 {
                     if (remoteSelectionCursor != null && remoteSelectionCursor.GetComponent<Image>() != null)
                     {
-                        remoteSelectionCursor.GetComponent<Image>().color = normalColor;
+                        remoteSelectionCursor.GetComponent<Image>().sprite = defaultRemoteSprite;
                     }
                 }
             }
@@ -357,10 +377,10 @@ public class CharacterSelectManager : MonoBehaviour
                 mySelectedChar = -1;
 
                 if (selectionCursor != null && selectionCursor.GetComponent<Image>() != null)
-                    selectionCursor.GetComponent<Image>().color = normalColor;
+                    selectionCursor.GetComponent<Image>().sprite = defaultSelectionSprite;
 
                 if (remoteSelectionCursor != null && remoteSelectionCursor.GetComponent<Image>() != null)
-                    remoteSelectionCursor.GetComponent<Image>().color = normalColor;
+                    remoteSelectionCursor.GetComponent<Image>().sprite = defaultRemoteSprite;
 
                 //  被ったので、相手側にも自分が「未確定（移動中）」に戻ったことを通知する
                 SendCharacterState(currentSelectIndex, false);

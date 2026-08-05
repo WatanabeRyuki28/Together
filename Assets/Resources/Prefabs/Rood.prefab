@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1319153396199057699}
   - component: {fileID: 8270025134682440267}
   - component: {fileID: 4621115263921350829}
-  m_Layer: 8
+  m_Layer: 3
   m_Name: Rood
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -173,6 +173,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   breakableBy: 2
   needsBoth: 0
+  canRespawn: 1
+  respawnDelay: 3
   breakSound: {fileID: 0}
   layerHitSound: {fileID: 0}
   failSound: {fileID: 0}

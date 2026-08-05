@@ -12,13 +12,19 @@ public class BGMManager : MonoBehaviour
     [SerializeField] private AudioClip gameBgm;  // GameBGMをセット
 
     [Header("TitleBGMを鳴らすシーン名")]
-    [SerializeField] private string[] sameBgmScenes = { "SecondScene", "CharacterSelectScene", "StageSelectScene" };
+    [SerializeField] private string[] titleBgmScenes = { "SecondScene", "CharacterSelectScene", "StageSelectScene" };
 
     private void Awake()
     {
-        // 重複防止（すでにBGMManagerが存在していれば新しい方を消す）
-        if (Instance != null)
+        // 🌟 重複防止処理を強化
+        if (Instance != null && Instance != this)
         {
+            // すでに古いBGMManager（曲を再生中のもの）が存在する場合、
+            // 新しい方の AudioSource を即座に停止して削除する（音が重複するのを防ぐ）
+            if (audioSource != null)
+            {
+                audioSource.Stop();
+            }
             Destroy(gameObject);
             return;
         }
@@ -29,6 +35,12 @@ public class BGMManager : MonoBehaviour
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
+    private void Start()
+    {
+        // 最初のシーン起動時のBGM判定
+        TryPlayBGM(SceneManager.GetActiveScene().name);
+    }
+
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         TryPlayBGM(scene.name);
@@ -36,12 +48,14 @@ public class BGMManager : MonoBehaviour
 
     private void TryPlayBGM(string sceneName)
     {
-        // ① タイトル系シーン（TitleBGM）か判定
-        if (IsSameBgmScene(sceneName))
+        // ① タイトル・メニュー系シーンの場合 ➔ titleBgm を再生
+        // (SecondScene / CharacterSelectScene / StageSelectScene など)
+        if (IsTitleBgmScene(sceneName))
         {
             PlayClip(titleBgm);
         }
-        // ② それ以外（Stage1〜8 や ClearScene）はすべて GameBGM にする
+        // ② ゲームプレイ中・クリアシーン等の場合 ➔ gameBgm を再生
+        // (Stage1〜8 / ClearScene など)
         else
         {
             PlayClip(gameBgm);
@@ -52,20 +66,21 @@ public class BGMManager : MonoBehaviour
     {
         if (clip == null) return;
 
-        // すでに同じ曲が再生中ならそのまま流し続ける（途切れ防止）
+        // すでに同じ曲が再生中なら、曲を止めずに継続して流し続ける
         if (audioSource.isPlaying && audioSource.clip == clip)
         {
             return;
         }
 
+        // 違う曲になった場合のみ切り替えて再生
         audioSource.clip = clip;
         audioSource.loop = true;
         audioSource.Play();
     }
 
-    private bool IsSameBgmScene(string sceneName)
+    private bool IsTitleBgmScene(string sceneName)
     {
-        foreach (string name in sameBgmScenes)
+        foreach (string name in titleBgmScenes)
         {
             if (sceneName == name) return true;
         }

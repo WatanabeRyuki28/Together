@@ -23147,6 +23147,18 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8269753767565732256, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8269753767565732256, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8269753767565732256, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8269753767565732256, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -23316,6 +23328,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Goal (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 5231743143991095096, guid: 5be6eb7f2ace38943a9b161fc09025a7, type: 3}
+      propertyPath: fireWork
+      value: 
+      objectReference: {fileID: 1362033889}
     - target: {fileID: 8291407207088595474, guid: 5be6eb7f2ace38943a9b161fc09025a7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 77.55
@@ -23361,6 +23377,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5be6eb7f2ace38943a9b161fc09025a7, type: 3}
+--- !u!114 &1362033889 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5826394861652869170, guid: 5be6eb7f2ace38943a9b161fc09025a7, type: 3}
+  m_PrefabInstance: {fileID: 1362033888}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bac0cd0dc9aa0f459df580579cf728d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1427375814
 PrefabInstance:
   m_ObjectHideFlags: 0
