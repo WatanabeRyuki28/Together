@@ -4891,6 +4891,7 @@ MonoBehaviour:
   firstmenuPanel: {fileID: 2118910427}
   firstMenuCursor: {fileID: 2118910426}
   exitButtonTransform: {fileID: 1832906755}
+  retryButtonTransform: {fileID: 1808268796}
   closeButtonTransform: {fileID: 777345344}
   confirmationPanel: {fileID: 2118910424}
   confirmCursor: {fileID: 2118910425}
@@ -4910,6 +4911,7 @@ MonoBehaviour:
   LoadText: {fileID: 2118910423}
   exitStatusText: {fileID: 2118910422}
   yesButton: {fileID: 0}
+  retryButtonText: {fileID: 1894196793}
 --- !u!4 &601447396
 Transform:
   m_ObjectHideFlags: 0
@@ -19697,6 +19699,11 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!224 &1808268796 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8218923870842849243, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 2118910421}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1810823343
 GameObject:
   m_ObjectHideFlags: 0
@@ -19832,6 +19839,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7840526398259052393, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
   m_PrefabInstance: {fileID: 2118910421}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1894196793 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6559482987829148675, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 2118910421}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1950047781
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20074,6 +20092,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: e6e85709b7e90544ca4f42fcc3b40069, type: 3}
+    - target: {fileID: 347626874263259032, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 601447395}
+    - target: {fileID: 347626874263259032, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: PressRetryByClick
+      objectReference: {fileID: 0}
     - target: {fileID: 712796850551941141, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
       propertyPath: m_AnchorMax.x
       value: 1
@@ -20264,7 +20290,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7840526398259052393, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 420
+      value: 70
       objectReference: {fileID: 0}
     - target: {fileID: 7840526398259052393, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
       propertyPath: m_AnchoredPosition.y

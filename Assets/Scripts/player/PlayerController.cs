@@ -143,7 +143,7 @@ public class PlayerController : MonoBehaviour
         if (!IsLocalPlayer)
         {
 
-            Debug.Log($"現在の接地状態: {isGrounded}");
+         
 
             if (rb != null)
             {

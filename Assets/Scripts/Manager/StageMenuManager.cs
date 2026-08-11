@@ -23,8 +23,9 @@ public class StageMenuManager : MonoBehaviour
     [SerializeField] private GameObject firstmenuPanel;
     [SerializeField] private RectTransform firstMenuCursor; // 第1メニューのカーソル画像
     [SerializeField] private RectTransform exitButtonTransform;  // 「退出する」ボタンの座標
+    [SerializeField] private RectTransform retryButtonTransform; // 「リトライ」ボタンの座標
     [SerializeField] private RectTransform closeButtonTransform; // 「閉じる」ボタンの座標
-    private int currentFirstIndex = 0; // 0: 退出する, 1: 閉じる
+    private int currentFirstIndex = 0; // 0: 退出する, 1: リトライ, 2: 閉じる
 
     [Header("2枚目: 確認パネル設定")]
     [SerializeField] private GameObject confirmationPanel;
@@ -83,6 +84,13 @@ public class StageMenuManager : MonoBehaviour
     [SerializeField] private Text exitStatusText;
 
     [SerializeField] private Button yesButton;
+
+    private bool myRetryVote = false;      // 自分がリトライを押したか
+    private bool remoteRetryVote = false;  // 相手がリトライを押したか
+
+    [SerializeField] private Text retryButtonText;
+    private static bool isRetry = false;
+
     public bool isIntroPlaying { get; private set; } = true;
 
     private void Awake()
@@ -120,18 +128,28 @@ public class StageMenuManager : MonoBehaviour
 
         InitializeStageStarDisplay();
 
-        if (stageNameText != null)
+        if (isRetry)
+        {
+            if (stageNameText != null) stageNameText.gameObject.SetActive(false);
+            if (LoadText != null) LoadText.gameObject.SetActive(false);
+            if (Image != null) Image.SetActive(false);
+            if (panel != null) panel.SetActive(false);
+
+            isIntroPlaying = false;
+            isRetry = false; // フラグをリセット
+        }
+
+        else if (stageNameText != null)
         {
             stageNameText.gameObject.SetActive(true);
-            LoadText.gameObject.SetActive(true);
-            Image.SetActive(true);
-            panel.SetActive(true);
+            if (LoadText != null) LoadText.gameObject.SetActive(true);
+            if (Image != null) Image.SetActive(true);
+            if (panel != null) panel.SetActive(true);
 
             int displayStageNumber = currentStageStageIndex + 1;
             stageNameText.text = $"ステージ {displayStageNumber}";
-            LoadText.text = "読み込み中";
+            if (LoadText != null) LoadText.text = "読み込み中";
 
-            
             StartCoroutine(AnimateStageNameRoutine());
         }
     }
@@ -163,7 +181,7 @@ public class StageMenuManager : MonoBehaviour
 
         if (currentMenuState == MenuState.Closed) return;
 
-        if (myExitVote || isExitingScene) return;
+        if (myExitVote || myRetryVote || isExitingScene) return;
 
         if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject != null)
         {
@@ -202,13 +220,15 @@ public class StageMenuManager : MonoBehaviour
     {
         if (currentMenuState == MenuState.FirstMenu)
         {
-            if (direction < -0.5f && currentFirstIndex == 1)
+            // 左移動
+            if (direction < -0.5f && currentFirstIndex > 0)
             {
-                currentFirstIndex = 0; // 「退出する」へ
+                currentFirstIndex--;
             }
-            else if (direction > 0.5f && currentFirstIndex == 0)
+            // 右移動
+            else if (direction > 0.5f && currentFirstIndex < 2)
             {
-                currentFirstIndex = 1; // 「閉じる」へ
+                currentFirstIndex++;
             }
         }
         else if (currentMenuState == MenuState.FinalMenu)
@@ -235,6 +255,12 @@ public class StageMenuManager : MonoBehaviour
             {
                 OpenConfirmation(); // 「退出する」
             }
+            else if (currentFirstIndex == 1)
+            {
+                Debug.Log("リトライボタンが決定されました");
+                controls.SecondMenu.Disable();
+                PressRetryByClick();
+            }
             else
             {
                 ToggleMenu(); // 「閉じる」
@@ -244,6 +270,7 @@ public class StageMenuManager : MonoBehaviour
         {
             if (currentConfirmIndex == 0)
             {
+                controls.SecondMenu.Disable();
                 PressYesByClick(); // 「はい」
             }
             else
@@ -269,6 +296,8 @@ public class StageMenuManager : MonoBehaviour
             controls.FinalMenu.Disable();
 
             if (menuOpenButton != null) menuOpenButton.interactable = false;
+
+            UpdateRetryStatusUI();
 
             currentFirstIndex = 0;
             UpdateCursorPositions();
@@ -321,11 +350,13 @@ public class StageMenuManager : MonoBehaviour
             {
                 firstMenuCursor.gameObject.SetActive(true);
 
-                RectTransform targetButton = (currentFirstIndex == 0) ? exitButtonTransform : closeButtonTransform;
+                // currentFirstIndex に応じて対象ボタンのTransformを切り替え
+                RectTransform targetButton = exitButtonTransform;
+                if (currentFirstIndex == 1) targetButton = retryButtonTransform;
+                else if (currentFirstIndex == 2) targetButton = closeButtonTransform;
 
                 if (targetButton != null)
                 {
-                   
                     firstMenuCursor.position = targetButton.position;
                 }
             }
@@ -340,7 +371,6 @@ public class StageMenuManager : MonoBehaviour
                 RectTransform targetTransform = (currentConfirmIndex == 0) ? yesButtonTransform : noButtonTransform;
                 if (targetTransform != null)
                 {
-                    // anchoredPosition を使用
                     Vector2 targetAnchorPos = targetTransform.anchoredPosition;
                     confirmCursor.anchoredPosition = new Vector2(targetAnchorPos.x + cursorOffsetX, targetAnchorPos.y);
                 }
@@ -387,6 +417,35 @@ public class StageMenuManager : MonoBehaviour
         CheckBothPlayersReadyToExit();
     }
 
+    public async void PressRetryByClick()
+    {
+        if (myRetryVote || isExitingScene) return;
+
+        myRetryVote = true;
+
+        // 自分の画面のUIを更新
+        UpdateRetryStatusUI();
+
+        if (NetworkManager.Instance != null)
+        {
+            int myIndex = NetworkManager.Instance.myRealSelectedChar;
+            if (myIndex == -1) myIndex = NetworkManager.Instance.myCharaIndex;
+
+            InGameMoveData retryMsg = new InGameMoveData();
+            retryMsg.type = "menu_retry";
+            retryMsg.dataType = "";
+            retryMsg.room_id = NetworkManager.Instance.myRoomID;
+            retryMsg.char_index = myIndex;
+
+            string json = JsonUtility.ToJson(retryMsg);
+            await NetworkManager.Instance.SendMessageAsync(json);
+
+            Debug.Log($"[リトライ送信] room_id: {retryMsg.room_id}, char_index: {myIndex}");
+        }
+
+        CheckBothPlayersReadyToRetry();
+    }
+
     public void ReceiveExitReady(int senderIndex)
     {
         int myIndex = -1;
@@ -408,6 +467,34 @@ public class StageMenuManager : MonoBehaviour
         CheckBothPlayersReadyToExit();
     }
 
+
+    public void ReceiveRetryReady(int senderIndex)
+    {
+        int myIndex = -1;
+        if (NetworkManager.Instance != null)
+        {
+            myIndex = NetworkManager.Instance.myRealSelectedChar;
+            if (myIndex == -1) myIndex = NetworkManager.Instance.myCharaIndex;
+        }
+
+        Debug.Log($"[ReceiveRetryReady] 送信元 char_index: {senderIndex} / 自分の char_index: {myIndex}");
+
+        // 自分自身の送信ループバックは無視
+        if (senderIndex == myIndex)
+        {
+            Debug.LogWarning("[ReceiveRetryReady] 自分の送信ループバックのため無視されました。");
+            return;
+        }
+
+        remoteRetryVote = true;
+        Debug.Log("【成功】相手からのリトライ同意を正常に受け取りました！");
+
+        // 相手から届いた時も画面の数字（1/2など）を更新
+        UpdateRetryStatusUI();
+
+        CheckBothPlayersReadyToRetry();
+    }
+
     public void ReceiveExitCancel(int senderIndex)
     {
 
@@ -423,6 +510,32 @@ public class StageMenuManager : MonoBehaviour
 
         remoteExitVote = false;
         UpdateExitStatusUI();
+    }
+
+
+    private void CheckBothPlayersReadyToRetry()
+    {
+        bool isOffline = (NetworkManager.Instance == null);
+        bool isReady = isOffline ? myRetryVote : (myRetryVote && remoteRetryVote);
+
+        if (isReady && !isExitingScene)
+        {
+            isExitingScene = true;
+            isRetry = true; // リトライ演出スキップフラグ
+
+            if (SaveManager.Instance != null)
+            {
+                string targetItemId = ItemIdPrefix + currentStageStageIndex;
+                if (SaveManager.Instance.CurrentSaveData?.obtainedItemIds != null)
+                {
+                    SaveManager.Instance.CurrentSaveData.obtainedItemIds.Remove(targetItemId);
+                }
+                SaveManager.Instance.LoadGame();
+            }
+
+            Time.timeScale = 1f;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
     }
 
     private void UpdateExitStatusUI()
@@ -557,10 +670,33 @@ public class StageMenuManager : MonoBehaviour
         int myIndex = (NetworkManager.Instance != null) ? NetworkManager.Instance.myCharaIndex : 0;
         if (myIndex == 0) player0Ready = false;
         if (myIndex == 1) player1Ready = false;
+
+        myExitVote = false;
+        remoteExitVote = false;
+        myRetryVote = false;
+        remoteRetryVote = false;
         hasPressedYes = false;
+
         UpdateYesButtonText();
     }
 
+    public void RetryStage()
+    {
+        // 仮獲得したスター等のデータをリセット
+        if (SaveManager.Instance != null)
+        {
+            string targetItemId = ItemIdPrefix + currentStageStageIndex;
+            if (SaveManager.Instance.CurrentSaveData?.obtainedItemIds != null)
+            {
+                SaveManager.Instance.CurrentSaveData.obtainedItemIds.Remove(targetItemId);
+            }
+            SaveManager.Instance.LoadGame();
+        }
+
+        Time.timeScale = 1f;
+        // 現在アクティブなシーン（ステージ）を再読み込み
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
     private void InitializeStageStarDisplay()
     {
         if (starUIPanel == null) return;
@@ -642,7 +778,16 @@ public class StageMenuManager : MonoBehaviour
         }
     }
 
-   
+    private void UpdateRetryStatusUI()
+    {
+        if (retryButtonText == null || isExitingScene) return;
+
+        int voteCount = 0;
+        if (myRetryVote) voteCount++;
+        if (remoteRetryVote) voteCount++;
+
+        retryButtonText.text = $"{voteCount}/2";
+    }
 
     private IEnumerator AnimateStageNameRoutine()
     {

@@ -201,7 +201,7 @@ public class ObjectOnlineCommunication : MonoBehaviour
     }
     public void HandleWebSocketMessage(string msg)
     {
-        if (msg.Contains("\"type\":\"menu_toggle\"") || msg.Contains("\"type\":\"menu_exit_ready\""))
+        if (msg.Contains("\"type\":\"menu_toggle\"") || msg.Contains("\"type\":\"menu_exit_cancel\"") || msg.Contains("\"type\":\"menu_retry\""))
         {
             try
             {
@@ -212,9 +212,15 @@ public class ObjectOnlineCommunication : MonoBehaviour
                     StageMenuManager.Instance.ReceiveExitReady(menuData.char_index);
                     return;
                 }
-                else if (menuData.type == "menu_exit_ready" && StageMenuManager.Instance != null)
+                else if (menuData.type == "menu_exit_cancel" && StageMenuManager.Instance != null)
                 {
                     StageMenuManager.Instance.ReceiveExitCancel(menuData.char_index);
+                    return;
+                }
+                else if (menuData.type == "menu_retry" && StageMenuManager.Instance != null)
+                {
+                    Debug.Log($"[ObjectOnlineComm] menu_retryÇéÛêMÇµÇ‹ÇµÇΩÅI char_index: {menuData.char_index}");
+                    StageMenuManager.Instance.ReceiveRetryReady(menuData.char_index);
                     return;
                 }
             }
