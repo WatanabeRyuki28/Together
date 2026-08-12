@@ -136,9 +136,16 @@ MonoBehaviour:
   pushSpeedMultiplier: 0.1
   jumpForce: 7.4
   fireRate: 1
+  icePillarPrefab: {fileID: 0}
+  waterLayer:
+    serializedVersion: 2
+    m_Bits: 16
+  waterCheckDistance: 1.5
   jumpSound: {fileID: 8300000, guid: 6e2efba68f309654ab1d43dc9675e1d6, type: 3}
   shootSound: {fileID: 8300000, guid: 43777e74804c2394fa979b97a1b697c9, type: 3}
   walkSound: {fileID: 0}
+  createPillarSound: {fileID: 0}
+  failSound: {fileID: 0}
   projectilePrefab: {fileID: 1470277367932372552, guid: 9a7087fc1a3459340b36e7d0b85e9e3a, type: 3}
   firePoint: {fileID: 5717610557424801763}
   groundLayer:

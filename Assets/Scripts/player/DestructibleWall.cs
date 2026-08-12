@@ -1,156 +1,76 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class DestructibleWall : MonoBehaviour, IInteractable
+/// <summary>
+/// 炎属性専用の破壊可能な壁
+/// </summary>
+public class FireDestructibleWall : MonoBehaviour, IInteractable
 {
-    [Header("Wall Settings")]
-    [SerializeField] private ElementType breakableBy; // どの属性で壊れるか
-    [SerializeField] private bool needsBoth = false;   // 両方の属性が必要か
+    // --- マジックナンバー排除用の定数定義 ---
+    private const float DefaultRespawnDelay = 3.0f; // 復活までの秒数
+
+    [Header("Respawn Settings (再生成設定)")]
+    [SerializeField] private bool canRespawn = false;              // 時間経過で復活するか
+    [SerializeField] private float respawnDelay = DefaultRespawnDelay; // 復活するまでの秒数
 
     [Header("Audio Settings (効果音)")]
-    [SerializeField] private AudioClip breakSound;       // 壁が壊れた時の音
-    [SerializeField] private AudioClip layerHitSound;    // 【協力用】片方当たった時の音
-    [SerializeField] private AudioClip failSound;        // 属性が違って効かなかった時の音
+    [SerializeField] private AudioClip breakSound; // 破壊時の効果音
+    [SerializeField] private AudioClip failSound;  // 氷属性などの攻撃を弾いた時の効果音
 
     [Header("Effect Settings (演出)")]
-    [SerializeField] private GameObject breakEffectPrefab; // 共通のパーティクルプレハブ
+    [SerializeField] private GameObject breakEffectPrefab; // 破壊時のエフェクトプレハブ
 
     private SpriteRenderer spriteRenderer;
-    private bool hitByFire = false;
-    private bool hitByIce = false;
-    private bool isBreaking = false;
+    private AudioSource audioSource;
+    private Collider2D[] wallColliders;
 
-    // 待機アニメーションのループ制御用
-    //private Coroutine idleCoroutine;
-    //private Vector3 basePosition;
+    private bool isBreaking = false;
     private Color baseColor;
 
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-}
+        wallColliders = GetComponents<Collider2D>();
+
+        // AudioSourceのキャッシュ
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+        audioSource.spatialBlend = 0f;
+    }
 
     private void Start()
     {
-        //basePosition = transform.position;
         if (spriteRenderer != null)
         {
             baseColor = spriteRenderer.color;
         }
-
-        //// 待機中の動き（どちらも異なる振動）
-        //if (needsBoth)
-        //{
-        //    idleCoroutine = StartCoroutine(IdleIceShiver());
-        //}
-        //else if (breakableBy == ElementType.Fire)
-        //{
-        //    idleCoroutine = StartCoroutine(IdleFireShiver()); // 炎：超高速振動
-        //}
-        //else
-        //{
-        //    idleCoroutine = StartCoroutine(IdleIceShiver());  // 氷：小刻みな硬質振動
-        //}
     }
 
-    //// 🔥 待機中（炎）：激しい微振動
-    //private IEnumerator IdleFireShiver()
-    //{
-    //    while (!isBreaking)
-    //    {
-    //        float shiverAmount = 0.025f;
-    //        transform.position = basePosition + new Vector3(
-    //            Random.Range(-shiverAmount, shiverAmount),
-    //            Random.Range(-shiverAmount, shiverAmount),
-    //            0f
-    //        );
-    //        yield return null;
-    //    }
-    //}
-
-    // ❄️ 待機中（氷）：小刻みな振動
-    //private IEnumerator IdleIceShiver()
-    //{
-    //    while (!isBreaking)
-    //    {
-    //        float shiverAmount = 0.015f;
-    //        transform.position = basePosition + new Vector3(
-    //            Random.Range(-shiverAmount, shiverAmount),
-    //            Random.Range(-shiverAmount, shiverAmount),
-    //            0f
-    //        );
-    //        yield return new WaitForSeconds(0.05f);
-    //    }
-    //}
+    /// <summary>
+    /// インタラクト時の判定（弾や攻撃が当たった時に呼ばれる）
+    /// </summary>
     public void OnInteract(ElementType type)
     {
-   　   if (isBreaking) return;
+        if (isBreaking) return;
 
-        if (needsBoth)
+        // 🔥 炎属性のみ破壊可能
+        if (type == ElementType.Fire)
         {
-            if (hitByFire && hitByIce) return;
-            if (type == ElementType.Fire && hitByFire) return;
-            if (type == ElementType.Ice && hitByIce) return;
-
-            if (type == ElementType.Fire) hitByFire = true;
-            if (type == ElementType.Ice) hitByIce = true;
-
-            UpdateVisuals();
-
-            if (hitByFire && hitByIce)
-            {
-                StartBreakSequence();
-            }
-            else
-            {
-                PlaySound(layerHitSound);
-            }
+            StartBreakSequence();
         }
         else
-    　   {
-            if (type == breakableBy)
-            {
-                StartBreakSequence();
-            }
-            else
-            {
-                PlaySound(failSound);
-            }
-        }
-    }
-
-    //[修正]　セットしたエフェクトをそのまま出すように修正
-    private void SpawnBreakEffect()
-    {
-        if (breakEffectPrefab == null) return;
-
-        GameObject effect = Instantiate(
-            breakEffectPrefab,
-            transform.position,
-            Quaternion.identity);
-    }
-
-    private void UpdateVisuals()
-    {
-        if (spriteRenderer != null)
         {
-            //baseColor = new Color(baseColor.r * 0.5f, baseColor.g * 0.5f, baseColor.b * 0.5f, 1.0f);
-            //spriteRenderer.color = baseColor;
-            spriteRenderer.color = baseColor * 0.5f;
+            // 氷など他の属性の場合は弾かれる（失敗音）
+            PlaySound(failSound);
         }
     }
 
     private void StartBreakSequence()
     {
         isBreaking = true;
-
-        //if (idleCoroutine != null)
-        //{
-        //    StopCoroutine(idleCoroutine);
-        //}
-
-        //transform.position = basePosition;
-        if (spriteRenderer != null) spriteRenderer.color = baseColor;
 
         if (breakSound != null)
         {
@@ -159,99 +79,70 @@ public class DestructibleWall : MonoBehaviour, IInteractable
 
         SpawnBreakEffect();
 
-        Destroy(gameObject);
-
-        //if (targetType == ElementType.Fire)
-        //{
-        //    StartCoroutine(AnimateFireShatter()); // 炎：木っ端微塵に砕け散る
-        //}
-        //else if (targetType == ElementType.Ice)
-        //{
-        //    StartCoroutine(AnimateIceShatterGlassEffect()); // 氷：パリーン！とガラスのように割れる
-        //}
+        if (canRespawn)
+        {
+            StartCoroutine(RespawnRoutine());
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
-    //// 🔥 破壊時（炎）：木っ端微塵に砕け散る
-    //private IEnumerator AnimateFireShatter()
-    //{
-    //    if (TryGetComponent<Collider2D>(out Collider2D col)) col.enabled = false;
+    /// <summary>
+    /// 壁を一定時間後に復活させるコルーチン
+    /// </summary>
+    private IEnumerator RespawnRoutine()
+    {
+        SetWallActive(false);
 
-    //    float elapsed = 0f;
-    //    float shakeDuration = 0.25f;
+        yield return new WaitForSeconds(respawnDelay);
 
-    //    while (elapsed < shakeDuration)
-    //    {
-    //        elapsed += Time.deltaTime;
-    //        float shakeAmount = 0.08f;
-    //        transform.position = basePosition + new Vector3(
-    //            Random.Range(-shakeAmount, shakeAmount),
-    //            Random.Range(-shakeAmount, shakeAmount),
-    //            0f
-    //        );
-    //        yield return null;
-    //    }
+        isBreaking = false;
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = baseColor;
+        }
 
-    //    // 炎：速度 5.0f、寿命 0.25秒（小さく激しく散る）
-    //    SpawnPrefabEffect(baseColor, 40, 5.0f, 0.25f);
-    //    Destroy(gameObject);
-    //}
+        SetWallActive(true);
+    }
 
-    //// ❄️ 破壊時（氷）：パリーン！と一瞬でヒビが入り、鋭く弾け飛ぶ演出
-    //private IEnumerator AnimateIceShatterGlassEffect()
-    //{
-    //    if (TryGetComponent<Collider2D>(out Collider2D col)) col.enabled = false;
-    //    Vector3 originalScale = transform.localScale;
+    /// <summary>
+    /// 壁の表示と当たり判定を一括で切り替える
+    /// </summary>
+    private void SetWallActive(bool active)
+    {
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.enabled = active;
+        }
 
-    //    float elapsed = 0f;
-    //    float glassStiffDuration = 0.1f;
+        if (wallColliders != null)
+        {
+            foreach (var col in wallColliders)
+            {
+                if (col != null)
+                {
+                    col.enabled = active;
+                }
+            }
+        }
+    }
 
-    //    transform.localScale = new Vector3(originalScale.x * 1.1f, originalScale.y * 0.9f, originalScale.z);
+    private void SpawnBreakEffect()
+    {
+        if (breakEffectPrefab == null) return;
 
-    //    while (elapsed < glassStiffDuration)
-    //    {
-    //        elapsed += Time.deltaTime;
-    //        yield return null;
-    //    }
-
-    //    // ★【調整】氷：速度 7.0f（鋭さ維持）に対し、寿命を「0.15秒」と超短縮！
-    //    // これにより、勢いよく弾け出た瞬間にパッと消えるため、広がりすぎず小気味良いサイズになります。
-    //    SpawnPrefabEffect(baseColor, 45, 7.0f, 0.15f);
-
-    //    Destroy(gameObject);
-    //}
-
-    // エフェクト生成（速度と寿命をコントロール）
-    //private void SpawnPrefabEffect(Color particleColor, int count, float speed, float lifetime)
-    //{
-    //    if (breakEffectPrefab == null) return;
-
-    //    GameObject effect = Instantiate(breakEffectPrefab, basePosition, Quaternion.identity);
-    //    effect.transform.localScale = transform.localScale;
-
-    //    ParticleSystem ps = effect.GetComponent<ParticleSystem>();
-    //    if (ps != null)
-    //    {
-    //        var mainModule = ps.main;
-    //        mainModule.startColor = particleColor;
-    //        mainModule.startSpeed = speed;       // 吹き飛ぶ速さ
-    //        mainModule.startLifetime = lifetime; // ★【追加】飛び散る距離を抑えるために寿命を制限
-
-    //        var emission = ps.emission;
-    //        ParticleSystem.Burst burst = emission.GetBurst(0);
-    //        float wallSizeFactor = transform.localScale.x * transform.localScale.y;
-    //        burst.count = new ParticleSystem.MinMaxCurve(count * wallSizeFactor);
-    //        emission.SetBurst(0, burst);
-    //    }
-
-    //    Destroy(effect, 1.0f);
-    //}
+        Instantiate(
+            breakEffectPrefab,
+            transform.position,
+            Quaternion.identity
+        );
+    }
 
     private void PlaySound(AudioClip clip)
     {
-        if (clip == null) return;
-        AudioSource source = GetComponent<AudioSource>();
-        if (source == null) source = gameObject.AddComponent<AudioSource>();
-        source.spatialBlend = 0f;
-        source.PlayOneShot(clip);
+        if (clip == null || audioSource == null) return;
+        audioSource.PlayOneShot(clip);
     }
 }
