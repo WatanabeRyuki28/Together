@@ -3,6 +3,13 @@
 [RequireComponent(typeof(Rigidbody2D))]
 public class Projectile : MonoBehaviour
 {
+    // --- 定数定義（マジックナンバーの排除） ---
+    private const float RightDirection = 1f;
+    private const float LeftDirection = -1f;
+    private const float DefaultHitEffectLifeTime = 1f; // ヒットエフェクト消滅までの時間
+    private const float RotationAngleThresholdMin = 170f;
+    private const float RotationAngleThresholdMax = 190f;
+
     [Header("Projectile Settings")]
     [SerializeField] private float speed = 10.0f;
     [SerializeField] private float lifeTime = 1.5f; // 1.5秒で自動消滅
@@ -16,7 +23,7 @@ public class Projectile : MonoBehaviour
     [SerializeField] private GameObject hitEffect;
 
     private Rigidbody2D rb;
-    private float moveDirection = 1f; // 飛ぶ方向（1なら右、-1なら左）
+    private float moveDirection = RightDirection; // 飛ぶ方向（1なら右、-1なら左）
     private bool isInitialized = false; // 初期化が完了したかのフラグ
 
     void Awake()
@@ -28,18 +35,18 @@ public class Projectile : MonoBehaviour
 
     private void Start()
     {
-        // ★【修正】すでに Initialize で方向が決まっているなら、以下の自動判定は完全にスルーする！
+        // すでに Initialize で方向が決まっているなら、以下の自動判定は完全にスルーする
         if (!isInitialized)
         {
             // ネットワーク経由で相手の画面に直接生成された時だけの救済措置
             float currentRotationZ = transform.eulerAngles.z;
-            if (currentRotationZ > 170f && currentRotationZ < 190f)
+            if (currentRotationZ > RotationAngleThresholdMin && currentRotationZ < RotationAngleThresholdMax)
             {
-                moveDirection = -1f;
+                moveDirection = LeftDirection;
             }
             else
             {
-                moveDirection = 1f;
+                moveDirection = RightDirection;
             }
             isInitialized = true;
         }
@@ -50,7 +57,7 @@ public class Projectile : MonoBehaviour
             rb.velocity = new Vector2(speed * moveDirection, 0f);
         }
 
-        // 【時間経過で消滅】指定した秒数（1.5秒）後に自分を削除
+        // 指定した秒数後に自分を削除
         Destroy(gameObject, lifeTime);
     }
 
@@ -59,7 +66,7 @@ public class Projectile : MonoBehaviour
     {
         moveDirection = direction;
         projectileType = playerElement; // プレイヤーの属性（FireやIce）を自動コピー
-        isInitialized = true; // ★ここで先に初期化フラグを立てる！
+        isInitialized = true; // ここで先に初期化フラグを立てる
 
         // 向いている方向（右 or 左）に物理速度をセットする
         if (rb != null)
@@ -79,20 +86,31 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        // 接触位置（着弾点）を計算
+        Vector3 hitPoint = other.ClosestPoint(transform.position);
+
         // エフェクト生成
         if (hitEffect != null)
         {
             GameObject effect = Instantiate(
                 hitEffect,
-                transform.position,
+                hitPoint,
                 Quaternion.identity
             );
 
-            // 1秒後にエフェクトを削除
-            Destroy(effect, 1f);
+            // 定数で設定した時間後にエフェクトを削除
+            Destroy(effect, DefaultHitEffectLifeTime);
         }
 
-        // 1. ギミック（IInteractable）に当たった場合
+        // 1. ピンポイント生成に対応した WaterSurface 等のコンポーネントかチェック
+        if (other.TryGetComponent<WaterSurface>(out var waterSurface))
+        {
+            waterSurface.OnInteractAtPoint(projectileType, hitPoint);
+            Destroy(gameObject);
+            return;
+        }
+
+        // 2. 通常の IInteractable ギミックに当たった場合
         IInteractable target = other.GetComponent<IInteractable>();
         if (target != null)
         {
@@ -101,7 +119,7 @@ public class Projectile : MonoBehaviour
             return;
         }
 
-        // 2. プレイヤーや壁などに当たった場合
+        // 3. プレイヤーや壁などに当たった場合
         // LayerMaskに含まれるレイヤー（壁や床など）に接触したか判定
         if (((1 << other.gameObject.layer) & collisionLayers) != 0)
         {

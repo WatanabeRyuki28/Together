@@ -11,6 +11,9 @@ public class DestructibleFloor : MonoBehaviour
     [SerializeField] private ElementType breakableBy; // どの属性で壊れるか
     [SerializeField] private bool needsBoth = false;   // 両方の属性で乗る必要があるか（協力用）
 
+    [Header("Slippery Settings (滑る床の設定)")]
+    [SerializeField] private PhysicsMaterial2D slipperyMaterial; // 摩擦0に設定したPhysicsMaterial2Dをアサイン
+
     [Header("Respawn Settings (再生成設定)")]
     [SerializeField] private bool canRespawn = true;             // 時間経過で復活するか
     [SerializeField] private float respawnDelay = DefaultRespawnDelay; // 壊れてから復活するまでの時間（秒）
@@ -52,6 +55,25 @@ public class DestructibleFloor : MonoBehaviour
         if (spriteRenderer != null)
         {
             baseColor = spriteRenderer.color;
+        }
+
+        // インスペクターで SlipperyMaterial が設定されていればコライダーに適用する
+        ApplySlipperyMaterial();
+    }
+
+    /// <summary>
+    /// 床のコライダーに滑る材質を適用する
+    /// </summary>
+    private void ApplySlipperyMaterial()
+    {
+        if (slipperyMaterial == null || floorColliders == null) return;
+
+        foreach (var col in floorColliders)
+        {
+            if (col != null)
+            {
+                col.sharedMaterial = slipperyMaterial;
+            }
         }
     }
 
@@ -137,6 +159,11 @@ public class DestructibleFloor : MonoBehaviour
 
         SpawnBreakEffect();
 
+        // --------------------------------------------------
+        // ★【破壊・リスポーンギミックの無効化】
+        // 床が消えたり削除されたりしないように処理をコメントアウト
+        // --------------------------------------------------
+        /*
         if (canRespawn)
         {
             StartCoroutine(RespawnRoutine());
@@ -145,30 +172,7 @@ public class DestructibleFloor : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }
-
-    /// <summary>
-    /// 時間経過で床を復活させるコルーチン
-    /// </summary>
-    private IEnumerator RespawnRoutine()
-    {
-        // 1. 見ためと当たり判定を無効化する
-        SetFloorActive(false);
-
-        // 2. 指定時間待機
-        yield return new WaitForSeconds(respawnDelay);
-
-        // 3. 状態・見た目を初期化して再有効化する
-        hitByFire = false;
-        hitByIce = false;
-        isBreaking = false;
-
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.color = baseColor;
-        }
-
-        SetFloorActive(true);
+        */
     }
 
     /// <summary>
