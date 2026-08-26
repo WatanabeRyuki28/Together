@@ -136,7 +136,7 @@ MonoBehaviour:
   pushSpeedMultiplier: 0.1
   jumpForce: 7.4
   fireRate: 1
-  icePillarPrefab: {fileID: 0}
+  icePillarPrefab: {fileID: 8982154150200284505, guid: de3cf56bef36f3946a10f029d3879352, type: 3}
   waterLayer:
     serializedVersion: 2
     m_Bits: 16
