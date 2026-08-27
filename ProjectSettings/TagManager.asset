@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Box
   - FxTemporaire
+  - IcePillar
   layers:
   - Default
   - TransparentFX
@@ -42,4 +43,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Player_Ice
+    uniqueID: 3950947107
     locked: 0

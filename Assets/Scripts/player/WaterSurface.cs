@@ -7,16 +7,17 @@ using UnityEngine;
 /// </summary>
 public class WaterSurface : MonoBehaviour, IInteractable
 {
-    // --- 定数定義 ---
+    // --- 定数定義（マジックナンバーの排除） ---
     private const float DefaultSoundVolume = 1.0f;
     private const float DividerForCenterCalculation = 2.0f;
-    private const int DefaultMaxPillarCount = 5; // デフォルトの最大保持数
+    private const int DefaultMaxPillarCount = 3;
+    private const float DefaultSpawnRotationZ = 90.0f; // デフォルトの回転角度（壁からの押し出し用）
 
     public enum SpawnMode
     {
         PointHit,          // 弾が当たったピンポイント位置に生成
         WideArea,          // 指定範囲（横方向）に複数生成
-        UseObjectRotation  // オブジェクト自身の向き（壁や天井）に合わせて生成
+        UseObjectRotation  // 設定された角度（壁や天井）に合わせて生成
     }
 
     [Header("Generation Mode")]
@@ -25,7 +26,8 @@ public class WaterSurface : MonoBehaviour, IInteractable
     [Header("Pillar Settings")]
     [SerializeField] private GameObject icePillarPrefab; // 作成済みの氷柱プレハブ
     [SerializeField] private Vector3 spawnOffset = Vector3.zero; // 位置調整用オフセット
-    [SerializeField] private int maxPillarCount = DefaultMaxPillarCount; // ★ 同時に存在できる氷柱の最大数
+    [SerializeField] private Vector3 spawnRotationEuler = new Vector3(0f, 0f, DefaultSpawnRotationZ); // 生成時の回転角度指定
+    [SerializeField] private int maxPillarCount = DefaultMaxPillarCount; // 同時に存在できる氷柱の最大数
 
     [Header("Wide Area Settings (広範囲生成用)")]
     [SerializeField] private int pillarCount = 3;        // 広範囲時に出す本数
@@ -73,6 +75,7 @@ public class WaterSurface : MonoBehaviour, IInteractable
                 CreateSinglePillar(hitPoint + spawnOffset);
                 break;
             case SpawnMode.UseObjectRotation:
+                // 着弾点（hitPoint）を直接渡す
                 CreateRotatedPillar(hitPoint);
                 break;
             case SpawnMode.WideArea:
@@ -83,21 +86,29 @@ public class WaterSurface : MonoBehaviour, IInteractable
     }
 
     /// <summary>
-    /// 1本だけ生成（真上に向かって直立生成）
+    /// 1本だけ生成（UseObjectRotationが有効な場合は設定された角度を維持）
     /// </summary>
     private void CreateSinglePillar(Vector3 position)
     {
-        SpawnAndManagePillar(position, Quaternion.identity);
+        Quaternion rotation = (spawnMode == SpawnMode.UseObjectRotation)
+            ? Quaternion.Euler(spawnRotationEuler)
+            : Quaternion.identity;
+
+        SpawnAndManagePillar(position, rotation);
         PlaySound(position);
     }
 
     /// <summary>
-    /// オブジェクト自身の回転（壁・天井・斜面）に合わせて生成
+    /// 設定されたオイラー角に合わせて回転させて生成
     /// </summary>
     private void CreateRotatedPillar(Vector3 basePosition)
     {
-        Vector3 spawnPosition = basePosition + transform.TransformDirection(spawnOffset);
-        SpawnAndManagePillar(spawnPosition, transform.rotation);
+        Quaternion rotation = Quaternion.Euler(spawnRotationEuler);
+
+        // 指定した角度の向きに合わせてオフセットを加算
+        Vector3 spawnPosition = basePosition + (rotation * spawnOffset);
+
+        SpawnAndManagePillar(spawnPosition, rotation);
         PlaySound(spawnPosition);
     }
 
@@ -120,19 +131,19 @@ public class WaterSurface : MonoBehaviour, IInteractable
     }
 
     /// <summary>
-    /// 氷柱を実体化し、上限数を超えた場合は古いものから破棄する共通メソッド
+    /// 氷柱を実体化し、上限数（3個）を超えた場合は古いものから破棄する共通メソッド
     /// </summary>
     private void SpawnAndManagePillar(Vector3 position, Quaternion rotation)
     {
-
         // 新しい氷柱を生成してキューに追加
         GameObject newPillar = Instantiate(icePillarPrefab, position, rotation);
         activePillars.Enqueue(newPillar);
 
-        // ★ 上限数を超えていたら一番古い氷柱（Queueの先頭）を破棄する
+        // 上限数を超えていたら一番古い氷柱（Queueの先頭）を破棄する
         while (activePillars.Count > maxPillarCount)
         {
             GameObject oldestPillar = activePillars.Dequeue();
+
             if (oldestPillar != null)
             {
                 Destroy(oldestPillar);
