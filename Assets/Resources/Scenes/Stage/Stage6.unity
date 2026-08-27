@@ -16166,6 +16166,7 @@ MonoBehaviour:
   firstmenuPanel: {fileID: 1746665931}
   firstMenuCursor: {fileID: 1075428656}
   exitButtonTransform: {fileID: 1746665929}
+  retryButtonTransform: {fileID: 0}
   closeButtonTransform: {fileID: 1746665928}
   confirmationPanel: {fileID: 162880852}
   confirmCursor: {fileID: 1561853320}
@@ -16185,6 +16186,10 @@ MonoBehaviour:
   LoadText: {fileID: 1105543276}
   exitStatusText: {fileID: 372799724}
   yesButton: {fileID: 0}
+  retryButtonText: {fileID: 1746665927}
+  Mask: {fileID: 1746665924}
+  circleAnimator: {fileID: 1746665923}
+  waitAfterClose: 1
 --- !u!1001 &846994241
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16896,6 +16901,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: e6e85709b7e90544ca4f42fcc3b40069, type: 3}
+    - target: {fileID: 347626874263259032, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 828724425}
+    - target: {fileID: 347626874263259032, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: PressRetryByClick
+      objectReference: {fileID: 0}
     - target: {fileID: 1070606867426754357, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -17053,6 +17066,16 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+--- !u!95 &1746665923 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 8500869390074084176, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1746665922}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1746665924 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4302455903331720158, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1746665922}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &1746665925 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 315223446627861720, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
@@ -17063,6 +17086,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3915684155841700695, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
   m_PrefabInstance: {fileID: 1746665922}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1746665927 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6559482987829148675, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1746665922}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &1746665928 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2209355337208804374, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
