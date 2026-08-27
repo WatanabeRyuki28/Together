@@ -23098,6 +23098,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: e6e85709b7e90544ca4f42fcc3b40069, type: 3}
+    - target: {fileID: 347626874263259032, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1871761195}
+    - target: {fileID: 347626874263259032, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: PressRetryByClick
+      objectReference: {fileID: 0}
     - target: {fileID: 1070606867426754357, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -23316,6 +23324,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7840526398259052393, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
   m_PrefabInstance: {fileID: 1113877097}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1290820754 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6559482987829148675, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1113877097}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1362033888
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -38484,6 +38503,7 @@ MonoBehaviour:
   firstmenuPanel: {fileID: 24911473}
   firstMenuCursor: {fileID: 1113877100}
   exitButtonTransform: {fileID: 1263095463}
+  retryButtonTransform: {fileID: 0}
   closeButtonTransform: {fileID: 2016613366}
   confirmationPanel: {fileID: 1580715929}
   confirmCursor: {fileID: 1113877099}
@@ -38503,6 +38523,10 @@ MonoBehaviour:
   LoadText: {fileID: 1113877098}
   exitStatusText: {fileID: 887991102}
   yesButton: {fileID: 0}
+  retryButtonText: {fileID: 1290820754}
+  Mask: {fileID: 1992857142}
+  circleAnimator: {fileID: 1905951169}
+  waitAfterClose: 1
 --- !u!4 &1871761196
 Transform:
   m_ObjectHideFlags: 0
@@ -38518,6 +38542,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &1905951169 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 8500869390074084176, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1113877097}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1916314794
 GameObject:
   m_ObjectHideFlags: 0
@@ -38630,6 +38659,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 614c7732c49756e41b64e594de91d68c, type: 3}
+--- !u!1 &1992857142 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4302455903331720158, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1113877097}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &2016613366 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2209355337208804374, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}

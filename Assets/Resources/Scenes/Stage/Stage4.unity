@@ -16044,6 +16044,7 @@ MonoBehaviour:
   firstmenuPanel: {fileID: 469022816}
   firstMenuCursor: {fileID: 249104441}
   exitButtonTransform: {fileID: 1154468081}
+  retryButtonTransform: {fileID: 0}
   closeButtonTransform: {fileID: 1853767666}
   confirmationPanel: {fileID: 1105912702}
   confirmCursor: {fileID: 269259992}
@@ -16063,6 +16064,10 @@ MonoBehaviour:
   LoadText: {fileID: 1424103217}
   exitStatusText: {fileID: 2040759232}
   yesButton: {fileID: 0}
+  retryButtonText: {fileID: 1090039527}
+  Mask: {fileID: 1090039526}
+  circleAnimator: {fileID: 1090039525}
+  waitAfterClose: 1
 --- !u!4 &909431768
 Transform:
   m_ObjectHideFlags: 0
@@ -16142,6 +16147,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: e6e85709b7e90544ca4f42fcc3b40069, type: 3}
+    - target: {fileID: 347626874263259032, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 909431767}
+    - target: {fileID: 347626874263259032, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: PressRetryByClick
+      objectReference: {fileID: 0}
     - target: {fileID: 1070606867426754357, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -16280,6 +16293,27 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2084153858432741409, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
   m_PrefabInstance: {fileID: 1090039521}
   m_PrefabAsset: {fileID: 0}
+--- !u!95 &1090039525 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 8500869390074084176, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1090039521}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1090039526 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4302455903331720158, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1090039521}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1090039527 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6559482987829148675, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1090039521}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1105912702 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1070606867426754357, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
