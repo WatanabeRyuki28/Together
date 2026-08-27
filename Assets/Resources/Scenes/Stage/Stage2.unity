@@ -14786,6 +14786,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Canvas 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7680708166020688268, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8269753767565732256, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -15361,6 +15365,7 @@ MonoBehaviour:
   firstmenuPanel: {fileID: 1423251970}
   firstMenuCursor: {fileID: 1423251973}
   exitButtonTransform: {fileID: 818573331}
+  retryButtonTransform: {fileID: 0}
   closeButtonTransform: {fileID: 1914497905}
   confirmationPanel: {fileID: 1423251975}
   confirmCursor: {fileID: 1423251969}
@@ -15380,6 +15385,7 @@ MonoBehaviour:
   LoadText: {fileID: 1423251968}
   exitStatusText: {fileID: 96941799}
   yesButton: {fileID: 0}
+  retryButtonText: {fileID: 0}
 --- !u!4 &2070368484
 Transform:
   m_ObjectHideFlags: 0
