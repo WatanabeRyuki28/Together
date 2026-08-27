@@ -8,215 +8,255 @@ using UnityEngine.UI;
 public class StageManager : MonoBehaviour
 {
     [SerializeField] private RectTransform[] stageButtons;
+    [SerializeField] private RectTransform homeButton;
 
     [Header("ホストの選択枠（カーソル画像や太枠）")]
     [SerializeField] private RectTransform selectionCursor;
 
-  
-
     [Header("アイテム表示用の設定")]
-    //  Image[] から SpriteRenderer[] に修正
     [SerializeField] private SpriteRenderer[] itemIcons;
 
-    // 星の画像をインスペクターから登録できるようにする
-    [SerializeField] private Sprite obtainedStarSprite; // 獲得済みの星（黄色の星など）
-    [SerializeField] private Sprite missingStarSprite;  // 未獲得の星（白い星など）
+    [SerializeField] private Sprite obtainedStarSprite;
+    [SerializeField] private Sprite missingStarSprite;
 
-    // ヒエラルキーのオブジェクト名に合わせて「StarItem」に変更
     private const string StarObjectName = "StarItem";
-
-    // マジックナンバーを避けるため、アイテムIDのベース名を定義
     private const string ItemIdPrefix = "Stage_";
 
-    private int currentStageIndex = 0; // 現在選んでいるステージ番号
+    private int currentStageIndex = 0;     // 0〜9: ステージ1〜10
+    private bool isHomeSelected = false;    // true: ホームへもどるを選択中
+    private int maxUnlockedStageIndex = 0; // 解放されている最大ステージ（0 = Stage1のみ）
 
+    [SerializeField] private GameObject[] offPanel;
+    [SerializeField] private Color lockedColor = new Color(0.3f, 0.3f, 0.3f, 1f);
     [SerializeField] private GameObject gestPanel;
 
     private CommunicationUI controls;
 
     void Awake()
     {
-        // インスタンスの生成
         controls = new CommunicationUI();
     }
 
     void OnEnable()
     {
-        // ステージ選択シーン用の操作マップ「StageSelect」を有効化
-        if (controls != null)
-        {
-            controls.StageSelect.Enable();
-        }
+        if (controls != null) controls.StageSelect.Enable();
     }
 
     void OnDisable()
     {
-        // シーンを抜ける時は安全のために操作をオフにする
-        if (controls != null)
-        {
-            controls.StageSelect.Disable();
-        }
+        if (controls != null) controls.StageSelect.Disable();
     }
 
     void Start()
     {
         CheckHost();
 
-        
-
-        // 初期カーソル位置の更新
-        UpdateCursorPosition();
-
-        // セーブファイルから前回の確定セーブ状態をロードし直し、同期をリセットする
         if (SaveManager.Instance != null)
         {
             SaveManager.Instance.LoadGame();
         }
 
-        // 各ステージのアイテム獲得状況をロードしてUIに反映する
+        int clearedCount = GetClearedStageCountFromSave();
+        maxUnlockedStageIndex = Mathf.Clamp(clearedCount, 0, stageButtons.Length - 1);
+
+        currentStageIndex = 0; // 初期位置は Stage 1
+        isHomeSelected = false;
+
+        UpdateCursorPosition();
         UpdateItemIconsDisplay();
 
-        // ホストなら初期位置をゲストに共有
         if (IsHost())
         {
-            SendStageSelectNotification(currentStageIndex, false);
+            SendStageSelectNotification(currentStageIndex, isHomeSelected, false);
         }
     }
 
     void Update()
     {
-        // ホスト以外はキーボード操作を受け付けない！
         if (!IsHost()) return;
 
         bool isMoved = false;
 
-        // グリッド状（2行×5列）のキーボード移動処理
-        // 横移動（右）
-        if (controls.StageSelect.Right.triggered)
+        if (isHomeSelected)
         {
-            currentStageIndex++;
-            if (currentStageIndex >= stageButtons.Length) currentStageIndex = 0;
-            isMoved = true;
-        }
-        // 横移動（左）
-        else if (controls.StageSelect.Left.triggered)
-        {
-            currentStageIndex--;
-            if (currentStageIndex < 0) currentStageIndex = stageButtons.Length - 1;
-            isMoved = true;
-        }
-        // 縦移動（下）
-        else if (controls.StageSelect.Down.triggered)
-        {
-            if (currentStageIndex < 5) // 上の段（0〜4）にいるとき
+            // 下キーでステージ1（または上段）へ戻る
+            if (controls.StageSelect.Down.triggered)
             {
-                currentStageIndex += 5;
-                if (currentStageIndex >= stageButtons.Length) currentStageIndex = stageButtons.Length - 1;
+                isHomeSelected = false;
+                currentStageIndex = 0; // Stage 1へ
                 isMoved = true;
             }
         }
-        // 縦移動（上）
-        else if (controls.StageSelect.Up.triggered)
+        else
         {
-            if (currentStageIndex >= 5) // 下の段（5〜9）にいるとき
+            // 横移動（右）
+            if (controls.StageSelect.Right.triggered)
             {
-                currentStageIndex -= 5;
+                int nextIndex = currentStageIndex + 1;
+                if (nextIndex >= stageButtons.Length) nextIndex = 0;
+
+                if (IsStageUnlocked(nextIndex))
+                {
+                    currentStageIndex = nextIndex;
+                    isMoved = true;
+                }
+            }
+            // 横移動（左）
+            else if (controls.StageSelect.Left.triggered)
+            {
+                int nextIndex = currentStageIndex - 1;
+                if (nextIndex < 0) nextIndex = stageButtons.Length - 1;
+
+                while (!IsStageUnlocked(nextIndex) && nextIndex > 0)
+                {
+                    nextIndex--;
+                }
+
+                currentStageIndex = nextIndex;
                 isMoved = true;
+            }
+            // 縦移動（上）
+            else if (controls.StageSelect.Up.triggered)
+            {
+                if (currentStageIndex < 5) // 上段（Stage 1〜5）にいる時
+                {
+                    isHomeSelected = true;
+                    isMoved = true;
+                }
+                else // 下段（Stage 6〜10）にいる時
+                {
+                    int nextIndex = currentStageIndex - 5;
+                    if (IsStageUnlocked(nextIndex))
+                    {
+                        currentStageIndex = nextIndex;
+                        isMoved = true;
+                    }
+                }
+            }
+            // 縦移動（下）
+            else if (controls.StageSelect.Down.triggered)
+            {
+                if (currentStageIndex < 5)
+                {
+                    int nextIndex = currentStageIndex + 5;
+                    if (nextIndex < stageButtons.Length && IsStageUnlocked(nextIndex))
+                    {
+                        currentStageIndex = nextIndex;
+                        isMoved = true;
+                    }
+                }
             }
         }
 
-        // カーソルが動いたら、位置を更新してゲストにも即座にパケットを送信する
         if (isMoved)
         {
             UpdateCursorPosition();
-
-            
-
-            // ゲストへ同期送信
-            SendStageSelectNotification(currentStageIndex, false);
+            SendStageSelectNotification(currentStageIndex, isHomeSelected, false);
         }
 
-        // 決定ボタンで本決定（Aボタン、またはEnter/Space/Zキーなど）
         if (controls.StageSelect.Submit.triggered)
         {
             ConfirmStageSelection();
         }
     }
 
-    // 自画面のカーソルの位置を更新する
-    void UpdateCursorPosition()
+    private bool IsStageUnlocked(int index)
     {
-        if (stageButtons == null || stageButtons.Length == 0 || selectionCursor == null) return;
+        return index <= maxUnlockedStageIndex;
+    }
 
-        if (currentStageIndex >= 0 && currentStageIndex < stageButtons.Length)
+    private int GetClearedStageCountFromSave()
+    {
+        if (SaveManager.Instance != null)
         {
-            selectionCursor.gameObject.SetActive(true);
-            selectionCursor.position = stageButtons[currentStageIndex].position;
+            // SaveManagerのStageClearCountプロパティから値を取得する
+            return SaveManager.Instance.StageClearCount;
+        }
+        return 0;
+
+    }
+
+    public static void ClearStage(int clearedStageIndex)
+    {
+        if (SaveManager.Instance == null) return;
+
+        // 現在のクリア数より大きいステージをクリアした場合のみセーブデータを更新
+        // （例: Stage1クリア（index=0）の時、クリア数が0なら1にカウントアップ）
+        int nextClearCount = clearedStageIndex + 1;
+
+        if (SaveManager.Instance.StageClearCount < nextClearCount)
+        {
+            SaveManager.Instance.SetStageClearCount(nextClearCount);
+            Debug.Log($"ステージ {clearedStageIndex + 1} をクリア！ 解放数を {nextClearCount} に更新しました。");
         }
     }
 
-    // ★修正：SpriteRendererのSpriteを切り替えるように処理を最適化
+    void UpdateCursorPosition()
+    {
+        if (selectionCursor == null) return;
+
+        selectionCursor.gameObject.SetActive(true);
+
+        if (isHomeSelected)
+        {
+            selectionCursor.sizeDelta = new Vector2(320f, 125f);
+            if (homeButton != null) selectionCursor.position = homeButton.position;
+        }
+        else
+        {
+            if (stageButtons != null && currentStageIndex >= 0 && currentStageIndex < stageButtons.Length)
+            {
+                selectionCursor.sizeDelta = new Vector2(280f, 340f);
+                selectionCursor.position = stageButtons[currentStageIndex].position;
+            }
+        }
+    }
+
     private void UpdateItemIconsDisplay()
     {
-        if (stageButtons == null || SaveManager.Instance == null) return;
+        if (stageButtons == null) return;
 
-        // ボタンの数に合わせて配列を自動で用意する
         itemIcons = new SpriteRenderer[stageButtons.Length];
 
         for (int i = 0; i < stageButtons.Length; i++)
         {
             if (stageButtons[i] == null) continue;
 
-            // まずボタンの直下から探す
-            Transform starTransform = stageButtons[i].Find(StarObjectName);
+            bool isUnlocked = IsStageUnlocked(i);
 
-            // 階層が奥深い場合は再帰探索で探す
-            if (starTransform == null)
+            if (stageButtons[i].TryGetComponent<Image>(out Image btnImage))
             {
-                starTransform = FindChildRecursive(stageButtons[i], StarObjectName);
+                btnImage.color = isUnlocked ? Color.white : lockedColor;
             }
 
-            // ★ TryGetComponent<SpriteRenderer> で星のスプライトを取得
+            Transform starTransform = stageButtons[i].Find(StarObjectName) ?? FindChildRecursive(stageButtons[i], StarObjectName);
+
             if (starTransform != null && starTransform.TryGetComponent<SpriteRenderer>(out SpriteRenderer starRenderer))
             {
                 itemIcons[i] = starRenderer;
 
-                // 各ステージ固有のアイテムIDを生成（例: "Stage_0", "Stage_1"...）
+                if (!isUnlocked)
+                {
+                    starRenderer.enabled = false;
+                    continue;
+                }
+
+                starRenderer.enabled = true;
                 string targetItemId = ItemIdPrefix + i;
 
-                // セーブデータに入っているかチェック
-                if (SaveManager.Instance.HasItem(targetItemId))
+                if (SaveManager.Instance != null && SaveManager.Instance.HasItem(targetItemId))
                 {
-                    // 取得済み：黄色の星の画像に切り替える
-                    if (obtainedStarSprite != null)
-                    {
-                        starRenderer.sprite = obtainedStarSprite;
-                    }
-                    starRenderer.color = Color.white; // カラーを通常に戻す
+                    if (obtainedStarSprite != null) starRenderer.sprite = obtainedStarSprite;
                 }
                 else
                 {
-                    // 未取得：白い星の画像に切り替える
-                    if (missingStarSprite != null)
-                    {
-                        starRenderer.sprite = missingStarSprite;
-                        starRenderer.color = Color.white;
-                    }
-                    else
-                    {
-                        // もしインスペクターに「白い星」が未登録なら、暫定処置として半透明のグレーにする
-                        starRenderer.color = new Color(0.2f, 0.2f, 0.2f, 0.5f);
-                    }
+                    if (missingStarSprite != null) starRenderer.sprite = missingStarSprite;
                 }
-            }
-            else
-            {
-                Debug.LogWarning($"{stageButtons[i].name} の中に名前が '{StarObjectName}' の SpriteRenderer コンポーネントが見つかりません。");
+                starRenderer.color = Color.white;
             }
         }
     }
 
-    // ボタンの奥深い子階層から名前でオブジェクトを検索するヘルパー関数
     private Transform FindChildRecursive(Transform parent, string name)
     {
         foreach (Transform child in parent)
@@ -228,23 +268,27 @@ public class StageManager : MonoBehaviour
         return null;
     }
 
-    // 決定ボタンが押された（または決定キーが叩かれた）時の本決定処理
     public void ConfirmStageSelection()
     {
         if (!IsHost()) return;
-        if (currentStageIndex == -1) return;
 
-        Debug.Log($"【ホスト】ステージ {currentStageIndex + 1} で本決定しました！ゲームを開始します。");
+        if (isHomeSelected)
+        {
+            Debug.Log("【ホスト】ホームへもどるを選択しました。");
+            SendStageSelectNotification(currentStageIndex, true, true);
+            LoadHomeScene();
+        }
+        else
+        {
+            if (!IsStageUnlocked(currentStageIndex)) return;
 
-        // 相手に「本決定（stage_ready = true）」として通知を送る
-        SendStageSelectNotification(currentStageIndex, true);
-
-        // ホスト自身の画面を遷移させる
-        LoadTargetScene(currentStageIndex);
+            Debug.Log($"【ホスト】ステージ {currentStageIndex + 1} で決定しました。");
+            SendStageSelectNotification(currentStageIndex, false, true);
+            LoadTargetScene(currentStageIndex);
+        }
     }
 
-    // サーバーへの送信処理（キャラ選択のロジックと完全に統一）
-    private async void SendStageSelectNotification(int stageIndex, bool isReady)
+    private async void SendStageSelectNotification(int stageIndex, bool isHome, bool isReady)
     {
         if (NetworkManager.Instance == null) return;
 
@@ -255,64 +299,56 @@ public class StageManager : MonoBehaviour
         msgData.index = NetworkManager.Instance.myPlayerIndex;
         msgData.IsStarted = isReady;
 
-        msgData.stage_index = stageIndex;
+        // ホーム選択時は -1 を送信して識別
+        msgData.stage_index = isHome ? -1 : stageIndex;
         msgData.stage_ready = isReady;
 
         string jsonMsg = JsonUtility.ToJson(msgData);
         await NetworkManager.Instance.SendMessageAsync(jsonMsg);
     }
 
-    // ゲスト側のメッセージ受信処理
     public void HandleRemoteStageMessage(string msg)
     {
         var stageData = JsonUtility.FromJson<StageSelectData>(msg);
         if (stageData == null) return;
 
-        if (stageData.type == "stage_select")
+        if (stageData.type == "stage_select" && stageData.name_id != NetworkManager.Instance.myPlayerId)
         {
-            // ホストからのデータである場合のみ処理する
-            if (stageData.name_id != NetworkManager.Instance.myPlayerId)
+            if (!stageData.stage_ready)
             {
-                // ホストが選択中の場合、ゲスト側のカーソル位置をリアルタイム同期
-                if (!stageData.stage_ready)
+                if (stageData.stage_index == -1)
                 {
-                    Debug.Log($"【同期】ホストがステージ {stageData.stage_index + 1} を選択中...");
-
-                    currentStageIndex = stageData.stage_index;
-                    UpdateCursorPosition(); // ゲスト画面のカーソルをホストと同じ位置に動かす
+                    isHomeSelected = true;
                 }
-                // ホストが本決定のパケットを送ってきた場合、ゲストも道連れでシーン遷移
                 else
                 {
-                    Debug.Log($"【同期】ホストがステージ {stageData.stage_index + 1} で確定しました。遷移します。");
-                    LoadTargetScene(stageData.stage_index);
+                    isHomeSelected = false;
+                    currentStageIndex = stageData.stage_index;
                 }
+                UpdateCursorPosition();
+            }
+            else
+            {
+                if (stageData.stage_index == -1) LoadHomeScene();
+                else LoadTargetScene(stageData.stage_index);
             }
         }
     }
 
-    // シーン遷移用の関数
+    private void LoadHomeScene()
+    {
+        if (controls != null) controls.StageSelect.Disable();
+        NetworkManager.Instance.DeleteData();
+        SceneManager.LoadScene("SecondScene"); 
+    }
+
     private void LoadTargetScene(int stageIndex)
     {
+        if (controls != null) controls.StageSelect.Disable();
 
-
-        if (stageIndex == -1) SceneManager.LoadScene("TutorialStageScene_Backup");
-        else if (stageIndex == 0) SceneManager.LoadScene("Stage1");
-        else if (stageIndex == 1) SceneManager.LoadScene("Stage2");
-        else if (stageIndex == 2) SceneManager.LoadScene("Stage3");
-        else if (stageIndex == 3) SceneManager.LoadScene("Stage4");
-        else if (stageIndex == 4) SceneManager.LoadScene("Stage5");
-        else if (stageIndex == 5) SceneManager.LoadScene("Stage6");
-
-        if (controls != null)
-        {
-            controls.StageSelect.Disable();
-        }              
-
-
+        string sceneName = "Stage" + (stageIndex + 1);
+        SceneManager.LoadScene(sceneName);
     }
-  
-
 
     private bool IsHost() => NetworkManager.Instance != null && NetworkManager.Instance.myPlayerIndex == 0;
 

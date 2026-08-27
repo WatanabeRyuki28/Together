@@ -5,4 +5,7 @@ public class SaveData
 {
     // 取得したアイテムのID（例: "Stage1_ItemA" など）を保存するリスト
     public List<string> obtainedItemIds = new List<string>();
+
+    // ステージクリアカウント
+    public int stageClearCount = 0;
 }
