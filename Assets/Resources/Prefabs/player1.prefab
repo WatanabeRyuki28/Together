@@ -105,7 +105,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 3
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -132,10 +132,10 @@ MonoBehaviour:
   useKeyboard: 1
   useGamepad: 1
   playerNumber: 1
-  element: 2
-  moveSpeed: 5
+  element: 1
+  moveSpeed: 7
   pushSpeedMultiplier: 0.5
-  jumpForce: 8
+  jumpForce: 15
   fireRate: 1
   icePillarPrefab: {fileID: 8982154150200284505, guid: de3cf56bef36f3946a10f029d3879352, type: 3}
   waterLayer:
