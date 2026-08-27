@@ -64,13 +64,17 @@ public class DestructibleFloor : MonoBehaviour
     /// <summary>
     /// 床のコライダーに滑る材質を適用する
     /// </summary>
+    /// <summary>
+    /// 床の物理コライダーに滑る材質を適用する
+    /// </summary>
     private void ApplySlipperyMaterial()
     {
         if (slipperyMaterial == null || floorColliders == null) return;
 
         foreach (var col in floorColliders)
         {
-            if (col != null)
+            // nullチェック 兼 Triggerでない（実体のある）コライダーにのみマテリアルをセット
+            if (col != null && !col.isTrigger)
             {
                 col.sharedMaterial = slipperyMaterial;
             }

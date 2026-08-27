@@ -23,6 +23,7 @@ public class PlayerController : MonoBehaviour
     private const float DefaultPreviewAlpha = 0.5f;        // プレビュー表示時のデフォルト透明度
     private const float PreviewLineWidth = 0.05f;          // 予測枠線の基本太さ
     private const int LineCornerCount = 4;                  // 枠線の頂点数（四角形）
+    private const float FrictionSlipperyThreshold = 0.01f; // ★ 滑る床と判定する摩擦の閾値
 
     [Header("操作方法の設定 (チェックONで有効)")]
     [SerializeField] private bool useKeyboard = true;  // キーボードを使うか
@@ -65,11 +66,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Color cannotSpawnColor = new Color(1f, 0f, 0f, DefaultPreviewAlpha); // 生成不可時の色（赤色・半透明）
 
     [Header("効果音（SE）設定")]
-    [SerializeField] private AudioClip jumpSound;          // ジャンプ音
-    [SerializeField] private AudioClip shootSound;         // 射撃音
-    [SerializeField] private AudioClip walkSound;          // 足音（ループ用）
+    [SerializeField] private AudioClip jumpSound;           // ジャンプ音
+    [SerializeField] private AudioClip shootSound;          // 射撃音
+    [SerializeField] private AudioClip walkSound;           // 足音（ループ用）
     [SerializeField] private AudioClip createPillarSound; // 氷柱生成音
-    [SerializeField] private AudioClip failSound;          // 氷柱生成失敗音
+    [SerializeField] private AudioClip failSound;           // 氷柱生成失敗音
 
     // 使用するキーをコード側で固定
     private KeyCode leftKey = KeyCode.A;          // 左移動
@@ -93,6 +94,7 @@ public class PlayerController : MonoBehaviour
     private SpriteRenderer previewSpriteRenderer; // プレビューオブジェクトのSpriteRenderer
 
     public bool isGrounded { get; set; }
+    private bool isOnSlipperyFloor; // ★ 滑る床の上にいるかどうかのフラグ
     private bool isPushing;
 
     NetworkManager client;
@@ -328,7 +330,12 @@ public class PlayerController : MonoBehaviour
 
         if (Mathf.Abs(moveInput) < MinMoveInputThreshold)
         {
-            rb.velocity = new Vector2(0f, rb.velocity.y);
+            // ★ 滑る床の上でない場合のみ、物理速度を即座にリセットして止める
+            if (!isOnSlipperyFloor)
+            {
+                rb.velocity = new Vector2(0f, rb.velocity.y);
+            }
+            // 滑る床の上の場合は何もしない（PhysicsMaterial2D の摩擦0によって自然に滑る）
         }
         else
         {
@@ -631,6 +638,12 @@ public class PlayerController : MonoBehaviour
         {
             if (state)
             {
+                // 接触した相手の物理マテリアルが「摩擦 0（滑る床）」かどうか判定
+                if (collision.collider.sharedMaterial != null && collision.collider.sharedMaterial.friction <= FrictionSlipperyThreshold)
+                {
+                    isOnSlipperyFloor = true;
+                }
+
                 foreach (ContactPoint2D contact in collision.contacts)
                 {
                     if (contact.normal.y >= MinGroundAngleY)
@@ -648,6 +661,7 @@ public class PlayerController : MonoBehaviour
             else
             {
                 isGrounded = false;
+                isOnSlipperyFloor = false; // 地面から離れたら滑る床フラグを解除
 
                 if (IsLocalPlayer)
                 {
