@@ -91,6 +91,12 @@ public class StageMenuManager : MonoBehaviour
     [SerializeField] private Text retryButtonText;
     private static bool isRetry = false;
 
+    [SerializeField] private GameObject Mask;
+
+
+
+    [SerializeField] private Animator circleAnimator; // 円アニメーションを制御するAnimator
+    [SerializeField] private float waitAfterClose = 0.5f; // 円が閉じた後に少し待つ時間（秒）
     public bool isIntroPlaying { get; private set; } = true;
 
     private void Awake()
@@ -128,19 +134,16 @@ public class StageMenuManager : MonoBehaviour
 
         InitializeStageStarDisplay();
 
+
+
         if (isRetry)
         {
-            if (stageNameText != null) stageNameText.gameObject.SetActive(false);
-            if (LoadText != null) LoadText.gameObject.SetActive(false);
-            if (Image != null) Image.SetActive(false);
-            if (panel != null) panel.SetActive(false);
-
-            isIntroPlaying = false;
-            isRetry = false; // フラグをリセット
+            StartCoroutine(OpenRetryCircleRoutine());
         }
 
         else if (stageNameText != null)
         {
+            Mask.SetActive(false);
             stageNameText.gameObject.SetActive(true);
             if (LoadText != null) LoadText.gameObject.SetActive(true);
             if (Image != null) Image.SetActive(true);
@@ -152,6 +155,24 @@ public class StageMenuManager : MonoBehaviour
 
             StartCoroutine(AnimateStageNameRoutine());
         }
+    }
+
+    private IEnumerator OpenRetryCircleRoutine()
+    {
+        if (circleAnimator != null)
+        {
+            circleAnimator.SetTrigger("Open");
+            yield return new WaitForSecondsRealtime(waitAfterClose);
+            if (Mask != null) Mask.SetActive(false);
+        }
+
+        if (stageNameText != null) stageNameText.gameObject.SetActive(false);
+        if (LoadText != null) LoadText.gameObject.SetActive(false);
+        if (Image != null) Image.SetActive(false);
+        if (panel != null) panel.SetActive(false);
+
+        isIntroPlaying = false;
+        isRetry = false; // フラグをリセット
     }
 
     private void Update()
@@ -521,22 +542,37 @@ public class StageMenuManager : MonoBehaviour
         if (isReady && !isExitingScene)
         {
             isExitingScene = true;
-            isRetry = true; // リトライ演出スキップフラグ
+            isRetry = true;
+            if (Mask != null) Mask.SetActive(true);
 
-            if (SaveManager.Instance != null)
-            {
-                string targetItemId = ItemIdPrefix + currentStageStageIndex;
-                if (SaveManager.Instance.CurrentSaveData?.obtainedItemIds != null)
-                {
-                    SaveManager.Instance.CurrentSaveData.obtainedItemIds.Remove(targetItemId);
-                }
-                SaveManager.Instance.LoadGame();
-            }
-
-            Time.timeScale = 1f;
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            StartCoroutine(RetrySequenceRoutine());
         }
     }
+
+    private IEnumerator RetrySequenceRoutine()
+    {
+        Time.timeScale = 1f;
+
+        if (SaveManager.Instance != null)
+        {
+            string targetItemId = ItemIdPrefix + currentStageStageIndex;
+            if (SaveManager.Instance.CurrentSaveData?.obtainedItemIds != null)
+            {
+                SaveManager.Instance.CurrentSaveData.obtainedItemIds.Remove(targetItemId);
+            }
+            SaveManager.Instance.LoadGame();
+        }
+
+        if (circleAnimator != null)
+        {
+            circleAnimator.SetTrigger("Close");
+        }
+
+        yield return new WaitForSecondsRealtime(waitAfterClose);
+
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
 
     private void UpdateExitStatusUI()
     {
