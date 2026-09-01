@@ -224,9 +224,9 @@ public class StageManager : MonoBehaviour
 
             bool isUnlocked = IsStageUnlocked(i);
 
-            if (stageButtons[i].TryGetComponent<Image>(out Image btnImage))
+            if (offPanel != null && i < offPanel.Length && offPanel[i] != null)
             {
-                btnImage.color = isUnlocked ? Color.white : lockedColor;
+                offPanel[i].SetActive(!isUnlocked);
             }
 
             Transform starTransform = stageButtons[i].Find(StarObjectName) ?? FindChildRecursive(stageButtons[i], StarObjectName);
@@ -234,17 +234,16 @@ public class StageManager : MonoBehaviour
             if (starTransform != null && starTransform.TryGetComponent<SpriteRenderer>(out SpriteRenderer starRenderer))
             {
                 itemIcons[i] = starRenderer;
+                starRenderer.enabled = true; 
 
-                if (!isUnlocked)
-                {
-                    starRenderer.enabled = false;
-                    continue;
-                }
-
-                starRenderer.enabled = true;
                 string targetItemId = ItemIdPrefix + i;
 
-                if (SaveManager.Instance != null && SaveManager.Instance.HasItem(targetItemId))
+            
+                if (!isUnlocked)
+                {
+                    if (missingStarSprite != null) starRenderer.sprite = missingStarSprite;
+                }
+                else if (SaveManager.Instance != null && SaveManager.Instance.HasItem(targetItemId))
                 {
                     if (obtainedStarSprite != null) starRenderer.sprite = obtainedStarSprite;
                 }
@@ -256,7 +255,6 @@ public class StageManager : MonoBehaviour
             }
         }
     }
-
     private Transform FindChildRecursive(Transform parent, string name)
     {
         foreach (Transform child in parent)
