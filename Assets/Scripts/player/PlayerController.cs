@@ -301,6 +301,75 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 足元（前寄り）が水エリア（Waterレイヤー）かつ氷属性の時、水面に氷柱を生成する（クールタイム制限あり）
+    /// </summary>
+    private void TrySpawnIcePillarOnWater()
+    {
+        // クールタイム中なら何もしない
+        if (Time.time < nextPillarTime) return;
+
+        if (element != ElementType.Ice || icePillarPrefab == null) return;
+
+        Vector3 rayOrigin = GetRaycastOrigin();
+        RaycastHit2D hit = Physics2D.Raycast(
+            rayOrigin,
+            Vector2.down,
+            waterCheckDistance,
+            waterLayer
+        );
+
+        if (hit.collider != null)
+        {
+            // 現在存在する氷柱を取得
+            GameObject[] currentPillars = GameObject.FindGameObjectsWithTag("IcePillar");
+
+            // 上限数（3個）以上の場合は一番古い氷柱を破壊
+            if (currentPillars.Length >= maxPillarCount)
+            {
+                Destroy(currentPillars[0]);
+            }
+
+            Vector3 spawnPosition = (Vector3)hit.point + pillarSpawnOffset;
+            Instantiate(icePillarPrefab, spawnPosition, Quaternion.identity);
+
+            if (createPillarSound != null)
+            {
+                audioSource.PlayOneShot(createPillarSound);
+            }
+
+            // ★ ネットワークへ氷柱生成イベントを送信
+            SendSpawnPillarEvent(spawnPosition);
+
+            // 生成成功時、次回可能時刻を更新（クールタイム設定）
+            nextPillarTime = Time.time + pillarCoolTime;
+        }
+        else
+        {
+            if (failSound != null)
+            {
+                audioSource.PlayOneShot(failSound);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 氷柱生成イベントをネットワークで送信する
+    /// </summary>
+    private async void SendSpawnPillarEvent(Vector3 pos)
+    {
+        if (networkManager == null) return;
+
+        InGameMoveData spawnPillarData = new InGameMoveData();
+        spawnPillarData.dataType = "spawn_pillar"; // 送信識別子
+        spawnPillarData.room_id = networkManager.myRoomID;
+
+        spawnPillarData.position_x = pos.x;
+        spawnPillarData.position_y = pos.y;
+
+        string json = JsonUtility.ToJson(spawnPillarData);
+        await networkManager.SendMessageAsync(json);
+    }
     private void Move()
     {
         float moveInput = 0f;
@@ -433,55 +502,6 @@ public class PlayerController : MonoBehaviour
     {
         float forwardDirection = (spriteRenderer != null && spriteRenderer.flipX) ? -1f : 1f;
         return transform.position + new Vector3(forwardDirection * pillarForwardOffset, 0f, 0f);
-    }
-
-    /// <summary>
-    /// 足元（前寄り）が水エリア（Waterレイヤー）かつ氷属性の時、水面に氷柱を生成する（クールタイム制限あり）
-    /// </summary>
-    private void TrySpawnIcePillarOnWater()
-    {
-        // ★ クールタイム中なら何もしない
-        if (Time.time < nextPillarTime) return;
-
-        if (element != ElementType.Ice || icePillarPrefab == null) return;
-
-        Vector3 rayOrigin = GetRaycastOrigin();
-        RaycastHit2D hit = Physics2D.Raycast(
-            rayOrigin,
-            Vector2.down,
-            waterCheckDistance,
-            waterLayer
-        );
-
-        if (hit.collider != null)
-        {
-            // 現在存在する氷柱を取得
-            GameObject[] currentPillars = GameObject.FindGameObjectsWithTag("IcePillar");
-
-            // 上限数（3個）以上の場合は一番古い氷柱を破壊
-            if (currentPillars.Length >= maxPillarCount)
-            {
-                Destroy(currentPillars[0]);
-            }
-
-            Vector3 spawnPosition = (Vector3)hit.point + pillarSpawnOffset;
-            Instantiate(icePillarPrefab, spawnPosition, Quaternion.identity);
-
-            if (createPillarSound != null)
-            {
-                audioSource.PlayOneShot(createPillarSound);
-            }
-
-            // ★ 生成成功時、次回可能時刻を更新（クールタイム設定）
-            nextPillarTime = Time.time + pillarCoolTime;
-        }
-        else
-        {
-            if (failSound != null)
-            {
-                audioSource.PlayOneShot(failSound);
-            }
-        }
     }
 
     /// <summary>
