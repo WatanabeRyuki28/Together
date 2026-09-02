@@ -15,8 +15,8 @@ public class ObjectOnlineCommunication : MonoBehaviour
     [SerializeField] private GameObject[] projectilePrefabs; // 0:赤の弾、1:青の弾などを登録
 
     [Header("氷柱の設定")]
-    [SerializeField] private GameObject icePillarPrefab; // ★ 追加: 氷柱のPrefabを割り当て
-    [SerializeField] private int maxPillarCount = 3;     // ★ 追加: 氷柱の最大数制限
+    [SerializeField] private GameObject icePillarPrefab; // 氷柱のPrefab
+    [SerializeField] private int maxPillarCount = 3;     // 氷柱の最大数制限
 
     public Dictionary<int, NetworkIdentity2D> syncObjects = new Dictionary<int, NetworkIdentity2D>();
 
@@ -180,7 +180,7 @@ public class ObjectOnlineCommunication : MonoBehaviour
         {
             HandleObjectSync(data);
         }
-        // ★ 追加: 氷柱生成イベントを受信した場合
+        // 氷柱生成イベントを受信した場合
         else if (data.dataType == "spawn_pillar")
         {
             HandleSpawnPillar(data);
@@ -270,15 +270,26 @@ public class ObjectOnlineCommunication : MonoBehaviour
             return;
         }
 
+        // オブジェクトの同期処理（壁破壊・位置更新など）
         if (syncObjects.ContainsKey(data.id))
         {
             var targetObj = syncObjects[data.id];
+
+            // ★ 破壊可能な壁（FireDestructibleWall）が含まれている場合は相手画面でも破壊を実行
+            FireDestructibleWall fireWall = targetObj.GetComponent<FireDestructibleWall>();
+            if (fireWall != null)
+            {
+                fireWall.OnBreakFromNetwork();
+                return;
+            }
+
+            // 通常の動的オブジェクトの位置更新
             targetObj.UpdatePositionFromNetwork(targetPos);
         }
     }
 
     /// <summary>
-    /// ★ 追加: 相手から送られてきた氷柱生成イベントを処理する
+    /// 相手から送られてきた氷柱生成イベントを処理する
     /// </summary>
     private void HandleSpawnPillar(InGameMoveData data)
     {
