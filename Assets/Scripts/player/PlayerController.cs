@@ -327,10 +327,23 @@ public class PlayerController : MonoBehaviour
     {
         if (networkManager == null) return;
 
+        // 1. 自分のキャラIDを取得（未設定時は属性から判定）
+        int myRealChara = networkManager.myRealSelectedChar;
+        if (myRealChara == -1)
+        {
+            myRealChara = networkManager.myCharaIndex;
+            if (myRealChara == -1)
+            {
+                myRealChara = (Element == ElementType.Fire) ? 0 : 1;
+            }
+        }
+
+        // 2. 送信データに char_index を設定
         InGameMoveData spawnPillarData = new InGameMoveData
         {
             dataType = "spawn_pillar",
             room_id = networkManager.myRoomID,
+            char_index = myRealChara, // ★ここを追加：自分のキャラIDを送信
             position_x = pos.x,
             position_y = pos.y
         };
