@@ -31175,6 +31175,8 @@ MonoBehaviour:
   projectilePrefabs:
   - {fileID: 109283890417617540, guid: e070b531c5d3da740b448b207ac74b89, type: 3}
   - {fileID: 1470277367932372552, guid: 9a7087fc1a3459340b36e7d0b85e9e3a, type: 3}
+  icePillarPrefab: {fileID: 8982154150200284505, guid: de3cf56bef36f3946a10f029d3879352, type: 3}
+  maxPillarCount: 3
 --- !u!1 &1642905136 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6012656688759668165, guid: b2d65fa80dfb47c459b7ffcd2df74291, type: 3}
