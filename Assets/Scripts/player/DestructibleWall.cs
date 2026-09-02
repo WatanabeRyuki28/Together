@@ -2,7 +2,7 @@
 using UnityEngine;
 
 /// <summary>
-/// 炎属性専用の破壊可能な壁
+/// 炎属性専用の破壊可能な壁（オンライン同期対応）
 /// </summary>
 public class FireDestructibleWall : MonoBehaviour, IInteractable
 {
@@ -23,6 +23,7 @@ public class FireDestructibleWall : MonoBehaviour, IInteractable
     private SpriteRenderer spriteRenderer;
     private AudioSource audioSource;
     private Collider2D[] wallColliders;
+    private NetworkIdentity2D networkIdentity; // ★ 追加: ネットワーク同期用コンポーネント
 
     private bool isBreaking = false;
     private Color baseColor;
@@ -31,6 +32,7 @@ public class FireDestructibleWall : MonoBehaviour, IInteractable
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         wallColliders = GetComponents<Collider2D>();
+        networkIdentity = GetComponent<NetworkIdentity2D>(); // ★ 追加: NetworkIdentity2D の取得
 
         // AudioSourceのキャッシュ
         audioSource = GetComponent<AudioSource>();
@@ -60,12 +62,24 @@ public class FireDestructibleWall : MonoBehaviour, IInteractable
         if (type == ElementType.Fire)
         {
             StartBreakSequence();
+
+            // ★ 追加: オンライン通信中であれば他プレイヤーへ通知を送信
+            SendObjectSyncEvent();
         }
         else
         {
             // 氷など他の属性の場合は弾かれる（失敗音）
             PlaySound(failSound);
         }
+    }
+
+    /// <summary>
+    /// ★ 追加: 外部（他プレイヤー）からネットワーク経由で破壊イベントを受け取った際に呼ばれる
+    /// </summary>
+    public void OnBreakFromNetwork()
+    {
+        if (isBreaking) return;
+        StartBreakSequence();
     }
 
     private void StartBreakSequence()
@@ -87,6 +101,34 @@ public class FireDestructibleWall : MonoBehaviour, IInteractable
         {
             Destroy(gameObject);
         }
+    }
+
+
+    /// <summary>
+    /// オブジェクトの破壊・同期データをサーバー/対戦相手へ送信する
+    /// </summary>
+    private async void SendObjectSyncEvent()
+    {
+        if (NetworkManager.Instance == null || networkIdentity == null) return;
+
+        int myRealColor = NetworkManager.Instance.myRealSelectedChar;
+        if (myRealColor == -1) myRealColor = NetworkManager.Instance.myCharaIndex;
+
+        InGameMoveData moveData = new InGameMoveData
+        {
+            type = "in_game_move",
+            dataType = "object",
+            room_id = NetworkManager.Instance.myRoomID,
+            char_index = myRealColor,
+            id = networkIdentity.objectId, // オブジェクト固有のID
+            position_x = transform.position.x,
+            position_y = transform.position.y
+        };
+
+        string json = JsonUtility.ToJson(moveData);
+
+        // ★ SendWebSocketMessage を削除し、既存の SendMessageAsync を直接呼び出し
+        await NetworkManager.Instance.SendMessageAsync(json);
     }
 
     /// <summary>
