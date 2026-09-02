@@ -133,8 +133,8 @@ MonoBehaviour:
   useGamepad: 1
   playerNumber: 2
   element: 2
-  moveSpeed: 5
-  pushSpeedMultiplier: 0.1
+  moveSpeed: 7
+  pushSpeedMultiplier: 0.5
   jumpForce: 15
   fireRate: 1
   icePillarPrefab: {fileID: 8982154150200284505, guid: de3cf56bef36f3946a10f029d3879352, type: 3}
