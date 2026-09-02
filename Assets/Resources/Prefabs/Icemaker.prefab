@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7773455840947919445}
   - component: {fileID: 1742241802387371569}
   - component: {fileID: -8942703038659770746}
+  - component: {fileID: 2350347567180961230}
   m_Layer: 11
   m_Name: Icemaker
   m_TagString: IcePillar
@@ -27,8 +28,8 @@ Transform:
   m_GameObject: {fileID: 8982154150200284505}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -9.29, y: -1.23, z: 0}
-  m_LocalScale: {x: 1, y: 3, z: 1}
+  m_LocalPosition: {x: -9.1064, y: -1.0086, z: 0}
+  m_LocalScale: {x: 1.3917, y: 3.7526066, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -130,3 +131,20 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.9375, y: 0.8310547}
   m_EdgeRadius: 0
+--- !u!114 &2350347567180961230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8982154150200284505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 046423f612ac16942a09e160adbfec30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canRespawn: 0
+  respawnDelay: 3
+  breakSound: {fileID: 0}
+  failSound: {fileID: 0}
+  breakEffectPrefab: {fileID: 4272629078293390519, guid: b11ac241943c350488c6a8f63e3dc3b0, type: 3}

@@ -147,9 +147,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 410c3395f4ab0374899ea275631eff0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnMode: 0
+  spawnMode: 1
   icePillarPrefab: {fileID: 8982154150200284505, guid: de3cf56bef36f3946a10f029d3879352, type: 3}
   spawnOffset: {x: 0, y: 0, z: 0}
+  spawnRotationEuler: {x: 0, y: 0, z: 90}
   maxPillarCount: 5
   pillarCount: 3
   pillarSpacing: 1.5
@@ -298,9 +299,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 410c3395f4ab0374899ea275631eff0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnMode: 0
+  spawnMode: 1
   icePillarPrefab: {fileID: 8982154150200284505, guid: de3cf56bef36f3946a10f029d3879352, type: 3}
   spawnOffset: {x: 0, y: 0, z: 0}
+  spawnRotationEuler: {x: 0, y: 0, z: 90}
   maxPillarCount: 5
   pillarCount: 3
   pillarSpacing: 1.5
@@ -449,9 +451,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 410c3395f4ab0374899ea275631eff0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnMode: 0
+  spawnMode: 1
   icePillarPrefab: {fileID: 8982154150200284505, guid: de3cf56bef36f3946a10f029d3879352, type: 3}
   spawnOffset: {x: 0, y: 0, z: 0}
+  spawnRotationEuler: {x: 0, y: 0, z: 90}
   maxPillarCount: 5
   pillarCount: 3
   pillarSpacing: 1.5
@@ -600,9 +603,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 410c3395f4ab0374899ea275631eff0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnMode: 0
+  spawnMode: 1
   icePillarPrefab: {fileID: 8982154150200284505, guid: de3cf56bef36f3946a10f029d3879352, type: 3}
   spawnOffset: {x: 0, y: 0, z: 0}
+  spawnRotationEuler: {x: 0, y: 0, z: 90}
   maxPillarCount: 5
   pillarCount: 3
   pillarSpacing: 1.5
@@ -751,9 +755,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 410c3395f4ab0374899ea275631eff0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnMode: 0
+  spawnMode: 1
   icePillarPrefab: {fileID: 8982154150200284505, guid: de3cf56bef36f3946a10f029d3879352, type: 3}
   spawnOffset: {x: 0, y: 0, z: 0}
+  spawnRotationEuler: {x: 0, y: 0, z: 90}
   maxPillarCount: 5
   pillarCount: 3
   pillarSpacing: 1.5
