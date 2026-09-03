@@ -15900,6 +15900,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6447ba3f4feaafb4b9f12fa14c4433cc, type: 3}
+--- !u!224 &844072763 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8218923870842849243, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1090039521}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &886660584
 GameObject:
   m_ObjectHideFlags: 0
@@ -15985,7 +15990,7 @@ MonoBehaviour:
   firstmenuPanel: {fileID: 469022816}
   firstMenuCursor: {fileID: 249104441}
   exitButtonTransform: {fileID: 1154468081}
-  retryButtonTransform: {fileID: 0}
+  retryButtonTransform: {fileID: 844072763}
   closeButtonTransform: {fileID: 1853767666}
   confirmationPanel: {fileID: 1105912702}
   confirmCursor: {fileID: 269259992}

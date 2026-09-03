@@ -35955,7 +35955,7 @@ MonoBehaviour:
   firstmenuPanel: {fileID: 275888747}
   firstMenuCursor: {fileID: 1746665927}
   exitButtonTransform: {fileID: 790832895}
-  retryButtonTransform: {fileID: 0}
+  retryButtonTransform: {fileID: 1944702145}
   closeButtonTransform: {fileID: 738209690}
   confirmationPanel: {fileID: 162880852}
   confirmCursor: {fileID: 1746665926}
@@ -37105,6 +37105,11 @@ PrefabInstance:
 --- !u!95 &1914336794 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 8500869390074084176, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1746665922}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &1944702145 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8218923870842849243, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
   m_PrefabInstance: {fileID: 1746665922}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1953418056 stripped

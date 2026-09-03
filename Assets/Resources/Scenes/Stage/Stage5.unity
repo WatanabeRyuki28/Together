@@ -25906,6 +25906,11 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1898153842121743557, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
   m_PrefabInstance: {fileID: 1113877097}
   m_PrefabAsset: {fileID: 0}
+--- !u!224 &1113877101 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8218923870842849243, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1113877097}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1126331523
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -41344,7 +41349,7 @@ MonoBehaviour:
   firstmenuPanel: {fileID: 24911473}
   firstMenuCursor: {fileID: 1113877100}
   exitButtonTransform: {fileID: 1263095463}
-  retryButtonTransform: {fileID: 0}
+  retryButtonTransform: {fileID: 1113877101}
   closeButtonTransform: {fileID: 2016613366}
   confirmationPanel: {fileID: 1580715929}
   confirmCursor: {fileID: 1113877099}

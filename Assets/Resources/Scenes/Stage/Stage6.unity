@@ -16116,6 +16116,11 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!224 &753096731 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8218923870842849243, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
+  m_PrefabInstance: {fileID: 1746665922}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &828724423
 GameObject:
   m_ObjectHideFlags: 0
@@ -16163,7 +16168,7 @@ MonoBehaviour:
   firstmenuPanel: {fileID: 1746665931}
   firstMenuCursor: {fileID: 1075428656}
   exitButtonTransform: {fileID: 1746665929}
-  retryButtonTransform: {fileID: 0}
+  retryButtonTransform: {fileID: 753096731}
   closeButtonTransform: {fileID: 1746665928}
   confirmationPanel: {fileID: 162880852}
   confirmCursor: {fileID: 1561853320}
