@@ -128,7 +128,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   lifeTime: 1.5
-  projectileType: 2
+  projectileType: 1
   collisionLayers:
     serializedVersion: 2
     m_Bits: 267265

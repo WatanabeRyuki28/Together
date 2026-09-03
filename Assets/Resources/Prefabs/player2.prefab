@@ -133,8 +133,8 @@ MonoBehaviour:
   useGamepad: 1
   playerNumber: 2
   element: 2
-  moveSpeed: 5
-  pushSpeedMultiplier: 0.1
+  moveSpeed: 7
+  pushSpeedMultiplier: 0.5
   jumpForce: 15
   fireRate: 1
   icePillarPrefab: {fileID: 8982154150200284505, guid: de3cf56bef36f3946a10f029d3879352, type: 3}
@@ -142,13 +142,13 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 16
   waterCheckDistance: 1.5
-  pillarForwardOffset: 0.8
-  pillarSpawnOffset: {x: 0, y: 0.5, z: 0}
+  pillarForwardOffset: 2
+  pillarSpawnOffset: {x: 0, y: 1.6, z: 0}
   maxPillarCount: 3
   pillarCoolTime: 3
   previewPillarObject: {fileID: 8982154150200284505, guid: 20152bb9992637041a9bdb61f996b5f6, type: 3}
   previewLineRenderer: {fileID: -993535898158028824}
-  matchPillarWidth: 1
+  matchPillarWidth: 0
   previewLineWidthMultiplier: 1
   canSpawnColor: {r: 0.7882353, g: 1, b: 1, a: 0.5}
   cannotSpawnColor: {r: 1, g: 0, b: 0, a: 0.5}

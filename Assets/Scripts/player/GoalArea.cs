@@ -14,11 +14,25 @@ public class GoalArea : MonoBehaviour
     [Header("花火演出スクリプトの参照")]
     [SerializeField] private FireWork fireWork; // 花火スクリプトをセットする
 
+    [Header("BGM / 効果音設定")]
+    [SerializeField] private AudioSource audioSource; // 再生用のAudioSource（指定がない場合は自オブジェクトから自動取得）
+    [SerializeField] private AudioClip clearJingle;    // クリア時に鳴らすファンファーレやBGM
+    [SerializeField] private bool stopBgmOnGoal = true;  // ゴール時に元のBGMを停止するかどうか
+
     // 二重カウントを防ぐため、エリア内にいる一意のプレイヤーをリストで管理
     private HashSet<PlayerController> playersInGoal = new HashSet<PlayerController>();
 
     // 二重クリア処理防止フラグ
     private bool isClearing = false;
+
+    private void Awake()
+    {
+        // AudioSourceが指定されていなければ自身のコンポーネントを取得
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+        }
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -60,6 +74,9 @@ public class GoalArea : MonoBehaviour
     {
         isClearing = true;
         Debug.Log("全員到達！キャラを停止して花火演出を開始します。");
+
+        // --- BGM・サウンド再生処理 ---
+        PlayClearSound();
 
         PlayerController[] allPlayers = FindObjectsOfType<PlayerController>();
         foreach (var player in allPlayers)
@@ -131,5 +148,32 @@ public class GoalArea : MonoBehaviour
 
         // シーン遷移
         SceneManager.LoadScene(nextStageSceneName);
+    }
+
+    /// <summary>
+    /// クリア時のサウンドを再生する処理
+    /// </summary>
+    private void PlayClearSound()
+    {
+        // StageManagerやSoundManager等の全体BGMを管理するシングルトンがあればここで停止することも可能
+        if (stopBgmOnGoal && audioSource != null && audioSource.isPlaying)
+        {
+            audioSource.Stop();
+        }
+
+        // ジングル（ファンファーレ/BGM）が設定されている場合
+        if (clearJingle != null)
+        {
+            if (audioSource != null)
+            {
+                // PlayOneShotで重ねて再生（あるいは audioSource.clip = clearJingle; audioSource.Play();）
+                audioSource.PlayOneShot(clearJingle);
+            }
+            else
+            {
+                // AudioSourceが指定されていない場合は一時的な3D/2Dサウンドとして再生
+                AudioSource.PlayClipAtPoint(clearJingle, Camera.main != null ? Camera.main.transform.position : transform.position);
+            }
+        }
     }
 }
