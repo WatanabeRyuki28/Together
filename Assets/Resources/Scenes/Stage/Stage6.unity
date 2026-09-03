@@ -1745,7 +1745,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 15
-      m_TileSpriteIndex: 17
+      m_TileSpriteIndex: 18
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -1885,7 +1885,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 8
-      m_TileSpriteIndex: 15
+      m_TileSpriteIndex: 17
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -2305,7 +2305,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 12
-      m_TileSpriteIndex: 13
+      m_TileSpriteIndex: 15
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -2768,18 +2768,18 @@ Tilemap:
     m_Data: {fileID: 736899261, guid: 28ccf0f0f70445840a58513c919a2887, type: 3}
   - m_RefCount: 11
     m_Data: {fileID: -1681636279, guid: 28ccf0f0f70445840a58513c919a2887, type: 3}
-  - m_RefCount: 1
-    m_Data: {fileID: 2120175286, guid: 28ccf0f0f70445840a58513c919a2887, type: 3}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
   - m_RefCount: 5
     m_Data: {fileID: 1574798582, guid: 28ccf0f0f70445840a58513c919a2887, type: 3}
   - m_RefCount: 1
-    m_Data: {fileID: -1621223952, guid: 28ccf0f0f70445840a58513c919a2887, type: 3}
+    m_Data: {fileID: 2120175286, guid: 28ccf0f0f70445840a58513c919a2887, type: 3}
   - m_RefCount: 3
     m_Data: {fileID: -384184287, guid: 28ccf0f0f70445840a58513c919a2887, type: 3}
   - m_RefCount: 1
+    m_Data: {fileID: -1621223952, guid: 28ccf0f0f70445840a58513c919a2887, type: 3}
+  - m_RefCount: 1
     m_Data: {fileID: -238143314, guid: 28ccf0f0f70445840a58513c919a2887, type: 3}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
   m_TileMatrixArray:
   - m_RefCount: 226
     m_Data:
@@ -16779,7 +16779,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7680708166020688268, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7681446784170099318, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
