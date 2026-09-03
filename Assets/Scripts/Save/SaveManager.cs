@@ -11,6 +11,21 @@ public class SaveManager : MonoBehaviour
     private string filePath;
 
 
+    [SerializeField] private int stageClearCount = 0;
+
+    
+    public int StageClearCount
+    {
+        get { return stageClearCount; }
+    }
+
+   
+    public void SetStageClearCount(int count)
+    {
+        stageClearCount = count;
+        SaveGame();
+    }
+
     void Start()
     {
         ResetSaveData();

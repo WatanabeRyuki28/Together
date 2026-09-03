@@ -456,7 +456,7 @@ public class InputFieldFocus : MonoBehaviour
         UpdateCursorSelection();
     }
 
-    private readonly Dictionary<char, char> textTransformTable = new Dictionary<char, char>()
+private readonly Dictionary<char, char> textTransformTable = new Dictionary<char, char>()
 {
 // --- ひらがな ---
 // か行

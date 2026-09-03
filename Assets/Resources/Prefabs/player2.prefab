@@ -143,12 +143,12 @@ MonoBehaviour:
     m_Bits: 16
   waterCheckDistance: 1.5
   pillarForwardOffset: 2
-  pillarSpawnOffset: {x: 0, y: 1.6, z: 0}
+  pillarSpawnOffset: {x: 0, y: 1.1, z: 0}
   maxPillarCount: 3
   pillarCoolTime: 3
   previewPillarObject: {fileID: 8982154150200284505, guid: 20152bb9992637041a9bdb61f996b5f6, type: 3}
   previewLineRenderer: {fileID: -993535898158028824}
-  matchPillarWidth: 0
+  matchPillarWidth: 1
   previewLineWidthMultiplier: 1
   canSpawnColor: {r: 0.7882353, g: 1, b: 1, a: 0.5}
   cannotSpawnColor: {r: 1, g: 0, b: 0, a: 0.5}

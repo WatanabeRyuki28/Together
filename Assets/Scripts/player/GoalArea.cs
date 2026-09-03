@@ -48,6 +48,37 @@ public class GoalArea : MonoBehaviour
 
                 if (playersInGoal.Count >= requiredPlayersToClear)
                 {
+                    string currentSceneName = SceneManager.GetActiveScene().name;
+
+                    // Stage 1 クリア
+                    if (currentSceneName == "Stage1")
+                    {
+                        StageManager.ClearStage(0);
+                    }
+
+                    if (currentSceneName == "Stage2")
+                    {
+                        StageManager.ClearStage(1);
+                    }
+
+                    if (currentSceneName == "Stage3")
+                    {
+                        StageManager.ClearStage(2);
+                    }
+                    if (currentSceneName == "Stage4")
+                    {
+                        StageManager.ClearStage(3);
+                    }
+                    if (currentSceneName == "Stage5")
+                    {
+                        StageManager.ClearStage(4);
+                    }
+                    if (currentSceneName == "Stage6")
+                    {
+                        StageManager.ClearStage(5);
+                    }
+
+
                     // クリアコルーチンを開始
                     StartCoroutine(ClearStageRoutine());
                 }
