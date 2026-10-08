@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 2748107523663934474}
   - component: {fileID: 3691125333140810083}
   - component: {fileID: 2357781001717994541}
-  - component: {fileID: 5062335198695630864}
   m_Layer: 4
   m_Name: "\u6C34\u8FBA"
   m_TagString: Untagged
@@ -135,27 +134,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.3846154, y: 1.3846154}
   m_EdgeRadius: 0
---- !u!114 &5062335198695630864
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2914232859922564510}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 410c3395f4ab0374899ea275631eff0e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnMode: 1
-  icePillarPrefab: {fileID: 8982154150200284505, guid: de3cf56bef36f3946a10f029d3879352, type: 3}
-  spawnOffset: {x: 0, y: 0, z: 0}
-  spawnRotationEuler: {x: 0, y: 0, z: 90}
-  maxPillarCount: 5
-  pillarCount: 3
-  pillarSpacing: 1.5
-  freezeSound: {fileID: 0}
-  soundVolume: 1
 --- !u!1 &5783477238239170174
 GameObject:
   m_ObjectHideFlags: 0
@@ -167,7 +145,6 @@ GameObject:
   - component: {fileID: 2412449295351866573}
   - component: {fileID: 8093775683377893395}
   - component: {fileID: 508897727869897577}
-  - component: {fileID: 4266500539773042302}
   m_Layer: 4
   m_Name: tilemap_53 (1)
   m_TagString: Untagged
@@ -287,27 +264,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.3846154, y: 1.3846154}
   m_EdgeRadius: 0
---- !u!114 &4266500539773042302
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5783477238239170174}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 410c3395f4ab0374899ea275631eff0e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnMode: 1
-  icePillarPrefab: {fileID: 8982154150200284505, guid: de3cf56bef36f3946a10f029d3879352, type: 3}
-  spawnOffset: {x: 0, y: 0, z: 0}
-  spawnRotationEuler: {x: 0, y: 0, z: 90}
-  maxPillarCount: 5
-  pillarCount: 3
-  pillarSpacing: 1.5
-  freezeSound: {fileID: 0}
-  soundVolume: 1
 --- !u!1 &5816082121418019623
 GameObject:
   m_ObjectHideFlags: 0
@@ -319,7 +275,6 @@ GameObject:
   - component: {fileID: 9088112996767451992}
   - component: {fileID: 4954294932092224873}
   - component: {fileID: 7407915670708618759}
-  - component: {fileID: 6547185497029171520}
   m_Layer: 4
   m_Name: tilemap_53 (3)
   m_TagString: Untagged
@@ -439,27 +394,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.3846154, y: 1.3846154}
   m_EdgeRadius: 0
---- !u!114 &6547185497029171520
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5816082121418019623}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 410c3395f4ab0374899ea275631eff0e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnMode: 1
-  icePillarPrefab: {fileID: 8982154150200284505, guid: de3cf56bef36f3946a10f029d3879352, type: 3}
-  spawnOffset: {x: 0, y: 0, z: 0}
-  spawnRotationEuler: {x: 0, y: 0, z: 90}
-  maxPillarCount: 5
-  pillarCount: 3
-  pillarSpacing: 1.5
-  freezeSound: {fileID: 0}
-  soundVolume: 1
 --- !u!1 &7995277407144674357
 GameObject:
   m_ObjectHideFlags: 0
@@ -471,7 +405,6 @@ GameObject:
   - component: {fileID: 2114887464403889456}
   - component: {fileID: 6842822543647571998}
   - component: {fileID: 7969672686150141467}
-  - component: {fileID: 1396039213074783314}
   m_Layer: 4
   m_Name: tilemap_53 (2)
   m_TagString: Untagged
@@ -591,27 +524,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.3846154, y: 1.3846154}
   m_EdgeRadius: 0
---- !u!114 &1396039213074783314
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7995277407144674357}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 410c3395f4ab0374899ea275631eff0e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnMode: 1
-  icePillarPrefab: {fileID: 8982154150200284505, guid: de3cf56bef36f3946a10f029d3879352, type: 3}
-  spawnOffset: {x: 0, y: 0, z: 0}
-  spawnRotationEuler: {x: 0, y: 0, z: 90}
-  maxPillarCount: 5
-  pillarCount: 3
-  pillarSpacing: 1.5
-  freezeSound: {fileID: 0}
-  soundVolume: 1
 --- !u!1 &8298040602570786743
 GameObject:
   m_ObjectHideFlags: 0
@@ -623,7 +535,6 @@ GameObject:
   - component: {fileID: 538505499802114608}
   - component: {fileID: 1597923343279945245}
   - component: {fileID: 5226769575748675847}
-  - component: {fileID: 5592874778611846081}
   m_Layer: 4
   m_Name: tilemap_53 (4)
   m_TagString: Untagged
@@ -743,24 +654,3 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.3846154, y: 1.3846154}
   m_EdgeRadius: 0
---- !u!114 &5592874778611846081
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8298040602570786743}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 410c3395f4ab0374899ea275631eff0e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnMode: 1
-  icePillarPrefab: {fileID: 8982154150200284505, guid: de3cf56bef36f3946a10f029d3879352, type: 3}
-  spawnOffset: {x: 0, y: 0, z: 0}
-  spawnRotationEuler: {x: 0, y: 0, z: 90}
-  maxPillarCount: 5
-  pillarCount: 3
-  pillarSpacing: 1.5
-  freezeSound: {fileID: 0}
-  soundVolume: 1

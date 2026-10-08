@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 1723333723385408888}
   - component: {fileID: 1767483884349951909}
   - component: {fileID: 3735277386197211281}
-  - component: {fileID: 3393878607313821181}
   - component: {fileID: 2205709773367431944}
   - component: {fileID: 6474548739276938427}
+  - component: {fileID: 5720097538492363652}
   m_Layer: 0
   m_Name: button
   m_TagString: Untagged
@@ -109,26 +109,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &3393878607313821181
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4655150860986584649}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc02b44a85a7d5646b7783f7c79d3455, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetDoorA: {fileID: 0}
-  targetDoorB: {fileID: 0}
-  normalColor: {r: 1, g: 1, b: 1, a: 1}
-  pressedColor: {r: 0.5018867, g: 0.5018867, b: 0.5018867, a: 1}
-  normalSprite: {fileID: 207831650, guid: 1241a20938df35c4486e83b7faf9095b, type: 3}
-  pressedSprite: {fileID: -2120575774, guid: 1241a20938df35c4486e83b7faf9095b, type: 3}
-  switchOnSound: {fileID: 8300000, guid: 1502e36fb16aabb469bceb5d262f8971, type: 3}
-  pressEffect: {fileID: 3432958286849152088, guid: 87ee7299dd44ed747af24dbb91bcd33b, type: 3}
 --- !u!61 &2205709773367431944
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -270,3 +250,23 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &5720097538492363652
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4655150860986584649}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc02b44a85a7d5646b7783f7c79d3455, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetDoorA: {fileID: 0}
+  targetDoorB: {fileID: 0}
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  pressedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  normalSprite: {fileID: 0}
+  pressedSprite: {fileID: 0}
+  switchOnSound: {fileID: 8300000, guid: 1502e36fb16aabb469bceb5d262f8971, type: 3}
+  pressEffect: {fileID: 0}

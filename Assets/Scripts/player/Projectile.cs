@@ -102,13 +102,6 @@ public class Projectile : MonoBehaviour
             Destroy(effect, DefaultHitEffectLifeTime);
         }
 
-        // 1. ピンポイント生成に対応した WaterSurface 等のコンポーネントかチェック
-        if (other.TryGetComponent<WaterSurface>(out var waterSurface))
-        {
-            waterSurface.OnInteractAtPoint(projectileType, hitPoint);
-            Destroy(gameObject);
-            return;
-        }
 
         // 2. 通常の IInteractable ギミックに当たった場合
         IInteractable target = other.GetComponent<IInteractable>();
