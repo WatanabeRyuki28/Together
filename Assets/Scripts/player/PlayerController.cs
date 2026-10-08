@@ -16,13 +16,6 @@ public class PlayerController : MonoBehaviour
     private const float PositionSyncThreshold = 0.01f;
     private const float RemoteSpeedThreshold = 0.2f;
     private const float RemoteLerpFactor = 0.05f;
-    private const float DefaultWaterCheckDistance = 1.5f; // 足元の水エリア検知距離
-    private const float DefaultPillarOffsetY = 0.5f;      // 氷柱のデフォルト生成高さオフセット
-    private const float DefaultPillarOffsetX = 0.8f;      // 氷柱のデフォルト生成前方オフセット
-    private const int DefaultMaxPillarCount = 3;           // デフォルトの最大氷柱生成数
-    private const float DefaultPreviewAlpha = 0.5f;        // プレビュー表示時のデフォルト透明度
-    private const float PreviewLineWidth = 0.05f;          // 予測枠線の基本太さ
-    private const int LineCornerCount = 4;                  // 枠線の頂点数（四角形）
     private const float FrictionSlipperyThreshold = 0.01f; // 滑る床と判定する摩擦の閾値
 
     [Header("操作方法の設定 (チェックONで有効)")]
@@ -38,45 +31,24 @@ public class PlayerController : MonoBehaviour
     public ElementType Element => element;       // 他のクラスから属性を確認するための公開プロパティ
 
     [Header("移動・ジャンプ設定")]
-    [SerializeField] private float moveSpeed = 5.0f;                 // 基本の移動速度
+    [SerializeField] private float moveSpeed = 5.0f;               // 基本の移動速度
     [SerializeField] private float pushSpeedMultiplier = 0.5f; // オブジェクト押し出し中の移動速度倍率
-    [SerializeField] private float jumpForce = 6.5f;                 // ジャンプ時に加える力の強さ
+    [SerializeField] private float jumpForce = 6.5f;               // ジャンプ時に加える力の強さ
 
     [Header("射撃（クールタイム）設定")]
     [SerializeField] private float fireRate = 0.3f; // 次の弾を撃つまでに必要な待機時間（秒）
     private float nextFireTime = 0f;                // 次に発射が可能になる時刻の記録用
 
-    [Header("氷柱生成（アイスメーカー）設定")]
-    [SerializeField] private GameObject icePillarPrefab; // 生成する氷柱のプレハブ
-    [SerializeField] private LayerMask waterLayer;       // 水エリアのレイヤー
-    [SerializeField] private float waterCheckDistance = DefaultWaterCheckDistance; // Raycastの長さ
-    [SerializeField] private float pillarForwardOffset = DefaultPillarOffsetX; // プレイヤー前方への生成ずらし距離
-    [SerializeField] private Vector3 pillarSpawnOffset = new Vector3(0f, DefaultPillarOffsetY, 0f); // 生成位置の上方向オフセット
-    [SerializeField] private int maxPillarCount = DefaultMaxPillarCount; // 画面内に存在できる氷柱の最大数
-    [SerializeField] private float pillarCoolTime = 1.0f; // 氷柱生成のクールタイム（秒）
-    private float nextPillarTime = 0f;                       // 次に氷柱が生成可能になる時刻
-
-    [Header("氷柱生成の予測（プレビュー）設定")]
-    [SerializeField] private GameObject previewPillarObject; // プレビュー用の氷柱オブジェクト
-    [SerializeField] private LineRenderer previewLineRenderer; // 予測線用のLineRenderer
-    [SerializeField] private bool matchPillarWidth = true;    // チェックをいれると柱の幅を基準にする
-    [SerializeField] private float previewLineWidthMultiplier = 1.0f; // インスペクターで太さを倍率調整
-    [SerializeField] private Color canSpawnColor = new Color(0f, 1f, 1f, DefaultPreviewAlpha);   // 生成可能時の色（水色・半透明）
-    [SerializeField] private Color cannotSpawnColor = new Color(1f, 0f, 0f, DefaultPreviewAlpha); // 生成不可時の色（赤色・半透明）
-
     [Header("効果音（SE）設定")]
     [SerializeField] private AudioClip jumpSound;           // ジャンプ音
     [SerializeField] private AudioClip shootSound;          // 射撃音
     [SerializeField] private AudioClip walkSound;           // 足音（ループ用）
-    [SerializeField] private AudioClip createPillarSound; // 氷柱生成音
-    [SerializeField] private AudioClip failSound;           // 氷柱生成失敗音
 
     // 使用するキーをコード側で固定
     private KeyCode leftKey = KeyCode.A;          // 左移動
-    private KeyCode rightKey = KeyCode.D;          // 右移動
+    private KeyCode rightKey = KeyCode.D;         // 右移動
     private KeyCode jumpKey = KeyCode.Space;      // ジャンプ
     private KeyCode fireKey = KeyCode.Return;     // 攻撃
-    private KeyCode pillarKey = KeyCode.E;        // 氷柱生成キー
 
     [Header("各種参照設定")]
     [SerializeField] private GameObject projectilePrefab; // 発射する弾のプレハブ
@@ -90,7 +62,6 @@ public class PlayerController : MonoBehaviour
     private Animator anim;                  // アニメーター用
     private SpriteRenderer spriteRenderer; // 左右反転用
     private AudioSource audioSource;       // 効果音再生用
-    private SpriteRenderer previewSpriteRenderer; // プレビューオブジェクトのSpriteRenderer
 
     public bool isGrounded { get; set; }
     private bool isOnSlipperyFloor; // 滑る床の上にいるかどうかのフラグ
@@ -121,22 +92,6 @@ public class PlayerController : MonoBehaviour
         }
 
         controls = new CommunicationUI();
-
-        // プレビュー表示用スプライトレンダラーの取得と初期化
-        if (previewPillarObject != null)
-        {
-            previewSpriteRenderer = previewPillarObject.GetComponent<SpriteRenderer>();
-            previewPillarObject.SetActive(false);
-        }
-
-        // LineRenderer の枠線初期設定
-        if (previewLineRenderer != null)
-        {
-            previewLineRenderer.useWorldSpace = true;
-            previewLineRenderer.loop = true;
-            previewLineRenderer.positionCount = LineCornerCount;
-            previewLineRenderer.enabled = false;
-        }
     }
 
     void OnEnable()
@@ -201,7 +156,6 @@ public class PlayerController : MonoBehaviour
             {
                 audioSource.Stop();
             }
-            SetPreviewActive(false);
             return;
         }
 
@@ -214,7 +168,6 @@ public class PlayerController : MonoBehaviour
             {
                 audioSource.Stop();
             }
-            SetPreviewActive(false);
             return;
         }
 
@@ -243,16 +196,6 @@ public class PlayerController : MonoBehaviour
                 }
             }
 
-            // 氷柱生成判定
-            bool keyboardPillar = useKeyboard && Input.GetKeyDown(pillarKey);
-            if (keyboardPillar)
-            {
-                TrySpawnIcePillarOnWater();
-            }
-
-            // 氷柱の生成予測（プレビュー）の更新処理
-            UpdateIcePillarPreview();
-
             // メニュー判定
             bool keyboardMenu = useKeyboard && Input.GetKeyDown(KeyCode.Escape);
             bool gamepadMenu = useGamepad && controls != null && controls.Player.Menu.triggered;
@@ -265,10 +208,6 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
-        else
-        {
-            SetPreviewActive(false);
-        }
 
         UpdateAnimationParameters(rb.velocity);
         HandleWalkSound();
@@ -278,78 +217,6 @@ public class PlayerController : MonoBehaviour
             SendPlayerData(transform.position, isGrounded);
             lastPosition = transform.position;
         }
-    }
-
-    private void TrySpawnIcePillarOnWater()
-    {
-        if (Time.time < nextPillarTime) return;
-        if (element != ElementType.Ice || icePillarPrefab == null) return;
-
-        Vector3 rayOrigin = GetRaycastOrigin();
-        RaycastHit2D hit = Physics2D.Raycast(
-            rayOrigin,
-            Vector2.down,
-            waterCheckDistance,
-            waterLayer
-        );
-
-        if (hit.collider != null)
-        {
-            GameObject[] currentPillars = GameObject.FindGameObjectsWithTag("IcePillar");
-
-            if (currentPillars.Length >= maxPillarCount)
-            {
-                Destroy(currentPillars[0]);
-            }
-
-            Vector3 spawnPosition = (Vector3)hit.point + pillarSpawnOffset;
-            Instantiate(icePillarPrefab, spawnPosition, Quaternion.identity);
-
-            if (createPillarSound != null && audioSource != null)
-            {
-                audioSource.PlayOneShot(createPillarSound);
-            }
-
-            SendSpawnPillarEvent(spawnPosition);
-
-            nextPillarTime = Time.time + pillarCoolTime;
-        }
-        else
-        {
-            if (failSound != null && audioSource != null)
-            {
-                audioSource.PlayOneShot(failSound);
-            }
-        }
-    }
-
-    private async void SendSpawnPillarEvent(Vector3 pos)
-    {
-        if (networkManager == null) return;
-
-        // 1. 自分のキャラIDを取得（未設定時は属性から判定）
-        int myRealChara = networkManager.myRealSelectedChar;
-        if (myRealChara == -1)
-        {
-            myRealChara = networkManager.myCharaIndex;
-            if (myRealChara == -1)
-            {
-                myRealChara = (Element == ElementType.Fire) ? 0 : 1;
-            }
-        }
-
-        // 2. 送信データに char_index を設定
-        InGameMoveData spawnPillarData = new InGameMoveData
-        {
-            dataType = "spawn_pillar",
-            room_id = networkManager.myRoomID,
-            char_index = myRealChara, // ★ここを追加：自分のキャラIDを送信
-            position_x = pos.x,
-            position_y = pos.y
-        };
-
-        string json = JsonUtility.ToJson(spawnPillarData);
-        await networkManager.SendMessageAsync(json);
     }
 
     private void Move()
@@ -475,121 +342,9 @@ public class PlayerController : MonoBehaviour
         nextFireTime = Time.time + fireRate;
     }
 
-    private Vector3 GetRaycastOrigin()
-    {
-        float forwardDirection = (spriteRenderer != null && spriteRenderer.flipX) ? -1f : 1f;
-        return transform.position + new Vector3(forwardDirection * pillarForwardOffset, 0f, 0f);
-    }
-
-    private void UpdateIcePillarPreview()
-    {
-        if (element != ElementType.Ice)
-        {
-            SetPreviewActive(false);
-            return;
-        }
-
-        Vector3 rayOrigin = GetRaycastOrigin();
-        RaycastHit2D hit = Physics2D.Raycast(
-            rayOrigin,
-            Vector2.down,
-            waterCheckDistance,
-            waterLayer
-        );
-
-        if (hit.collider != null)
-        {
-            Vector3 targetSpawnPosition = (Vector3)hit.point + pillarSpawnOffset;
-
-            bool canSpawn = Time.time >= nextPillarTime;
-            Color currentColor = canSpawn ? canSpawnColor : cannotSpawnColor;
-
-            if (previewPillarObject != null)
-            {
-                previewPillarObject.SetActive(true);
-                previewPillarObject.transform.position = targetSpawnPosition;
-
-                if (icePillarPrefab != null)
-                {
-                    previewPillarObject.transform.localScale = icePillarPrefab.transform.localScale;
-
-                    SpriteRenderer prefabSr = icePillarPrefab.GetComponent<SpriteRenderer>();
-                    if (prefabSr != null && previewSpriteRenderer != null)
-                    {
-                        previewSpriteRenderer.sprite = prefabSr.sprite;
-                    }
-                }
-
-                if (previewSpriteRenderer != null)
-                {
-                    previewSpriteRenderer.color = currentColor;
-                }
-            }
-
-            if (previewLineRenderer != null)
-            {
-                previewLineRenderer.enabled = true;
-                previewLineRenderer.useWorldSpace = true;
-                previewLineRenderer.loop = true;
-                previewLineRenderer.positionCount = LineCornerCount;
-
-                Vector2 pillarSize = Vector2.one;
-                if (icePillarPrefab != null)
-                {
-                    SpriteRenderer pillarSR = icePillarPrefab.GetComponent<SpriteRenderer>();
-                    if (pillarSR != null && pillarSR.sprite != null)
-                    {
-                        pillarSize = Vector2.Scale(pillarSR.sprite.bounds.size, icePillarPrefab.transform.localScale);
-                    }
-                    else
-                    {
-                        pillarSize = icePillarPrefab.transform.localScale;
-                    }
-                }
-
-                float halfWidth = pillarSize.x * 0.5f;
-                float halfHeight = pillarSize.y * 0.5f;
-
-                Vector3 topLeft = targetSpawnPosition + new Vector3(-halfWidth, halfHeight, 0f);
-                Vector3 topRight = targetSpawnPosition + new Vector3(halfWidth, halfHeight, 0f);
-                Vector3 bottomRight = targetSpawnPosition + new Vector3(halfWidth, -halfHeight, 0f);
-                Vector3 bottomLeft = targetSpawnPosition + new Vector3(-halfWidth, -halfHeight, 0f);
-
-                previewLineRenderer.SetPosition(0, topLeft);
-                previewLineRenderer.SetPosition(1, topRight);
-                previewLineRenderer.SetPosition(2, bottomRight);
-                previewLineRenderer.SetPosition(3, bottomLeft);
-
-                float calculatedLineWidth = PreviewLineWidth * previewLineWidthMultiplier;
-                previewLineRenderer.startWidth = calculatedLineWidth;
-                previewLineRenderer.endWidth = calculatedLineWidth;
-
-                previewLineRenderer.startColor = currentColor;
-                previewLineRenderer.endColor = currentColor;
-            }
-        }
-        else
-        {
-            SetPreviewActive(false);
-        }
-    }
-
-    private void SetPreviewActive(bool active)
-    {
-        if (previewPillarObject != null && previewPillarObject.activeSelf != active)
-        {
-            previewPillarObject.SetActive(active);
-        }
-
-        if (previewLineRenderer != null && previewLineRenderer.enabled != active)
-        {
-            previewLineRenderer.enabled = active;
-        }
-    }
-
     private void HandleWalkSound()
     {
-        if (walkSound == null || audioSource == null) return;
+        if (walkSound == null || audioSource != null) return;
 
         if (isGrounded && Mathf.Abs(rb.velocity.x) > RemoteSpeedThreshold)
         {
@@ -725,18 +480,5 @@ public class PlayerController : MonoBehaviour
         anim.SetFloat("Speed", currentHorizontalSpeed);
         anim.SetBool("isGround", remoteIsGrounded);
         anim.SetFloat("yVelocity", simulatedVelocity.y);
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        float forwardDirection = (spriteRenderer != null && spriteRenderer.flipX) ? -1f : 1f;
-        Vector3 startPosition = transform.position + new Vector3(forwardDirection * pillarForwardOffset, 0f, 0f);
-        Vector3 endPosition = startPosition + Vector3.down * waterCheckDistance;
-
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawLine(startPosition, endPosition);
-
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(endPosition + pillarSpawnOffset, 0.2f);
     }
 }

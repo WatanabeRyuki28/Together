@@ -8,9 +8,11 @@ public class FireDestructibleWall : MonoBehaviour, IInteractable
 {
     // --- マジックナンバー排除用の定数定義 ---
     private const float DefaultRespawnDelay = 3.0f; // 復活までの秒数
+    private const int UnassignedCharacterIndex = -1; // 未割り当てキャラインデックスのデフォルト値
+    private const float SpatialBlend2D = 0f;          // 2Dサウンド用空間ブレンド値
 
     [Header("Respawn Settings (再生成設定)")]
-    [SerializeField] private bool canRespawn = false;              // 時間経過で復活するか
+    [SerializeField] private bool canRespawn = false;               // 時間経過で復活するか
     [SerializeField] private float respawnDelay = DefaultRespawnDelay; // 復活するまでの秒数
 
     [Header("Audio Settings (効果音)")]
@@ -23,7 +25,7 @@ public class FireDestructibleWall : MonoBehaviour, IInteractable
     private SpriteRenderer spriteRenderer;
     private AudioSource audioSource;
     private Collider2D[] wallColliders;
-    private NetworkIdentity2D networkIdentity; // ★ 追加: ネットワーク同期用コンポーネント
+    private NetworkIdentity2D networkIdentity;
 
     private bool isBreaking = false;
     private Color baseColor;
@@ -32,7 +34,7 @@ public class FireDestructibleWall : MonoBehaviour, IInteractable
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         wallColliders = GetComponents<Collider2D>();
-        networkIdentity = GetComponent<NetworkIdentity2D>(); // ★ 追加: NetworkIdentity2D の取得
+        networkIdentity = GetComponent<NetworkIdentity2D>();
 
         // AudioSourceのキャッシュ
         audioSource = GetComponent<AudioSource>();
@@ -40,7 +42,7 @@ public class FireDestructibleWall : MonoBehaviour, IInteractable
         {
             audioSource = gameObject.AddComponent<AudioSource>();
         }
-        audioSource.spatialBlend = 0f;
+        audioSource.spatialBlend = SpatialBlend2D;
     }
 
     private void Start()
@@ -58,12 +60,12 @@ public class FireDestructibleWall : MonoBehaviour, IInteractable
     {
         if (isBreaking) return;
 
-        // 🔥 炎属性のみ破壊可能
+        // 炎属性のみ破壊可能
         if (type == ElementType.Fire)
         {
             StartBreakSequence();
 
-            // ★ 追加: オンライン通信中であれば他プレイヤーへ通知を送信
+            // オンライン通信中であれば他プレイヤーへ通知を送信
             SendObjectSyncEvent();
         }
         else
@@ -74,7 +76,7 @@ public class FireDestructibleWall : MonoBehaviour, IInteractable
     }
 
     /// <summary>
-    /// ★ 追加: 外部（他プレイヤー）からネットワーク経由で破壊イベントを受け取った際に呼ばれる
+    /// 外部（他プレイヤー）からネットワーク経由で破壊イベントを受け取った際に呼ばれる
     /// </summary>
     public void OnBreakFromNetwork()
     {
@@ -103,7 +105,6 @@ public class FireDestructibleWall : MonoBehaviour, IInteractable
         }
     }
 
-
     /// <summary>
     /// オブジェクトの破壊・同期データをサーバー/対戦相手へ送信する
     /// </summary>
@@ -112,7 +113,10 @@ public class FireDestructibleWall : MonoBehaviour, IInteractable
         if (NetworkManager.Instance == null || networkIdentity == null) return;
 
         int myRealColor = NetworkManager.Instance.myRealSelectedChar;
-        if (myRealColor == -1) myRealColor = NetworkManager.Instance.myCharaIndex;
+        if (myRealColor == UnassignedCharacterIndex)
+        {
+            myRealColor = NetworkManager.Instance.myCharaIndex;
+        }
 
         InGameMoveData moveData = new InGameMoveData
         {
@@ -127,7 +131,6 @@ public class FireDestructibleWall : MonoBehaviour, IInteractable
 
         string json = JsonUtility.ToJson(moveData);
 
-        // ★ SendWebSocketMessage を削除し、既存の SendMessageAsync を直接呼び出し
         await NetworkManager.Instance.SendMessageAsync(json);
     }
 
