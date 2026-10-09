@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.VFX;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class Projectile : MonoBehaviour
@@ -10,6 +11,9 @@ public class Projectile : MonoBehaviour
     private const float RotationAngleThresholdMin = 170f;
     private const float RotationAngleThresholdMax = 190f;
 
+    // VFX Graph発火用のイベントID（文字列検索の負荷を軽減）
+    private static readonly int OnPlayEventID = Shader.PropertyToID("OnPlay");
+
     [Header("Projectile Settings")]
     [SerializeField] private float speed = 10.0f;
     [SerializeField] private float lifeTime = 1.5f; // 1.5秒で自動消滅
@@ -20,7 +24,7 @@ public class Projectile : MonoBehaviour
     [SerializeField] private LayerMask collisionLayers;
 
     [Header("HITエフェクト")]
-    [SerializeField] private GameObject hitEffect;
+    [SerializeField] private GameObject hitEffect; // VFX Graphが含まれるプレハブを割り当てる
 
     private Rigidbody2D rb;
     private float moveDirection = RightDirection; // 飛ぶ方向（1なら右、-1なら左）
@@ -86,37 +90,50 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // 接触位置（着弾点）を計算
+        // 1. 接触位置（着弾点）を計算
         Vector3 hitPoint = other.ClosestPoint(transform.position);
 
-        // エフェクト生成
-        if (hitEffect != null)
-        {
-            GameObject effect = Instantiate(
-                hitEffect,
-                hitPoint,
-                Quaternion.identity
-            );
+        // 2. VFXエフェクトの生成と再生（Pattern 2実装）
+        SpawnHitEffect(hitPoint);
 
-            // 定数で設定した時間後にエフェクトを削除
-            Destroy(effect, DefaultHitEffectLifeTime);
-        }
-
-
-        // 2. 通常の IInteractable ギミックに当たった場合
+        // 3. 通常の IInteractable ギミックに当たった場合
         IInteractable target = other.GetComponent<IInteractable>();
         if (target != null)
         {
             target.OnInteract(projectileType); // 属性を伝達
-            Destroy(gameObject);              // 即座に消滅
+            Destroy(gameObject);               // 即座に消滅
             return;
         }
 
-        // 3. プレイヤーや壁などに当たった場合
+        // 4. プレイヤーや壁などに当たった場合
         // LayerMaskに含まれるレイヤー（壁や床など）に接触したか判定
         if (((1 << other.gameObject.layer) & collisionLayers) != 0)
         {
             Destroy(gameObject); // 即座に消滅
         }
+    }
+
+    /// <summary>
+    /// 指定位置にVFXヒットエフェクトを生成し、SendEventで単発再生する
+    /// </summary>
+    private void SpawnHitEffect(Vector3 position)
+    {
+        if (hitEffect == null) return;
+
+        // ヒット位置にVFXプレハブを生成
+        GameObject effectInstance = Instantiate(
+            hitEffect,
+            position,
+            Quaternion.identity
+        );
+
+        // VisualEffectコンポーネントを取得してOnPlayイベントを送信
+        if (effectInstance.TryGetComponent<VisualEffect>(out var vfx))
+        {
+            vfx.SendEvent(OnPlayEventID);
+        }
+
+        // 設定時間後に生成したエフェクトオブジェクトを削除
+        Destroy(effectInstance, DefaultHitEffectLifeTime);
     }
 }

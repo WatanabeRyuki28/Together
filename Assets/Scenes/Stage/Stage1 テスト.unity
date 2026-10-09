@@ -1808,6 +1808,8 @@ MonoBehaviour:
   projectilePrefabs:
   - {fileID: 109283890417617540, guid: e070b531c5d3da740b448b207ac74b89, type: 3}
   - {fileID: 1470277367932372552, guid: 9a7087fc1a3459340b36e7d0b85e9e3a, type: 3}
+  icePillarPrefab: {fileID: 0}
+  maxPillarCount: 3
 --- !u!4 &625097364
 Transform:
   m_ObjectHideFlags: 0
@@ -1936,6 +1938,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: button
       objectReference: {fileID: 0}
+    - target: {fileID: 5720097538492363652, guid: f4f6aa65bc670724782700be9957acf3, type: 3}
+      propertyPath: targetDoorA
+      value: 
+      objectReference: {fileID: 2102206001}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6884,10 +6890,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: "\u6C34\u8FBA (1)"
       objectReference: {fileID: 0}
-    - target: {fileID: 5062335198695630864, guid: 51ae4b6736451b94ea0466728febe980, type: 3}
-      propertyPath: spawnMode
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 5226769575748675847, guid: 51ae4b6736451b94ea0466728febe980, type: 3}
       propertyPath: m_Size.y
       value: 0.65598935
@@ -7782,10 +7784,6 @@ PrefabInstance:
       propertyPath: icePillarPrefab
       value: 
       objectReference: {fileID: 8982154150200284505, guid: de3cf56bef36f3946a10f029d3879352, type: 3}
-    - target: {fileID: 5062335198695630864, guid: 51ae4b6736451b94ea0466728febe980, type: 3}
-      propertyPath: spawnMode
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5592874778611846081, guid: 51ae4b6736451b94ea0466728febe980, type: 3}
       propertyPath: spawnMode
       value: 1
@@ -7802,7 +7800,8 @@ PrefabInstance:
       propertyPath: icePillarPrefab
       value: 
       objectReference: {fileID: 8982154150200284505, guid: de3cf56bef36f3946a10f029d3879352, type: 3}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 0}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
