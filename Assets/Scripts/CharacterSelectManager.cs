@@ -60,18 +60,28 @@ public class CharacterSelectManager : MonoBehaviour
             controls.CharSelect.Left.started += OnLeftPressed;
             controls.CharSelect.Submit.started += OnSubmitPressed;
         }
+
+        if (NetworkManager.Instance != null)
+        {
+            NetworkManager.Instance.OnCharacterSelected += HandleRemoteMessage;
+        }
     }
 
     void OnDisable()
     {
         if (controls != null)
         {
-            controls.CharSelect.Enable();
+            controls.CharSelect.Disable();
 
             // ボタンが押された瞬間のイベントを登録する
             controls.CharSelect.Right.started += OnRightPressed;
             controls.CharSelect.Left.started += OnLeftPressed;
             controls.CharSelect.Submit.started += OnSubmitPressed;
+        }
+
+        if (NetworkManager.Instance != null)
+        {
+            NetworkManager.Instance.OnCharacterSelected -= HandleRemoteMessage;
         }
     }
 
@@ -83,6 +93,7 @@ public class CharacterSelectManager : MonoBehaviour
         if (currentSelectIndex >= characterIcons.Length) currentSelectIndex = 0;
 
         UpdateCursorPosition();
+
         SendCharacterState(currentSelectIndex, false);
     }
 
@@ -233,29 +244,13 @@ public class CharacterSelectManager : MonoBehaviour
         selectionCursor.anchoredPosition = new Vector2(targetX,290);
     }
 
-    // データを送信する共通の関数を作りました
-    //  これなら確実に動く！
-    async void SendCharacterState(int index, bool isReady)
+    // データを送信する
+    public void SendCharacterState(int index, bool isReady)
     {
-        if (NetworkManager.Instance == null) return;
-
-        CharSelectData msgData = new CharSelectData();
-
-        // 親クラス（InitResponse）から受け継いだ大事な変数もすべて確実にセット！
-        msgData.type = "char_select";
-        msgData.name_id = NetworkManager.Instance.myPlayerId;   
-        msgData.room_id = NetworkManager.Instance.myRoomID;     
-        msgData.index = NetworkManager.Instance.myPlayerIndex;   
-        msgData.IsStarted = false;
-
-        // 子クラス（CharSelectData）の固有メンバー
-        msgData.char_index = index;
-        msgData.is_ready = isReady;
-
-        Debug.Log($"'{msgData.char_index}'");
-        string jsonMsg = JsonUtility.ToJson(msgData);
-        await NetworkManager.Instance.SendMessageAsync(jsonMsg);
+        NetworkManager.Instance.SendCharSelect(index,isReady);
     }
+
+
 
     // キャラクターが確定した時の処理
     void SelectCharacter(int index)
@@ -284,10 +279,16 @@ public class CharacterSelectManager : MonoBehaviour
     }
 
     // NetworkManagerからデータを受け取る部分
-    public void HandleRemoteMessage(string msg)
+    
+
+    // NetworkManagerからデータを受け取る部分（引数を string から NetMessage に変更！）
+    public void HandleRemoteMessage(NetMessage playerData)
     {
-        var playerData = JsonUtility.FromJson<CharSelectData>(msg);
-        if (playerData == null) return; Debug.Log("何も入ってないよ");
+        if (playerData == null)
+        {
+            Debug.Log("何も入ってないよ");
+            return;
+        }
 
         if (playerData.type == "char_select")
         {
@@ -295,22 +296,20 @@ public class CharacterSelectManager : MonoBehaviour
             // 相手からのデータの場合のみ処理
             if (playerData.name_id != NetworkManager.Instance.myPlayerId)
             {
-                //  相手が「動かしただけ」でも「決定した」でも、カーソル位置はリアルタイムに同期する
+                // 相手が「動かしただけ」でも「決定した」でも、カーソル位置はリアルタイムに同期する
                 if (remoteSelectionCursor != null && characterIcons.Length > playerData.char_index)
                 {
                     remoteSelectionCursor.gameObject.SetActive(true);
                     float remoteX = 0f;
-                  
 
                     // 相手のインデックス（1Pか2Pか）で判定
                     if (playerData.index == 0) // 相手が1Pの場合
                     {
-                        remoteX = (playerData.char_index == 0) ? -636f :364f;
+                        remoteX = (playerData.char_index == 0) ? -636f : 364f;
                     }
                     else // 相手が2Pの場合
                     {
                         remoteX = (playerData.char_index == 0) ? -364f : 636f;
-                      
                     }
 
                     remoteSelectionCursor.anchoredPosition = new Vector2(remoteX, 290f);
@@ -318,22 +317,9 @@ public class CharacterSelectManager : MonoBehaviour
                     remoteplayer = playerData.name_id;
 
                     NetworkManager.Instance.myCharaIndex = playerData.char_index;
-
-                    int myIndex = NetworkManager.Instance.myPlayerIndex;
-/*
-                    if (myIndex == 0)
-                    {
-                       
-                        otherInfoText.text = remoteplayer;
-                    }
-                    else if (myIndex == 1)
-                    {
-                        myInfoText.text = remoteplayer;
-                      
-                    }*/
                 }
 
-                //  相手が「決定（is_ready == true）」した時だけ、選択番号を確定させる
+                // 相手が「決定（is_ready == true）」した時だけ、選択番号を確定させる
                 if (playerData.is_ready)
                 {
                     remoteSelectedChar = playerData.char_index;
@@ -354,14 +340,11 @@ public class CharacterSelectManager : MonoBehaviour
                 }
             }
         }
-
         else
         {
-           
             Debug.Log($"typeが違うよ。期待値: char_select ➔ 実際の値: '{playerData.type}'");
         }
     }
-
     private void CheckBothPlayersReady()
     {
         if (mySelectedChar != -1 && remoteSelectedChar != -1)

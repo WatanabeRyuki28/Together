@@ -56,11 +56,23 @@ public class StageClearManager : MonoBehaviour
     void OnEnable()
     {
         if (controls != null) controls.GameClear.Enable();
+
+        if (NetworkManager.Instance != null)
+        {
+            NetworkManager.Instance.OnStageClearSelected += HandleClearMessage;
+        }
+
     }
+
 
     void OnDisable()
     {
         if (controls != null) controls.GameClear.Disable();
+
+        if (NetworkManager.Instance != null)
+        {
+            NetworkManager.Instance.OnStageClearSelected += HandleClearMessage;
+        }
     }
 
     private void Start()
@@ -187,7 +199,7 @@ public class StageClearManager : MonoBehaviour
         await Task.Delay(500);
         int clearindex = 0;
 
-        await SendStageClear(clearindex);
+        await SendStageClearWait(clearindex);
     }
 
     public async void OnBackToSelectPressed()
@@ -196,7 +208,7 @@ public class StageClearManager : MonoBehaviour
         // 送信する前に0.5秒待つ場合
         await Task.Delay(500);
         int clearindex = 1;
-        await SendStageClear(clearindex);
+        await SendStageClearWait(clearindex);
     }
 
     public async void OnRetryPressed()
@@ -206,28 +218,22 @@ public class StageClearManager : MonoBehaviour
         // 送信する前に0.5秒待つ場合
         await Task.Delay(500);
         int clearindex = 2;
-        await SendStageClear(clearindex);
+        await SendStageClearWait(clearindex);
     }
 
-    private async Task SendStageClear(int clearindex)
+    #region 送信
+
+    private async Task SendStageClearWait(int clearIndex)
     {
-        if (NetworkManager.Instance == null) return;
-
-        ClearSelectData msgData = new ClearSelectData();
-        msgData.type = "clear_select";
-        msgData.name_id = NetworkManager.Instance.myPlayerId;
-        msgData.room_id = NetworkManager.Instance.myRoomID;
-        msgData.index = NetworkManager.Instance.myPlayerIndex;
-        msgData.IsStarted = false;
-        msgData.select_index = clearindex;
-
-        string jsonMsg = JsonUtility.ToJson(msgData);
-        await NetworkManager.Instance.SendMessageAsync(jsonMsg);
+        NetworkManager.Instance.SendStageClear(clearIndex);
+  
     }
+    #endregion
 
-    public void HandleClearMessage(string msg)
+    #region 受信
+
+    public void HandleClearMessage(NetMessage clearData)
     {
-        var clearData = JsonUtility.FromJson<ClearSelectData>(msg);
         if (clearData == null) return;
 
         if (clearData.type == "clear_select")
@@ -235,6 +241,7 @@ public class StageClearManager : MonoBehaviour
             LoadScene(clearData.select_index);
         }
     }
+    #endregion
 
     void LoadScene(int clearIndex)
     {

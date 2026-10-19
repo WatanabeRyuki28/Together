@@ -104,7 +104,7 @@ public class NetworkIdentity2D : MonoBehaviour
     {
         if (NetworkManager.Instance == null) return;
 
-        InGameMoveData data = new InGameMoveData();
+        NetMessage data = new NetMessage();
         data.dataType = "object";
         data.room_id = NetworkManager.Instance.myRoomID;
         data.id = objectId;

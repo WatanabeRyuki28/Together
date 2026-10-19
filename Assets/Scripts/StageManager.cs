@@ -40,11 +40,26 @@ public class StageManager : MonoBehaviour
     void OnEnable()
     {
         if (controls != null) controls.StageSelect.Enable();
+
+        if (NetworkManager.Instance != null)
+        {
+            // 参加時の初期化データが来たらどうするかを登録
+            NetworkManager.Instance.OnStageSelected += HandleRemoteStageMessage;
+          
+        }
     }
 
     void OnDisable()
     {
         if (controls != null) controls.StageSelect.Disable();
+
+
+        if (NetworkManager.Instance != null)
+        {
+            // 参加時の初期化データが来たらどうするかを登録
+            NetworkManager.Instance.OnStageSelected -= HandleRemoteStageMessage;
+           
+        }
     }
 
     void Start()
@@ -67,7 +82,7 @@ public class StageManager : MonoBehaviour
 
         if (IsHost())
         {
-            SendStageSelectNotification(currentStageIndex, isHomeSelected, false);
+            SendStageSelectNotification(currentStageIndex, false);
         }
     }
 
@@ -151,7 +166,7 @@ public class StageManager : MonoBehaviour
         if (isMoved)
         {
             UpdateCursorPosition();
-            SendStageSelectNotification(currentStageIndex, isHomeSelected, false);
+            SendStageSelectNotification(currentStageIndex,  false);
         }
 
         if (controls.StageSelect.Submit.triggered)
@@ -273,7 +288,7 @@ public class StageManager : MonoBehaviour
         if (isHomeSelected)
         {
             Debug.Log("【ホスト】ホームへもどるを選択しました。");
-            SendStageSelectNotification(currentStageIndex, true, true);
+            SendStageSelectNotification(currentStageIndex, true);
             LoadHomeScene();
         }
         else
@@ -281,33 +296,22 @@ public class StageManager : MonoBehaviour
             if (!IsStageUnlocked(currentStageIndex)) return;
 
             Debug.Log($"【ホスト】ステージ {currentStageIndex + 1} で決定しました。");
-            SendStageSelectNotification(currentStageIndex, false, true);
+            SendStageSelectNotification(currentStageIndex, true);
             LoadTargetScene(currentStageIndex);
         }
     }
 
-    private async void SendStageSelectNotification(int stageIndex, bool isHome, bool isReady)
+    #region 送信
+    public void SendStageSelectNotification(int stageIndex, bool isReady)
     {
-        if (NetworkManager.Instance == null) return;
-
-        StageSelectData msgData = new StageSelectData();
-        msgData.type = "stage_select";
-        msgData.name_id = NetworkManager.Instance.myPlayerId;
-        msgData.room_id = NetworkManager.Instance.myRoomID;
-        msgData.index = NetworkManager.Instance.myPlayerIndex;
-        msgData.IsStarted = isReady;
-
-        // ホーム選択時は -1 を送信して識別
-        msgData.stage_index = isHome ? -1 : stageIndex;
-        msgData.stage_ready = isReady;
-
-        string jsonMsg = JsonUtility.ToJson(msgData);
-        await NetworkManager.Instance.SendMessageAsync(jsonMsg);
+        NetworkManager.Instance.SendStageSelect(stageIndex, isReady);
     }
+    #endregion
 
-    public void HandleRemoteStageMessage(string msg)
+    #region 受信
+    public void HandleRemoteStageMessage(NetMessage stageData)
     {
-        var stageData = JsonUtility.FromJson<StageSelectData>(msg);
+       
         if (stageData == null) return;
 
         if (stageData.type == "stage_select" && stageData.name_id != NetworkManager.Instance.myPlayerId)
@@ -332,6 +336,7 @@ public class StageManager : MonoBehaviour
             }
         }
     }
+    #endregion
 
     private void LoadHomeScene()
     {

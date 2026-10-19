@@ -12,7 +12,7 @@ public class SocketPlayerController : MonoBehaviour
     {
         if (client.ws.State == WebSocketState.Open)
         {
-            var playerData = new InGameMoveData
+            var playerData = new NetMessage
             {
                 name_id = pm.myPlayerId,
                 position_x = pos.x,
