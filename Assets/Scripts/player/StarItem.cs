@@ -12,6 +12,9 @@ public class StarItem : MonoBehaviour
 
     private AudioSource audioSource;
 
+
+    private const float  effectScale = 0f;
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // 触れてきたのがプレイヤー（PlayerControllerを持っているか）をチェック
@@ -40,12 +43,20 @@ public class StarItem : MonoBehaviour
                     Quaternion.identity
                 );
 
-                // 1秒後にエフェクトを削除
-                Destroy(effect, 1f);
+
+               /* effect.transform.localScale *= effectScale;*/
+
+                /*// 1秒後にエフェクトを削除
+                Destroy(effect, 1f);*/
             }
+
+          
 
             // スターのオブジェクトを消去
             Destroy(gameObject);
         }
     }
+   
+
+    
 }

@@ -50,7 +50,7 @@ public class NetworkManager : MonoBehaviour
 
     void LoadConfig()
     {
-       
+
         string filePath = Path.Combine(Directory.GetParent(Application.dataPath).FullName, "IP.txt");
 
         // ファイルが存在するかチェック
@@ -94,8 +94,8 @@ public class NetworkManager : MonoBehaviour
 
     void Update()
     {
-        
-      
+
+
 
 #if !UNITY_WEBGL || UNITY_EDITOR
         if (ws != null)
@@ -105,7 +105,7 @@ public class NetworkManager : MonoBehaviour
 #endif
     }
 
-   
+
 
 
     public void DispatchMessage(string jsonMsg)
@@ -133,7 +133,7 @@ public class NetworkManager : MonoBehaviour
         {
             OnPlayerPosReceived?.Invoke(msg);
         }
-        else if(msg.dataType == "spawn_projectile")
+        else if (msg.dataType == "spawn_projectile")
         {
             OnSpawnProjectile?.Invoke(msg);
         }
@@ -201,7 +201,7 @@ public class NetworkManager : MonoBehaviour
         {
             type = "char_select",
             char_index = charIndex,
-            is_ready = isReady, 
+            is_ready = isReady,
             index = myPlayerIndex,
             name_id = myPlayerId,
             room_id = myRoomID
@@ -210,7 +210,7 @@ public class NetworkManager : MonoBehaviour
     }
 
     //　ステージ選択を送る時
-    public async void SendStageSelect(int stageIndex,bool isReady)
+    public async void SendStageSelect(int stageIndex, bool isReady)
     {
         var data = new NetMessage
         {
@@ -220,7 +220,6 @@ public class NetworkManager : MonoBehaviour
             index = myPlayerIndex,
             name_id = myPlayerId,
             room_id = myRoomID
-
         };
         await SendJsonAsync(data);
     }
@@ -249,7 +248,7 @@ public class NetworkManager : MonoBehaviour
         var data = new NetMessage
         {
             dataType = "spawn_projectile",
-            room_id =   myRoomID,
+            room_id = myRoomID,
             char_index = bulletIndex,
             position_x = pos.x,
             position_y = pos.y,
@@ -284,7 +283,7 @@ public class NetworkManager : MonoBehaviour
         await SendJsonAsync(data);
     }
 
-   
+
 
     public async void SendMenuExitCansel(int currentMyIndex)
     {
@@ -294,7 +293,7 @@ public class NetworkManager : MonoBehaviour
             index = myPlayerIndex,
             room_id = myRoomID,
             char_index = currentMyIndex,
-    };
+        };
         await SendJsonAsync(data);
     }
 
@@ -303,7 +302,7 @@ public class NetworkManager : MonoBehaviour
         var data = new NetMessage
         {
             type = "clear_select",
-            name_id =myPlayerId,
+            name_id = myPlayerId,
             room_id = myRoomID,
             index = myPlayerIndex,
             IsStarted = false,
@@ -343,13 +342,8 @@ public class NetworkManager : MonoBehaviour
     public void DeleteData()
     {
         ws = null;
-
         myPlayerId = string.Empty;
         myRoomID = string.Empty;
-
         myPlayerIndex = -1;
-
-
-
     }
 }
