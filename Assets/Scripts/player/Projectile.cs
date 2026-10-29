@@ -4,45 +4,53 @@ using UnityEngine.VFX;
 [RequireComponent(typeof(Rigidbody2D))]
 public class Projectile : MonoBehaviour
 {
-    // --- 定数定義（マジックナンバーの排除） ---
     private const float RightDirection = 1f;
     private const float LeftDirection = -1f;
-    private const float DefaultHitEffectLifeTime = 1f; // ヒットエフェクト消滅までの時間
+    private const float DefaultHitEffectLifeTime = 1f;
     private const float RotationAngleThresholdMin = 170f;
     private const float RotationAngleThresholdMax = 190f;
 
-    // VFX Graph発火用のイベントID（文字列検索の負荷を軽減）
     private static readonly int OnPlayEventID = Shader.PropertyToID("OnPlay");
 
     [Header("Projectile Settings")]
     [SerializeField] private float speed = 10.0f;
-    [SerializeField] private float lifeTime = 1.5f; // 1.5秒で自動消滅
+    [SerializeField] private float lifeTime = 1.5f;
     [SerializeField] private ElementType projectileType;
 
+    [Header("軌道設定（放物線にする場合）")]
+    [Tooltip("チェックを入れると重力を受けて放物線を描きます（水の球などに便利）")]
+    [SerializeField] private bool useParabola = false;     // 放物線軌道を使うか
+    [SerializeField] private float gravityScale = 1.5f;    // 重力の強さ
+    [SerializeField] private float upwardForce = 3.0f;     // 打ち出すときの上方向への初速
+
     [Header("Collision Settings")]
-    // インスペクターで「壁(Wall)」「床(Ground)」「箱(Pushable)」にチェックを入れる
     [SerializeField] private LayerMask collisionLayers;
 
     [Header("HITエフェクト")]
-    [SerializeField] private GameObject hitEffect; // VFX Graphが含まれるプレハブを割り当てる
+    [SerializeField] private GameObject hitEffect;
 
     private Rigidbody2D rb;
-    private float moveDirection = RightDirection; // 飛ぶ方向（1なら右、-1なら左）
-    private bool isInitialized = false; // 初期化が完了したかのフラグ
+    private float moveDirection = RightDirection;
+    private bool isInitialized = false;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        // 重力の影響を無効化
-        rb.gravityScale = 0f;
+
+        if (useParabola)
+        {
+            rb.gravityScale = gravityScale; // 重力を有効にする
+        }
+        else
+        {
+            rb.gravityScale = 0f; // 直線的な場合は重力を切る
+        }
     }
 
     private void Start()
     {
-        // すでに Initialize で方向が決まっているなら、以下の自動判定は完全にスルーする
         if (!isInitialized)
         {
-            // ネットワーク経由で相手の画面に直接生成された時だけの救済措置
             float currentRotationZ = transform.eulerAngles.z;
             if (currentRotationZ > RotationAngleThresholdMin && currentRotationZ < RotationAngleThresholdMax)
             {
@@ -53,87 +61,91 @@ public class Projectile : MonoBehaviour
                 moveDirection = RightDirection;
             }
             isInitialized = true;
+            ApplyInitialVelocity();
         }
 
-        // 確定した正しい方向（moveDirection）へ物理速度を設定する
-        if (rb != null)
-        {
-            rb.velocity = new Vector2(speed * moveDirection, 0f);
-        }
-
-        // 指定した秒数後に自分を削除
         Destroy(gameObject, lifeTime);
     }
 
-    // プレイヤーから「向き」と「属性」を受け取って、勢いよく飛ばす処理（ローカルプレイヤー用）
     public void Initialize(float direction, ElementType playerElement)
     {
         moveDirection = direction;
-        projectileType = playerElement; // プレイヤーの属性（FireやIce）を自動コピー
-        isInitialized = true; // ここで先に初期化フラグを立てる
+        projectileType = playerElement;
+        isInitialized = true;
 
-        // 向いている方向（右 or 左）に物理速度をセットする
-        if (rb != null)
-        {
-            rb.velocity = new Vector2(speed * moveDirection, 0f);
-        }
+        ApplyInitialVelocity();
     }
 
-    private void FixedUpdate()
+    /// <summary>
+    /// 発射時の初速を計算して適用する
+    /// </summary>
+    private void ApplyInitialVelocity()
     {
-        // 万が一、衝突などで弾の速度が落ちたり変わったりしないよう、消えるまで速度を一定に維持する
-        if (isInitialized && rb != null)
+        if (rb == null) return;
+
+        if (useParabola)
         {
+            // 放物線：横方向のスピードに加え、上方向への初速（upwardForce）を加算する
+            rb.velocity = new Vector2(speed * moveDirection, upwardForce);
+        }
+        else
+        {
+            // 直線：重力なしでまっすぐ飛ぶ
             rb.velocity = new Vector2(speed * moveDirection, 0f);
         }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // 1. 接触位置（着弾点）を計算
         Vector3 hitPoint = other.ClosestPoint(transform.position);
-
-        // 2. VFXエフェクトの生成と再生（Pattern 2実装）
         SpawnHitEffect(hitPoint);
 
-        // 3. 通常の IInteractable ギミックに当たった場合
-        IInteractable target = other.GetComponent<IInteractable>();
-        if (target != null)
+        PlayerController hitPlayer = other.GetComponent<PlayerController>();
+        if (hitPlayer != null)
         {
-            target.OnInteract(projectileType); // 属性を伝達
-            Destroy(gameObject);               // 即座に消滅
+            if (projectileType == ElementType.Fire)
+            {
+                hitPlayer.ApplyStatus(StatusCondition.Burning);
+            }
+            else if (projectileType == ElementType.Ice)
+            {
+                hitPlayer.ApplyStatus(StatusCondition.Wet);
+            }
+
+            hitPlayer.TakeDamage(1);
+            Destroy(gameObject);
             return;
         }
 
-        // 4. プレイヤーや壁などに当たった場合
-        // LayerMaskに含まれるレイヤー（壁や床など）に接触したか判定
+        IInteractable target = other.GetComponent<IInteractable>();
+        if (target != null)
+        {
+            target.OnInteract(projectileType);
+            Destroy(gameObject);
+            return;
+        }
+
         if (((1 << other.gameObject.layer) & collisionLayers) != 0)
         {
-            Destroy(gameObject); // 即座に消滅
+            Destroy(gameObject);
         }
     }
 
-    /// <summary>
-    /// 指定位置にVFXヒットエフェクトを生成し、SendEventで単発再生する
-    /// </summary>
     private void SpawnHitEffect(Vector3 position)
     {
         if (hitEffect == null) return;
 
-        // ヒット位置にVFXプレハブを生成
         GameObject effectInstance = Instantiate(
             hitEffect,
             position,
             Quaternion.identity
         );
 
-        // VisualEffectコンポーネントを取得してOnPlayイベントを送信
         if (effectInstance.TryGetComponent<VisualEffect>(out var vfx))
         {
             vfx.SendEvent(OnPlayEventID);
         }
 
-        // 設定時間後に生成したエフェクトオブジェクトを削除
         Destroy(effectInstance, DefaultHitEffectLifeTime);
     }
 }
