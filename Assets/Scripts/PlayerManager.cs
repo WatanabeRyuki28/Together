@@ -30,7 +30,7 @@ public class PlayerManager : MonoBehaviour
         // リスト追加
         players[id] = player;
     }
-    public void UpdatePlayer(InGameMoveData pd)
+    public void UpdatePlayer(NetMessage pd)
     {
         // 位置情報更新
         var player = players[pd.name_id];
@@ -38,7 +38,7 @@ public class PlayerManager : MonoBehaviour
     }
     public void HandleWebSocketMessage(string msg)
     {
-        var playerData = JsonUtility.FromJson<InGameMoveData>(msg);
+        var playerData = JsonUtility.FromJson<NetMessage>(msg);
 
         if (!players.ContainsKey(playerData.name_id))
         {

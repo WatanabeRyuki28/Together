@@ -112,6 +112,7 @@ public class StageMenuManager : MonoBehaviour
 
     private void OnEnable()
     {
+        // プレイヤー操作（ActionMap）を有効化
         controls.Player.Enable();
         controls.SecondMenu.Disable();
         controls.FinalMenu.Disable();
@@ -119,6 +120,7 @@ public class StageMenuManager : MonoBehaviour
 
     private void OnDisable()
     {
+        // すべて無効化
         controls.Player.Disable();
         controls.SecondMenu.Disable();
         controls.FinalMenu.Disable();
@@ -423,16 +425,7 @@ public class StageMenuManager : MonoBehaviour
             int myIndex = NetworkManager.Instance.myRealSelectedChar;
             if (myIndex == -1) myIndex = NetworkManager.Instance.myCharaIndex;
 
-            InGameMoveData exitMsg = new InGameMoveData();
-            exitMsg.type = "menu_toggle";
-            exitMsg.dataType = "";
-            exitMsg.room_id = NetworkManager.Instance.myRoomID;
-            exitMsg.char_index = myIndex; 
-
-            string json = JsonUtility.ToJson(exitMsg);
-            await NetworkManager.Instance.SendMessageAsync(json);
-
-            Debug.Log($"[退出同意送信] char_index: {myIndex}");
+            NetworkManager.Instance.SendMenuToggle(myIndex);
         }
 
         CheckBothPlayersReadyToExit();
@@ -451,17 +444,8 @@ public class StageMenuManager : MonoBehaviour
         {
             int myIndex = NetworkManager.Instance.myRealSelectedChar;
             if (myIndex == -1) myIndex = NetworkManager.Instance.myCharaIndex;
-
-            InGameMoveData retryMsg = new InGameMoveData();
-            retryMsg.type = "menu_retry";
-            retryMsg.dataType = "";
-            retryMsg.room_id = NetworkManager.Instance.myRoomID;
-            retryMsg.char_index = myIndex;
-
-            string json = JsonUtility.ToJson(retryMsg);
-            await NetworkManager.Instance.SendMessageAsync(json);
-
-            Debug.Log($"[リトライ送信] room_id: {retryMsg.room_id}, char_index: {myIndex}");
+            
+            NetworkManager.Instance.SendMenuRetry(myIndex); 
         }
 
         CheckBothPlayersReadyToRetry();
@@ -689,15 +673,7 @@ public class StageMenuManager : MonoBehaviour
         {
             int currentMyIndex = NetworkManager.Instance.myCharaIndex;
 
-            InGameMoveData cancelMsg = new InGameMoveData();
-            cancelMsg.type = "menu_exit_cancel";
-            cancelMsg.dataType = "";
-            cancelMsg.room_id = NetworkManager.Instance.myRoomID;
-            cancelMsg.char_index = currentMyIndex;
-
-            string json = JsonUtility.ToJson(cancelMsg);
-            await NetworkManager.Instance.SendMessageAsync(json);
-            Debug.Log("退出キャンセルを送信しました。");
+            NetworkManager.Instance.SendMenuExitCansel(currentMyIndex);
         }
     }
 

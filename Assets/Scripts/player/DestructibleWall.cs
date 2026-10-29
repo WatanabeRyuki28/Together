@@ -113,7 +113,7 @@ public class DestructibleWall : MonoBehaviour, IInteractable
             myRealColor = NetworkManager.Instance.myCharaIndex;
         }
 
-        InGameMoveData moveData = new InGameMoveData
+        NetMessage moveData = new NetMessage
         {
             type = "in_game_move",
             dataType = "object",

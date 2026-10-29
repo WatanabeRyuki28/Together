@@ -78,7 +78,8 @@ public class TopViewClient : MonoBehaviour
             if (LobbyPanel != null && LobbyPanel.activeSelf && Startflag == true)
             {
                 Debug.Log("-> SendPlayerDataを実行します");
-                SendPlayerData();
+                SendGameStartMessage();
+              
             }
         }
     }
@@ -91,10 +92,61 @@ public class TopViewClient : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        if (NetworkManager.Instance != null)
+        {
+            // 参加時の初期化データが来たらどうするかを登録
+            NetworkManager.Instance.OnInitReceived += HandleInit;
+            // 誰かの入退室ステータスが来たらどうするかを登録
+            NetworkManager.Instance.OnLobbyStatusReceived += HandleLobbyStatus;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (NetworkManager.Instance != null)
+        {
+            NetworkManager.Instance.OnInitReceived -= HandleInit;
+            NetworkManager.Instance.OnLobbyStatusReceived -= HandleLobbyStatus;
+        }
+    }
+
+    private void HandleInit(NetMessage msg)
+    {
+        NetworkManager.Instance.myPlayerId = msg.name_id;
+        NetworkManager.Instance.myRoomID = msg.room_id;
+        NetworkManager.Instance.myPlayerIndex = msg.index;
+
+        Debug.Log($"<color=cyan>【システム】接続完了。自分のID: {msg.name_id}, 入室順: {msg.index}</color>");
+        UpdateLobbyUI();
+    }
+
+    private void HandleLobbyStatus(NetMessage msg)
+    {
+        if (msg.name_id != NetworkManager.Instance.myPlayerId)
+        {
+            remotePlayer = msg.name_id;
+            UpdateLobbyUI();
+        }
+    }
+
+    #region 送信
+    public void SendGameStartMessage()
+    {
+        // NetworkManagerの便利関数を呼ぶだけ！
+        NetworkManager.Instance.SendGameStart();
+
+        // シーン切り替え
+        SceneManager.LoadScene("CharacterSelectScene");
+    }
+    #endregion
+
+    #region 受信
     public void HandleMessage(string msg)
     {
         // 共通のレスポンス構造をチェック
-        var res = JsonUtility.FromJson<InitResponse>(msg);
+        var res = JsonUtility.FromJson<NetMessage>(msg);
 
         if (res.type == "init")
         {
@@ -128,7 +180,7 @@ public class TopViewClient : MonoBehaviour
 
 
     }
-
+    #endregion
     public void PushJoinButton()
     {
         var playerNameInput = inputPlayerName.text;
@@ -148,23 +200,7 @@ public class TopViewClient : MonoBehaviour
         NetworkManager.Instance.Connect(playerNameInput, roomIdInput);
     }
 
-    public async void SendPlayerData()
-    {
-        var initResponse = new InitResponse
-        {
-            type = "lobby_to_char", 
-            name_id = NetworkManager.Instance.myPlayerId,
-            room_id = NetworkManager.Instance.myRoomID,
-            index = NetworkManager.Instance.myPlayerIndex,
-            IsStarted = true,       // 開始フラグ
-        };
-
-        var jsonMsg = JsonUtility.ToJson(initResponse);
-       
-        await NetworkManager.Instance.SendMessageAsync(jsonMsg);
-        SceneManager.LoadScene("CharacterSelectScene");
-    }
-
+  
     private void Init(bool IP, bool LP)
     {
         InputPanel.SetActive(IP);
@@ -196,7 +232,7 @@ public class TopViewClient : MonoBehaviour
 
     private void HandleWebSocketMessage(string msg)
     {
-        var playerData = JsonUtility.FromJson<InGameMoveData>(msg);
+        var playerData = JsonUtility.FromJson<NetMessage>(msg);
 
         if (playerData.IsStarted)
         {

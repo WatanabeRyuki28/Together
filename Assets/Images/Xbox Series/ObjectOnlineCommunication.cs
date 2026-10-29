@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,6 +20,39 @@ public class ObjectOnlineCommunication : MonoBehaviour
     [SerializeField] private int maxPillarCount = 3;     // 氷柱の最大数制限
 
     public Dictionary<int, NetworkIdentity2D> syncObjects = new Dictionary<int, NetworkIdentity2D>();
+
+
+    void OnEnable()
+    {
+        if (NetworkManager.Instance != null)
+        {
+            // NetworkManager側にあるメッセージ受信イベントに自分を結びつける
+         
+            NetworkManager.Instance.OnPlayerPosReceived += HandleWebSocketMessage;
+            NetworkManager.Instance.OnSpawnProjectile += HandleWebSocketMessage;
+
+
+            NetworkManager.Instance.OnMenuToggleReceived += HandleWebSocketMessage;
+            NetworkManager.Instance.OnMenuRetryReceived += HandleWebSocketMessage;
+            NetworkManager.Instance.OnMenuExitCancelReceived += HandleWebSocketMessage;
+
+        }
+    }
+
+    void OnDisable()
+    {
+        if (NetworkManager.Instance != null)
+        {
+            NetworkManager.Instance.OnPlayerPosReceived -= HandleWebSocketMessage;
+            NetworkManager.Instance.OnSpawnProjectile -= HandleWebSocketMessage;
+
+
+            NetworkManager.Instance.OnMenuToggleReceived -= HandleWebSocketMessage;
+            NetworkManager.Instance.OnMenuRetryReceived -= HandleWebSocketMessage;
+            NetworkManager.Instance.OnMenuExitCancelReceived -= HandleWebSocketMessage;
+
+        }
+    }
 
     IEnumerator Start()
     {
@@ -139,28 +173,28 @@ public class ObjectOnlineCommunication : MonoBehaviour
         }
     }
 
-    public void HandleWebSocketMessage(string msg)
+    public void HandleWebSocketMessage(NetMessage data)
     {
-        if (msg.Contains("\"type\":\"menu_toggle\"") || msg.Contains("\"type\":\"menu_exit_cancel\"") || msg.Contains("\"type\":\"menu_retry\""))
-        {
+
+            if (data == null) return;
+
             try
             {
-                InGameMoveData menuData = JsonUtility.FromJson<InGameMoveData>(msg);
-
-                if (menuData.type == "menu_toggle" && StageMenuManager.Instance != null)
+                // 1. メニュー関連の処理
+                if (data.type == "menu_toggle" && StageMenuManager.Instance != null)
                 {
-                    StageMenuManager.Instance.ReceiveExitReady(menuData.char_index);
+                    StageMenuManager.Instance.ReceiveExitReady(data.char_index);
                     return;
                 }
-                else if (menuData.type == "menu_exit_cancel" && StageMenuManager.Instance != null)
+                else if (data.type == "menu_exit_cancel" && StageMenuManager.Instance != null)
                 {
-                    StageMenuManager.Instance.ReceiveExitCancel(menuData.char_index);
+                    StageMenuManager.Instance.ReceiveExitCancel(data.char_index);
                     return;
                 }
-                else if (menuData.type == "menu_retry" && StageMenuManager.Instance != null)
+                else if (data.type == "menu_retry" && StageMenuManager.Instance != null)
                 {
-                    Debug.Log($"[ObjectOnlineComm] menu_retryを受信しました！ char_index: {menuData.char_index}");
-                    StageMenuManager.Instance.ReceiveRetryReady(menuData.char_index);
+                    Debug.Log($"[ObjectOnlineComm] menu_retryを受信しました！ char_index: {data.char_index}");
+                    StageMenuManager.Instance.ReceiveRetryReady(data.char_index);
                     return;
                 }
             }
@@ -168,26 +202,27 @@ public class ObjectOnlineCommunication : MonoBehaviour
             {
                 Debug.LogError($"メニューデータの振り分けでエラーが発生: {e.Message}");
             }
-        }
 
-        var data = JsonUtility.FromJson<InGameMoveData>(msg);
+            // 2. インゲームの各アクション・同期処理（dataType または type で判定）
+            // ※ もし NetworkManager 側で dataType に代入するようにしている場合は data.dataType を使ってください
+            string actionType = !string.IsNullOrEmpty(data.dataType) ? data.dataType : data.type;
 
-        if (data.dataType == "player")
-        {
-            HandlePlayerSync(data);
-        }
-        else if (data.dataType == "object" || data.dataType == "spawn_projectile")
-        {
-            HandleObjectSync(data);
-        }
-        // 氷柱生成イベントを受信した場合
-        else if (data.dataType == "spawn_pillar")
-        {
-            HandleSpawnPillar(data);
-        }
+            if (actionType == "player" || actionType == "player_pos")
+            {
+                HandlePlayerSync(data);
+            }
+            else if (actionType == "object" || actionType == "spawn_projectile")
+            {
+                HandleObjectSync(data);
+            }
+            else if (actionType == "spawn_pillar")
+            {
+                HandleSpawnPillar(data);
+            }
+        
     }
 
-    private void HandlePlayerSync(InGameMoveData data)
+    private void HandlePlayerSync(NetMessage data)
     {
         if (NetworkManager.Instance == null) return;
 
@@ -223,7 +258,7 @@ public class ObjectOnlineCommunication : MonoBehaviour
         }
     }
 
-    private void HandleObjectSync(InGameMoveData data)
+    private void HandleObjectSync(NetMessage data)
     {
         if (NetworkManager.Instance == null) return;
         if (data.room_id != NetworkManager.Instance.myRoomID) return;
@@ -283,7 +318,7 @@ public class ObjectOnlineCommunication : MonoBehaviour
     /// <summary>
     /// 相手から送られてきた氷柱生成イベントを処理する
     /// </summary>
-    private void HandleSpawnPillar(InGameMoveData data)
+    private void HandleSpawnPillar(NetMessage data)
     {
         if (NetworkManager.Instance == null) return;
         if (data.room_id != NetworkManager.Instance.myRoomID) return;
