@@ -3,6 +3,14 @@ using UnityEngine.EventSystems;
 using System.Threading.Tasks;
 using NativeWebSocket;
 
+// 状態の定義（燃えている、濡れている、通常）
+public enum StatusCondition
+{
+    Normal,
+    Burning, // 炎で燃えている
+    Wet      // 水で濡れている
+}
+
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(AudioSource))]
 public class PlayerController : MonoBehaviour
@@ -12,67 +20,74 @@ public class PlayerController : MonoBehaviour
     private const float MinFlipInputThreshold = 0.1f;
     private const float StickDeadZone = 0.2f;
     private const float MinGroundAngleY = 0.5f;
-    private const float BoxCheckDistance = 0.5f;
+    private const float BoxCheckDistance = 1.0f;
     private const float PositionSyncThreshold = 0.01f;
     private const float RemoteSpeedThreshold = 0.2f;
     private const float RemoteLerpFactor = 0.05f;
-    private const float FrictionSlipperyThreshold = 0.01f; // 滑る床と判定する摩擦の閾値
+    private const float FrictionSlipperyThreshold = 0.01f;
 
     [Header("操作方法の設定 (チェックONで有効)")]
-    [SerializeField] private bool useKeyboard = true;  // キーボードを使うか
-    [SerializeField] private bool useGamepad = false;  // ゲームパッドを使うか
+    [SerializeField] private bool useKeyboard = true;
+    [SerializeField] private bool useGamepad = false;
 
     [Header("プレイヤー番号の設定")]
     [Tooltip("1Pなら1、2Pなら2を設定してください")]
     public int playerNumber = 1;
 
     [Header("キャラクターの属性")]
-    [SerializeField] private ElementType element; // 属性設定：Fire（炎）または Ice（氷）
-    public ElementType Element => element;       // 他のクラスから属性を確認するための公開プロパティ
+    [SerializeField] private ElementType element;
+    public ElementType Element => element;
+
+    [Header("ステータス設定（HP・死亡）")]
+    [SerializeField] private int maxHp = 1;
+    private int currentHp;
+    private bool isDead = false;
+    public bool IsDead => isDead;
+
+    [Header("現在の状態異常")]
+    [SerializeField] private StatusCondition currentStatus = StatusCondition.Normal;
+    public StatusCondition CurrentStatus => currentStatus;
 
     [Header("移動・ジャンプ設定")]
-    [SerializeField] private float moveSpeed = 5.0f;               // 基本の移動速度
-    [SerializeField] private float pushSpeedMultiplier = 0.5f; // オブジェクト押し出し中の移動速度倍率
-    [SerializeField] private float jumpForce = 6.5f;               // ジャンプ時に加える力の強さ
+    [SerializeField] private float moveSpeed = 5.0f;
+    [SerializeField] private float pushSpeedMultiplier = 0.5f;
+    [SerializeField] private float jumpForce = 6.5f;
 
     [Header("射撃（クールタイム）設定")]
-    [SerializeField] private float fireRate = 0.3f; // 次の弾を撃つまでに必要な待機時間（秒）
-    private float nextFireTime = 0f;                // 次に発射が可能になる時刻の記録用
+    [SerializeField] private float fireRate = 0.3f;
+    private float nextFireTime = 0f;
 
     [Header("効果音（SE）設定")]
-    [SerializeField] private AudioClip jumpSound;           // ジャンプ音
-    [SerializeField] private AudioClip shootSound;          // 射撃音
-    [SerializeField] private AudioClip walkSound;           // 足音（ループ用）
+    [SerializeField] private AudioClip jumpSound;
+    [SerializeField] private AudioClip shootSound;
+    [SerializeField] private AudioClip walkSound;
 
-    // 使用するキーをコード側で固定
-    private KeyCode leftKey = KeyCode.A;          // 左移動
-    private KeyCode rightKey = KeyCode.D;         // 右移動
-    private KeyCode jumpKey = KeyCode.Space;      // ジャンプ
-    private KeyCode fireKey = KeyCode.Return;     // 攻撃
+    private KeyCode leftKey = KeyCode.A;
+    private KeyCode rightKey = KeyCode.D;
+    private KeyCode jumpKey = KeyCode.Space;
+    private KeyCode fireKey = KeyCode.Return;
 
     [Header("各種参照設定")]
-    [SerializeField] private GameObject projectilePrefab; // 発射する弾のプレハブ
-    [SerializeField] private Transform firePoint;           // 弾が生成（出現）するポイント
-    [SerializeField] private LayerMask groundLayer;        // 地面判定を行う対象レイヤー
-    [SerializeField] private LayerMask pushableLayer;      // 押し出し可能なオブジェクトのレイヤー
+    [SerializeField] private GameObject projectilePrefab;
+    [SerializeField] private Transform firePoint;
+    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private LayerMask pushableLayer;
 
     public bool CanMove { get; set; } = true;
 
     private Rigidbody2D rb;
-    private Animator anim;                  // アニメーター用
-    private SpriteRenderer spriteRenderer; // 左右反転用
-    private AudioSource audioSource;       // 効果音再生用
+    private Animator anim;
+    private SpriteRenderer spriteRenderer;
+    private AudioSource audioSource;
 
     public bool isGrounded { get; set; }
-    private bool isOnSlipperyFloor; // 滑る床の上にいるかどうかのフラグ
+    private bool isOnSlipperyFloor;
     private bool isPushing;
 
     public bool IsLocalPlayer { get; set; } = true;
     private NetworkManager networkManager;
 
-    // 前回の座標を記録
     private Vector2 lastPosition;
-
     public Vector3 TargetPosition { get; set; }
 
     [SerializeField] private int projectilePrefabIndex;
@@ -112,6 +127,8 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        currentHp = maxHp; // HPの初期化
+
         if (NetworkManager.Instance != null)
         {
             networkManager = NetworkManager.Instance;
@@ -138,13 +155,11 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        // 相手（リモート）のキャラクターの場合
+        if (isDead) return; // 死亡時は入力を一切受け付けない
+
         if (!IsLocalPlayer)
         {
-            if (rb != null)
-            {
-                rb.velocity = Vector2.zero;
-            }
+            if (rb != null) rb.velocity = Vector2.zero;
 
             Vector3 previousPosition = transform.position;
             transform.position = Vector3.Lerp(transform.position, TargetPosition, RemoteLerpFactor);
@@ -175,7 +190,6 @@ public class PlayerController : MonoBehaviour
         {
             Move();
 
-            // ジャンプ判定
             bool keyboardJump = useKeyboard && Input.GetKeyDown(jumpKey);
             bool gamepadJump = useGamepad && controls != null && controls.Player.Jump.triggered;
 
@@ -184,7 +198,6 @@ public class PlayerController : MonoBehaviour
                 Jump();
             }
 
-            // 攻撃判定
             bool keyboardFire = useKeyboard && Input.GetKeyDown(fireKey);
             bool gamepadFire = useGamepad && controls != null && controls.Player.Tama.triggered;
 
@@ -196,7 +209,6 @@ public class PlayerController : MonoBehaviour
                 }
             }
 
-            // メニュー判定
             bool keyboardMenu = useKeyboard && Input.GetKeyDown(KeyCode.Escape);
             bool gamepadMenu = useGamepad && controls != null && controls.Player.Menu.triggered;
 
@@ -232,26 +244,15 @@ public class PlayerController : MonoBehaviour
         if (useGamepad && controls != null)
         {
             float gamepadInput = controls.Player.Move.ReadValue<float>();
-
-            if (Mathf.Abs(gamepadInput) < StickDeadZone)
-            {
-                gamepadInput = 0f;
-            }
-
-            if (moveInput == 0f)
-            {
-                moveInput = gamepadInput;
-            }
+            if (Mathf.Abs(gamepadInput) < StickDeadZone) gamepadInput = 0f;
+            if (moveInput == 0f) moveInput = gamepadInput;
         }
 
         moveInput = Mathf.Clamp(moveInput, -1f, 1f);
 
         if (Mathf.Abs(moveInput) < MinMoveInputThreshold)
         {
-            if (!isOnSlipperyFloor)
-            {
-                rb.velocity = new Vector2(0f, rb.velocity.y);
-            }
+            if (!isOnSlipperyFloor) rb.velocity = new Vector2(0f, rb.velocity.y);
         }
         else
         {
@@ -260,20 +261,13 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector2(moveInput * currentSpeed, rb.velocity.y);
         }
 
-        if (moveInput > MinFlipInputThreshold)
-        {
-            spriteRenderer.flipX = false;
-        }
-        else if (moveInput < -MinFlipInputThreshold)
-        {
-            spriteRenderer.flipX = true;
-        }
+        if (moveInput > MinFlipInputThreshold) spriteRenderer.flipX = false;
+        else if (moveInput < -MinFlipInputThreshold) spriteRenderer.flipX = true;
     }
 
     private bool IsInputtingTowardsBox(float moveInput)
     {
         if (moveInput == 0) return false;
-
         RaycastHit2D hit = Physics2D.Raycast(transform.position, new Vector2(moveInput, 0), BoxCheckDistance, pushableLayer);
         return hit.collider != null;
     }
@@ -307,20 +301,7 @@ public class PlayerController : MonoBehaviour
             moveInput += controls.Player.Move.ReadValue<float>();
         }
 
-        float direction = 1f;
-
-        if (moveInput < -MinFlipInputThreshold)
-        {
-            direction = -1f;
-        }
-        else if (moveInput > MinFlipInputThreshold)
-        {
-            direction = 1f;
-        }
-        else
-        {
-            direction = spriteRenderer.flipX ? -1f : 1f;
-        }
+        float direction = (moveInput < -MinFlipInputThreshold) ? -1f : (moveInput > MinFlipInputThreshold ? 1f : (spriteRenderer.flipX ? -1f : 1f));
 
         Quaternion spawnRotation = (direction == -1f) ? Quaternion.identity : Quaternion.Euler(0, 0, 180f);
         GameObject projectileObj = Instantiate(projectilePrefab, firePoint.position, spawnRotation);
@@ -344,11 +325,11 @@ public class PlayerController : MonoBehaviour
 
     private void HandleWalkSound()
     {
-        if (walkSound == null || audioSource != null) return;
+        if (walkSound == null || audioSource == null) return;
 
         if (isGrounded && Mathf.Abs(rb.velocity.x) > RemoteSpeedThreshold)
         {
-            if (!audioSource.isPlaying)
+            if (!audioSource.isPlaying || audioSource.clip != walkSound)
             {
                 audioSource.clip = walkSound;
                 audioSource.loop = true;
@@ -364,9 +345,75 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision) => CheckContact(collision, true);
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        CheckContact(collision, true);
+
+        // プレイヤー同士が接触したときの処理（燃やす・濡らす）
+        PlayerController otherPlayer = collision.gameObject.GetComponent<PlayerController>();
+        if (otherPlayer != null)
+        {
+            if (this.element == ElementType.Fire)
+            {
+                otherPlayer.ApplyStatus(StatusCondition.Burning); // 触れたら燃やす
+            }
+            else if (this.element == ElementType.Ice) // ※水属性がIceの場合
+            {
+                otherPlayer.ApplyStatus(StatusCondition.Wet);      // 触れたら濡らす
+            }
+        }
+    }
+
     private void OnCollisionExit2D(Collision2D collision) => CheckContact(collision, false);
     private void OnCollisionStay2D(Collision2D collision) => CheckContact(collision, true);
+
+    /// <summary>
+    /// 外部や接触から状態異常（燃焼・濡れ）を付与される
+    /// </summary>
+    public void ApplyStatus(StatusCondition newStatus)
+    {
+        currentStatus = newStatus;
+        Debug.Log($"{playerNumber}P の状態が変化: {newStatus}");
+        // 必要に応じてここで色の変化やパーティクル再生を呼び出せます
+    }
+
+    /// <summary>
+    /// ダメージを受ける処理（弾のヒット時など）
+    /// </summary>
+    public void TakeDamage(int damage)
+    {
+        if (isDead) return;
+
+        currentHp -= damage;
+        Debug.Log($"{playerNumber}P がダメージを受けました！ 残りHP: {currentHp}");
+
+        if (currentHp <= 0)
+        {
+            Die();
+        }
+    }
+
+    /// <summary>
+    /// 死亡処理
+    /// </summary>
+    private void Die()
+    {
+        isDead = true;
+        CanMove = false;
+        rb.velocity = Vector2.zero;
+
+        if (anim != null)
+        {
+            anim.SetTrigger("Die");
+        }
+
+        if (audioSource != null && audioSource.isPlaying)
+        {
+            audioSource.Stop();
+        }
+
+        Debug.Log($"{playerNumber}P が死亡しました。");
+    }
 
     private void CheckContact(Collision2D collision, bool state)
     {
@@ -418,23 +465,18 @@ public class PlayerController : MonoBehaviour
         if (networkManager == null) return;
 
         InGameMoveData playerData = new InGameMoveData();
-
         playerData.dataType = "player";
         playerData.room_id = networkManager.myRoomID;
 
         int myRealChara = networkManager.myRealSelectedChar;
-
         if (myRealChara == -1)
         {
             myRealChara = (Element == ElementType.Fire) ? 0 : 1;
         }
         playerData.char_index = myRealChara;
-
         playerData.position_x = pos.x;
         playerData.position_y = pos.y;
-
         playerData.is_flip_x = spriteRenderer != null && spriteRenderer.flipX;
-
         playerData.IsGrounded = groundedStatus;
 
         var jsonMsg = JsonUtility.ToJson(playerData);
@@ -474,7 +516,6 @@ public class PlayerController : MonoBehaviour
         if (anim == null) return;
 
         float currentHorizontalSpeed = Mathf.Abs(simulatedVelocity.x);
-
         if (currentHorizontalSpeed < RemoteSpeedThreshold) currentHorizontalSpeed = 0f;
 
         anim.SetFloat("Speed", currentHorizontalSpeed);

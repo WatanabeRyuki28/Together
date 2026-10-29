@@ -275,14 +275,6 @@ public class ObjectOnlineCommunication : MonoBehaviour
         {
             var targetObj = syncObjects[data.id];
 
-            // ★ 破壊可能な壁（FireDestructibleWall）が含まれている場合は相手画面でも破壊を実行
-            FireDestructibleWall fireWall = targetObj.GetComponent<FireDestructibleWall>();
-            if (fireWall != null)
-            {
-                fireWall.OnBreakFromNetwork();
-                return;
-            }
-
             // 通常の動的オブジェクトの位置更新
             targetObj.UpdatePositionFromNetwork(targetPos);
         }
