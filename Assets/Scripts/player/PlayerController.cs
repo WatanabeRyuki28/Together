@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour
     private const float MinFlipInputThreshold = 0.1f;
     private const float StickDeadZone = 0.2f;
     private const float MinGroundAngleY = 0.5f;
-    private const float BoxCheckDistance = 0.5f;
+    private const float BoxCheckDistance = 1.0f;
     private const float PositionSyncThreshold = 0.01f;
     private const float RemoteSpeedThreshold = 0.2f;
     private const float RemoteLerpFactor = 0.05f;
@@ -33,8 +33,8 @@ public class PlayerController : MonoBehaviour
 
     [Header("移動・ジャンプ設定")]
     [SerializeField] private float moveSpeed = 5.0f;               // 基本の移動速度
-    [SerializeField] private float pushSpeedMultiplier = 0.5f; // オブジェクト押し出し中の移動速度倍率
-    [SerializeField] private float jumpForce = 6.5f;               // ジャンプ時に加える力の強さ
+    [SerializeField] private float pushSpeedMultiplier = 0.01f; // オブジェクト押し出し中の移動速度倍率
+    [SerializeField] private float jumpForce = 6.5f;        
 
     [Header("射撃（クールタイム）設定")]
     [SerializeField] private float fireRate = 0.3f; // 次の弾を撃つまでに必要な待機時間（秒）
@@ -222,6 +222,9 @@ public class PlayerController : MonoBehaviour
 
     private void Move()
     {
+
+     
+
         float moveInput = 0f;
 
         if (useKeyboard)
@@ -256,7 +259,12 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            bool isActuallyPushing = isPushing && IsInputtingTowardsBox(moveInput);
+            //bool isActuallyPushing = isPushing && IsInputtingTowardsBox(moveInput);
+            bool rayHit = IsInputtingTowardsBox(moveInput);
+            bool isActuallyPushing = isPushing && rayHit;
+
+            Debug.Log($"isPushing: {isPushing} / Raycast当たってる?: {rayHit}");
+
             float currentSpeed = isActuallyPushing ? moveSpeed * pushSpeedMultiplier : moveSpeed;
             rb.velocity = new Vector2(moveInput * currentSpeed, rb.velocity.y);
         }
@@ -274,6 +282,11 @@ public class PlayerController : MonoBehaviour
     private bool IsInputtingTowardsBox(float moveInput)
     {
         if (moveInput == 0) return false;
+
+        Vector2 rayOrigin = transform.position;
+
+        // ★ Sceneビューに赤い光線を表示する（ゲーム画面には見えません）
+        Debug.DrawRay(rayOrigin, new Vector2(moveInput, 0) * BoxCheckDistance, Color.red);
 
         RaycastHit2D hit = Physics2D.Raycast(transform.position, new Vector2(moveInput, 0), BoxCheckDistance, pushableLayer);
         return hit.collider != null;
