@@ -460,46 +460,36 @@ public class PlayerController : MonoBehaviour
         if (isPushableLayer) isPushing = state;
     }
 
+    
+    #region  送信
+
     private async void SendPlayerData(Vector3 pos, bool groundedStatus)
     {
         if (networkManager == null) return;
-
-        InGameMoveData playerData = new InGameMoveData();
-        playerData.dataType = "player";
-        playerData.room_id = networkManager.myRoomID;
 
         int myRealChara = networkManager.myRealSelectedChar;
         if (myRealChara == -1)
         {
             myRealChara = (Element == ElementType.Fire) ? 0 : 1;
         }
-        playerData.char_index = myRealChara;
-        playerData.position_x = pos.x;
-        playerData.position_y = pos.y;
-        playerData.is_flip_x = spriteRenderer != null && spriteRenderer.flipX;
-        playerData.IsGrounded = groundedStatus;
 
-        var jsonMsg = JsonUtility.ToJson(playerData);
-        await networkManager.SendMessageAsync(jsonMsg);
+        networkManager.SendPlayerPosition(
+            myRealChara,
+            pos.x,
+            pos.y,
+            groundedStatus,
+            spriteRenderer != null && spriteRenderer.flipX
+        );
+
     }
+
 
     private async void SendSpawnProjectileEvent(Vector3 pos, float dir, int bulletIndex)
     {
-        if (networkManager == null) return;
-
-        InGameMoveData spawnData = new InGameMoveData
-        {
-            dataType = "spawn_projectile",
-            room_id = networkManager.myRoomID,
-            char_index = bulletIndex,
-            position_x = pos.x,
-            position_y = pos.y,
-            id = (int)dir
-        };
-
-        string json = JsonUtility.ToJson(spawnData);
-        await networkManager.SendMessageAsync(json);
+        NetworkManager.Instance.SendSpawnProjectile(pos, dir, bulletIndex);
     }
+
+    #endregion
 
     private void UpdateAnimationParameters(Vector2 velocity)
     {
