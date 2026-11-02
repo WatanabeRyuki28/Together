@@ -129,6 +129,9 @@ MonoBehaviour:
   speed: 10
   lifeTime: 1.5
   projectileType: 2
+  useParabola: 1
+  gravityScale: 3
+  upwardForce: 9.06
   collisionLayers:
     serializedVersion: 2
     m_Bits: 269313
