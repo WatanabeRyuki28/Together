@@ -30,6 +30,10 @@ public class StageManager : MonoBehaviour
     [SerializeField] private Color lockedColor = new Color(0.3f, 0.3f, 0.3f, 1f);
     [SerializeField] private GameObject gestPanel;
 
+    [Header("デバッグ用（開発時のみ全ステージ解放などにする場合）")]
+    [SerializeField] private bool debugUnlockAll = false;
+    [SerializeField] private int debugUnlockedStageIndex = 0;
+
     private CommunicationUI controls;
 
     void Awake()
@@ -43,9 +47,7 @@ public class StageManager : MonoBehaviour
 
         if (NetworkManager.Instance != null)
         {
-            // 参加時の初期化データが来たらどうするかを登録
             NetworkManager.Instance.OnStageSelected += HandleRemoteStageMessage;
-          
         }
     }
 
@@ -53,12 +55,9 @@ public class StageManager : MonoBehaviour
     {
         if (controls != null) controls.StageSelect.Disable();
 
-
         if (NetworkManager.Instance != null)
         {
-            // 参加時の初期化データが来たらどうするかを登録
             NetworkManager.Instance.OnStageSelected -= HandleRemoteStageMessage;
-           
         }
     }
 
@@ -71,12 +70,24 @@ public class StageManager : MonoBehaviour
             SaveManager.Instance.LoadGame();
         }
 
+        // ★ 先に解放ステージ数を計算・確定させる
         int clearedCount = GetClearedStageCountFromSave();
-        maxUnlockedStageIndex = Mathf.Clamp(clearedCount, 0, stageButtons.Length - 1);
+        int unlockedFromSave = Mathf.Clamp(clearedCount, 0, stageButtons.Length - 1);
+
+        if (debugUnlockAll)
+        {
+            maxUnlockedStageIndex = stageButtons.Length - 1; // 全ステージ解放
+        }
+        else
+        {
+            // セーブデータとデバッグ用指定の大きい方を採用
+            maxUnlockedStageIndex = Mathf.Max(unlockedFromSave, Mathf.Clamp(debugUnlockedStageIndex, 0, stageButtons.Length - 1));
+        }
 
         currentStageIndex = 0; // 初期位置は Stage 1
         isHomeSelected = false;
 
+        // 解放数が決まったあとにUIを更新する
         UpdateCursorPosition();
         UpdateItemIconsDisplay();
 
@@ -166,7 +177,9 @@ public class StageManager : MonoBehaviour
         if (isMoved)
         {
             UpdateCursorPosition();
-            SendStageSelectNotification(currentStageIndex,  false);
+            // ホーム選択中の場合は stage_index を -1 として送る
+            int sendIndex = isHomeSelected ? -1 : currentStageIndex;
+            SendStageSelectNotification(sendIndex, false);
         }
 
         if (controls.StageSelect.Submit.triggered)
@@ -184,19 +197,15 @@ public class StageManager : MonoBehaviour
     {
         if (SaveManager.Instance != null)
         {
-            // SaveManagerのStageClearCountプロパティから値を取得する
             return SaveManager.Instance.StageClearCount;
         }
         return 0;
-
     }
 
     public static void ClearStage(int clearedStageIndex)
     {
         if (SaveManager.Instance == null) return;
 
-        // 現在のクリア数より大きいステージをクリアした場合のみセーブデータを更新
-        // （例: Stage1クリア（index=0）の時、クリア数が0なら1にカウントアップ）
         int nextClearCount = clearedStageIndex + 1;
 
         if (SaveManager.Instance.StageClearCount < nextClearCount)
@@ -249,11 +258,10 @@ public class StageManager : MonoBehaviour
             if (starTransform != null && starTransform.TryGetComponent<SpriteRenderer>(out SpriteRenderer starRenderer))
             {
                 itemIcons[i] = starRenderer;
-                starRenderer.enabled = true; 
+                starRenderer.enabled = true;
 
                 string targetItemId = ItemIdPrefix + i;
 
-            
                 if (!isUnlocked)
                 {
                     if (missingStarSprite != null) starRenderer.sprite = missingStarSprite;
@@ -270,6 +278,7 @@ public class StageManager : MonoBehaviour
             }
         }
     }
+
     private Transform FindChildRecursive(Transform parent, string name)
     {
         foreach (Transform child in parent)
@@ -311,12 +320,16 @@ public class StageManager : MonoBehaviour
     #region 受信
     public void HandleRemoteStageMessage(NetMessage stageData)
     {
-       
         if (stageData == null) return;
 
+        // 自分が送信したメッセージでなければ処理する
         if (stageData.type == "stage_select" && stageData.name_id != NetworkManager.Instance.myPlayerId)
         {
-            if (!stageData.stage_ready)
+            // ★ stage_ready ではなく is_ready をログに出すように確認用修正
+            Debug.Log($"<color=cyan>【受信】ステージ同期データ受取: index={stageData.stage_index}, is_ready={stageData.is_ready}</color>");
+
+            // ★ ここを stage_ready から is_ready に変更
+            if (!stageData.is_ready)
             {
                 if (stageData.stage_index == -1)
                 {
@@ -331,8 +344,17 @@ public class StageManager : MonoBehaviour
             }
             else
             {
-                if (stageData.stage_index == -1) LoadHomeScene();
-                else LoadTargetScene(stageData.stage_index);
+                // ホストが「決定」したときのシーン移行
+                Debug.Log($"<color=magenta>【受信】ホストがステージ決定！ index={stageData.stage_index} に移行します</color>");
+
+                if (stageData.stage_index == -1)
+                {
+                    LoadHomeScene();
+                }
+                else
+                {
+                    LoadTargetScene(stageData.stage_index);
+                }
             }
         }
     }
@@ -342,7 +364,7 @@ public class StageManager : MonoBehaviour
     {
         if (controls != null) controls.StageSelect.Disable();
         NetworkManager.Instance.DeleteData();
-        SceneManager.LoadScene("SecondScene"); 
+        SceneManager.LoadScene("SecondScene");
     }
 
     private void LoadTargetScene(int stageIndex)

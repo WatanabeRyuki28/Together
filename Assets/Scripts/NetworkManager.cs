@@ -112,6 +112,8 @@ public class NetworkManager : MonoBehaviour
     {
         NetMessage msg = JsonUtility.FromJson<NetMessage>(jsonMsg);
 
+        Debug.Log($"<color=orange>変換結果 -> type: {msg.type}, name_id: {msg.name_id}, index: {msg.index}</color>");
+
         // type や dataType に応じて、登録されているイベントを一斉に発火（通知）する
         if (msg.type == "init")
         {
@@ -185,7 +187,7 @@ public class NetworkManager : MonoBehaviour
     {
         var data = new NetMessage
         {
-            type = "lobby_to_char",
+            type = "lobby_status",
             IsStarted = true,
             name_id = myPlayerId,
             room_id = myRoomID,
