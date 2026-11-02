@@ -3,15 +3,12 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
-using Unity.VisualScripting;
 using System;
 
 public class TopViewClient : MonoBehaviour
 {
     [SerializeField] InputField inputPlayerName;
     [SerializeField] InputField inputRoomId;
-
-
 
     public GameObject InputPanel;
     public GameObject LobbyPanel;
@@ -26,9 +23,6 @@ public class TopViewClient : MonoBehaviour
 
     [SerializeField] private GameObject WaitingForGuestText;
 
-
-    private string remotePlayer;
-
     private CommunicationUI controls;
 
     void Start()
@@ -40,14 +34,26 @@ public class TopViewClient : MonoBehaviour
 
         Startflag = false;
         controls = new CommunicationUI();
-
         controls.UI.Enable();
+
+        if (NetworkManager.Instance != null)
+        {
+            NetworkManager.Instance.OnInitReceived -= HandleInit;
+            NetworkManager.Instance.OnInitReceived += HandleInit;
+
+            NetworkManager.Instance.OnLobbyStatusReceived -= HandleLobbyStatus;
+            NetworkManager.Instance.OnLobbyStatusReceived += HandleLobbyStatus;
+
+            Debug.Log("<color=green>【TopViewClient】NetworkManagerのイベントを登録しました</color>");
+        }
+        else
+        {
+            Debug.LogError("【TopViewClient】NetworkManager.Instanceが見つかりません！");
+        }
     }
+
     void Update()
     {
-
-        
-
         GameObject keyboardMenu = GameObject.Find("CanvasKeyborad");
         if (keyboardMenu != null && keyboardMenu.activeSelf)
         {
@@ -72,17 +78,18 @@ public class TopViewClient : MonoBehaviour
             }
         }
 
-        // 4. GameStart（Xボタン）の処理
+        // GameStart（Xボタン）の処理
+
         if (controls.UI.GameStart.triggered)
         {
             if (LobbyPanel != null && LobbyPanel.activeSelf && Startflag == true)
             {
                 Debug.Log("-> SendPlayerDataを実行します");
                 SendGameStartMessage();
-              
             }
         }
     }
+
     private void OnDestroy()
     {
         if (controls != null)
@@ -94,13 +101,7 @@ public class TopViewClient : MonoBehaviour
 
     private void OnEnable()
     {
-        if (NetworkManager.Instance != null)
-        {
-            // 参加時の初期化データが来たらどうするかを登録
-            NetworkManager.Instance.OnInitReceived += HandleInit;
-            // 誰かの入退室ステータスが来たらどうするかを登録
-            NetworkManager.Instance.OnLobbyStatusReceived += HandleLobbyStatus;
-        }
+      
     }
 
     private void OnDisable()
@@ -112,6 +113,7 @@ public class TopViewClient : MonoBehaviour
         }
     }
 
+    // 自分の初期情報（init）を受け取ったとき
     private void HandleInit(NetMessage msg)
     {
         NetworkManager.Instance.myPlayerId = msg.name_id;
@@ -119,68 +121,38 @@ public class TopViewClient : MonoBehaviour
         NetworkManager.Instance.myPlayerIndex = msg.index;
 
         Debug.Log($"<color=cyan>【システム】接続完了。自分のID: {msg.name_id}, 入室順: {msg.index}</color>");
-        UpdateLobbyUI();
+
+        // 自分のインデックス（0 または 1）の場所に名前を反映
+        UpdatePlayerUI(msg.index, msg.name_id);
     }
 
+    // サーバーからロビーの状態（lobby_status）を受け取ったとき
     private void HandleLobbyStatus(NetMessage msg)
     {
-        if (msg.name_id != NetworkManager.Instance.myPlayerId)
+        Debug.Log($"<color=red>★HandleLobbyStatusが呼ばれたよ！ 名前: {msg.name_id}, インデックス: {msg.index}, IsStarted: {msg.IsStarted}</color>");
+
+        // ★★★ ここを追加：ゲーム開始の合図が来たら最優先でシーンを切り替える ★★★
+        if (msg.IsStarted)
         {
-            remotePlayer = msg.name_id;
-            UpdateLobbyUI();
+            Debug.Log("<color=green>【シーン移行】ゲーム開始シグナルを受信しました。キャラクターセレクトへ移動します</color>");
+            SceneManager.LoadScene("CharacterSelectScene");
+            return;
         }
+
+        if (msg.index == 0) P1Text.text = msg.name_id;
+        else if (msg.index == 1) P2Text.text = msg.name_id;
+
+        CheckStartButtonCondition();
     }
 
     #region 送信
     public void SendGameStartMessage()
     {
-        // NetworkManagerの便利関数を呼ぶだけ！
         NetworkManager.Instance.SendGameStart();
-
-        // シーン切り替え
         SceneManager.LoadScene("CharacterSelectScene");
     }
     #endregion
 
-    #region 受信
-    public void HandleMessage(string msg)
-    {
-        // 共通のレスポンス構造をチェック
-        var res = JsonUtility.FromJson<NetMessage>(msg);
-
-        if (res.type == "init")
-        {
-           
-            // 自分の情報をNetworkManager側に保存してもらう
-            NetworkManager.Instance.myPlayerId = res.name_id;
-            NetworkManager.Instance.myRoomID = res.room_id;
-            NetworkManager.Instance.myPlayerIndex = res.index;
-
-            Debug.Log($"<color=cyan>【システム】接続完了。自分のID: {res.name_id}, 入室順: {res.index}</color>");
-            UpdateLobbyUI();
-           
-            return;
-
-        }
-        else if (res.type == "lobby_status")
-        {
-            // 自分以外のプレイヤーなら、対戦相手として名前を登録する
-            if (res.name_id != NetworkManager.Instance.myPlayerId)
-            {
-                remotePlayer = res.name_id;
-              
-                UpdateLobbyUI();
-            }
-            return;
-        }
-        else
-        {
-            HandleWebSocketMessage(msg);
-        }
-
-
-    }
-    #endregion
     public void PushJoinButton()
     {
         var playerNameInput = inputPlayerName.text;
@@ -196,58 +168,33 @@ public class TopViewClient : MonoBehaviour
 
         Init(false, true);
 
+        // ボタンを押した瞬間に自分の名前をP1へ仮置きし、相方を「待機中...」にする
+        P1Text.text = playerNameInput;
+        P2Text.text = "待機中...";
+
         // 通信開始をNetworkManagerに依頼する
         NetworkManager.Instance.Connect(playerNameInput, roomIdInput);
     }
 
-  
     private void Init(bool IP, bool LP)
     {
         InputPanel.SetActive(IP);
         LobbyPanel.SetActive(LP);
     }
 
-    private void UpdateLobbyUI()
+    // インデックスごとにテキストを割り当て、スタートボタンの条件をチェックする
+    private void UpdatePlayerUI(int index, string playerName)
     {
-        MatchNowflag = false;
-
-        int myIndex = NetworkManager.Instance.myPlayerIndex;
-        string myId = NetworkManager.Instance.myPlayerId;
-
-        
-
-        if (myIndex == 0)
+        if (index == 0)
         {
-            P1Text.text = myId;
-            P2Text.text = string.IsNullOrEmpty(remotePlayer) ? "待機中..." : remotePlayer;
+            P1Text.text = playerName;
         }
-        else if (myIndex == 1)
+        else if (index == 1)
         {
-            P1Text.text = string.IsNullOrEmpty(remotePlayer) ? "待機中..." : remotePlayer;
-            P2Text.text = myId;
+            P2Text.text = playerName;
         }
 
         CheckStartButtonCondition();
-    }
-
-    private void HandleWebSocketMessage(string msg)
-    {
-        var playerData = JsonUtility.FromJson<NetMessage>(msg);
-
-        if (playerData.IsStarted)
-        {
-            // ここで次のシーンへ！NetworkManagerは生き残ります
-            SceneManager.LoadScene("CharacterSelectScene");
-            UIInit();
-            return;
-        }
-
-        if (playerData.name_id != NetworkManager.Instance.myPlayerId)
-        {
-            remotePlayer = playerData.name_id;
-            UpdateLobbyUI();
-        }
-      
     }
 
     private void CheckStartButtonCondition()
@@ -255,8 +202,8 @@ public class TopViewClient : MonoBehaviour
         bool isP1Ready = !string.IsNullOrEmpty(P1Text.text) && P1Text.text != "待機中...";
         bool isP2Ready = !string.IsNullOrEmpty(P2Text.text) && P2Text.text != "待機中...";
 
-
         int myIndex = NetworkManager.Instance.myPlayerIndex;
+
         // 自分がホスト（P1）の場合
         if (myIndex == 0)
         {
@@ -264,25 +211,23 @@ public class TopViewClient : MonoBehaviour
 
             if (isP1Ready && isP2Ready)
             {
-                
                 HostText.SetActive(true);
                 if (WaitingForGuestText != null) WaitingForGuestText.SetActive(false);
                 Startflag = true;
             }
             else
             {
-                // 自分はいるけど、ゲストがまだ来ていない
                 HostText.SetActive(false);
-                if (WaitingForGuestText != null) WaitingForGuestText.SetActive(true); // ★「ゲストの参加を待ってます」を表示
+                if (WaitingForGuestText != null) WaitingForGuestText.SetActive(true);
                 Startflag = false;
             }
         }
-        //　自分がゲスト（P2）の場合
+        // 自分がゲスト（P2）の場合
         else
         {
             HostText.SetActive(false);
-            if (WaitingForGuestText != null) WaitingForGuestText.SetActive(false); // ゲストなのでホスト用待機表示は出さない
-            GestText.SetActive(true); // 「ホストの開始を待っています」を表示
+            if (WaitingForGuestText != null) WaitingForGuestText.SetActive(false);
+            GestText.SetActive(true);
             Startflag = false;
         }
     }
@@ -294,19 +239,15 @@ public class TopViewClient : MonoBehaviour
             Debug.Log("サーバー接続を切断中...");
             await NetworkManager.Instance.ws.Close();
             Debug.Log("サーバー接続完了");
-
         }
         MatchNowflag = true;
         NetworkManager.Instance.DeleteData();
 
         UIInit();
-        
     }
 
     private void UIInit()
     {
-        remotePlayer = string.Empty;
-
         P1Text.text = string.Empty;
         P2Text.text = string.Empty;
         HostText.SetActive(false);

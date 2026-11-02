@@ -7785,6 +7785,8 @@ MonoBehaviour:
   - {fileID: 1744915910}
   lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
   gestPanel: {fileID: 470376748}
+  debugUnlockAll: 1
+  debugUnlockedStageIndex: 0
 --- !u!1001 &1895143028
 PrefabInstance:
   m_ObjectHideFlags: 0

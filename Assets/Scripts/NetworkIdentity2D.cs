@@ -52,7 +52,7 @@ public class NetworkIdentity2D : MonoBehaviour
         // 自分が権利を持っている時は、動いたら通信を送る
         if (Time.time >= nextSendTime && Vector2.Distance(transform.position, lastPosition) > 0.01f)
         {
-            SendObjectData();
+            SendPositionToNetwork();
             lastPosition = transform.position;
             nextSendTime = Time.time + sendInterval;
         }
@@ -100,18 +100,15 @@ public class NetworkIdentity2D : MonoBehaviour
         transform.position = targetPos;
     }
 
-    private async void SendObjectData()
+    /// <summary>
+    /// NetworkManager を経由して現在の位置とIDをサーバーに送信する
+    /// </summary>
+    private void SendPositionToNetwork()
     {
-        if (NetworkManager.Instance == null) return;
-
-        NetMessage data = new NetMessage();
-        data.dataType = "object";
-        data.room_id = NetworkManager.Instance.myRoomID;
-        data.id = objectId;
-        data.position_x = transform.position.x;
-        data.position_y = transform.position.y;
-
-        string json = JsonUtility.ToJson(data);
-        await NetworkManager.Instance.SendMessageAsync(json);
+        if (NetworkManager.Instance != null)
+        {
+            // NetworkManager に追加した専用メソッドを呼び出す
+            NetworkManager.Instance.SendObjectPosition(objectId, transform.position.x, transform.position.y);
+        }
     }
 }

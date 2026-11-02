@@ -31,6 +31,7 @@ public class FloorSwitch : MonoBehaviour
     private int currentOverlapCount = 0;
     private float nextSoundTime = 0f; // 音の連続再生を制御するタイマー
 
+    
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -38,6 +39,8 @@ public class FloorSwitch : MonoBehaviour
 
         audioSource.playOnAwake = false;
         audioSource.spatialBlend = 0f;
+
+
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -51,6 +54,8 @@ public class FloorSwitch : MonoBehaviour
             if (currentOverlapCount == 1)
             {
                 SetSwitchState(true);
+
+                targetDoorA.DustCloudCheck(false);
             }
         }
     }
@@ -61,6 +66,8 @@ public class FloorSwitch : MonoBehaviour
         {
             currentOverlapCount--;
 
+            
+
             // カウンターがマイナスにならないように安全対策
             if (currentOverlapCount < 0) currentOverlapCount = 0;
 
@@ -68,7 +75,10 @@ public class FloorSwitch : MonoBehaviour
             if (currentOverlapCount == 0)
             {
                 SetSwitchState(false);
+
+                targetDoorA.DustCloudCheck(true);
             }
+
         }
     }
 

@@ -112,6 +112,8 @@ public class NetworkManager : MonoBehaviour
     {
         NetMessage msg = JsonUtility.FromJson<NetMessage>(jsonMsg);
 
+        Debug.Log($"<color=orange>変換結果 -> type: {msg.type}, name_id: {msg.name_id}, index: {msg.index}</color>");
+
         // type や dataType に応じて、登録されているイベントを一斉に発火（通知）する
         if (msg.type == "init")
         {
@@ -185,7 +187,7 @@ public class NetworkManager : MonoBehaviour
     {
         var data = new NetMessage
         {
-            type = "lobby_to_char",
+            type = "lobby_status",
             IsStarted = true,
             name_id = myPlayerId,
             room_id = myRoomID,
@@ -311,6 +313,19 @@ public class NetworkManager : MonoBehaviour
         await SendJsonAsync(data);
     }
 
+    public async void SendObjectPosition(int objectId, float x, float y)
+    {
+        var data = new NetMessage
+        {
+            dataType = "object",     
+            id = objectId,            
+            room_id = myRoomID,
+            name_id = myPlayerId,
+            position_x = x,
+            position_y = y
+        };
+        await SendJsonAsync(data);
+    }
     // 内部でJsonに変換して送信する共通ヘルパー
     private async Task SendJsonAsync(object payload)
     {
