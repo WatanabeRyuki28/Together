@@ -169,7 +169,7 @@ MonoBehaviour:
   currentStatus: 1
   moveSpeed: 7
   pushSpeedMultiplier: 0.5
-  jumpForce: 13
+  jumpForce: 15.5
   fireRate: 1
   jumpSound: {fileID: 8300000, guid: 6e2efba68f309654ab1d43dc9675e1d6, type: 3}
   shootSound: {fileID: 8300000, guid: 43777e74804c2394fa979b97a1b697c9, type: 3}
