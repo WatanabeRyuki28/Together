@@ -311,6 +311,19 @@ public class NetworkManager : MonoBehaviour
         await SendJsonAsync(data);
     }
 
+    public async void SendObjectPosition(int objectId, float x, float y)
+    {
+        var data = new NetMessage
+        {
+            dataType = "object",     
+            id = objectId,            
+            room_id = myRoomID,
+            name_id = myPlayerId,
+            position_x = x,
+            position_y = y
+        };
+        await SendJsonAsync(data);
+    }
     // 内部でJsonに変換して送信する共通ヘルパー
     private async Task SendJsonAsync(object payload)
     {
