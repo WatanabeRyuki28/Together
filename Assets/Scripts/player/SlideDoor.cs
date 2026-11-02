@@ -1,3 +1,5 @@
+using Unity.VisualScripting;
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
@@ -31,6 +33,11 @@ public class WarpDoor : MonoBehaviour
     // アニメーターのパラメーター名（IsOpen）のハッシュ値
     private static readonly int IsOpenParam = Animator.StringToHash("IsOpen");
 
+    // エフェクト
+    [SerializeField] DustCloudCheck dust1;
+    [SerializeField] DustCloudCheck dust2;
+    private Coroutine dustCoroutine;
+
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -41,8 +48,15 @@ public class WarpDoor : MonoBehaviour
         audioSource.playOnAwake = false;
         audioSource.spatialBlend = 0f; // 2Dサウンドとしてハッキリ鳴らす
 
+        DustCloudCheck[] dusts = GetComponentsInChildren<DustCloudCheck>();
+
+        if (dusts.Length > 0) dust1 = dusts[0];
+        if (dusts.Length > 1) dust2 = dusts[1];
+
+
         // ゲーム開始時の初期化（最初は閉じているので壁にする）
         UpdateColliderState();
+
     }
 
     // スッチから呼ばれる、扉の開閉状態を設定するメソッド
@@ -67,7 +81,36 @@ public class WarpDoor : MonoBehaviour
         else
         {
             //PlaySound(closeSound);
+          
         }
+    }
+
+    public void DustCloudCheck(bool isClose)
+    {
+        if (dust1 != null&&isClose)
+        {
+            if (dustCoroutine != null)
+            {
+                StopCoroutine(dustCoroutine);
+            }
+
+            // 新しくコルーチンをスタートして記憶する
+            dustCoroutine = StartCoroutine(DelayDustCoroutine());
+
+        }
+    }
+
+    private IEnumerator DelayDustCoroutine()
+    {
+        // 1秒間待つ
+        yield return new WaitForSeconds(0.5f);
+
+        dust1.DustCloud();
+        dust2.DustCloud();
+
+
+        // 終わったら変数を空にする
+        dustCoroutine = null;
     }
 
     // 扉の開閉状態に応じてコライダーの性質を切り替える処理
@@ -86,6 +129,10 @@ public class WarpDoor : MonoBehaviour
             // 扉が閉じている：物理的な壁にする（Is Trigger を OFF にする）
             doorCollider.isTrigger = false;
             Debug.Log($"{gameObject.name} が閉じたため、通行不可の壁になりました。");
+
+
+
+            
         }
     }
 
@@ -97,6 +144,8 @@ public class WarpDoor : MonoBehaviour
             audioSource.PlayOneShot(clip);
         }
     }
+
+    
 
     // --- 【ワープ判定・処理】将来使う場合はここのコメントアウトを外してください ---
     // private void OnTriggerEnter2D(Collider2D other)
