@@ -1,16 +1,18 @@
 using UnityEngine;
 
 /// <summary>
-/// 水キャラクターのみが触れて水位を上げることができる貯水ギミック
+/// 水の弾（攻撃）が当たったときのみ水位が上昇する貯水ギミック（接触では反応しない）
 /// </summary>
-public class WaterStorageGimmick : MonoBehaviour
+public class WaterStorageGimmick : MonoBehaviour, IInteractable
 {
-    private bool isActivated = false;
-
     [Header("水位上昇の設定")]
     [SerializeField] private float waterRaiseAmount = 2.0f; // 水位が上がる高さや量
     [SerializeField] private float raiseSpeed = 1.0f;       // 水位が上昇するスピード
     [SerializeField] private GameObject waterObject;        // 実際に動かす水のオブジェクト
+
+    [Header("制限設定")]
+    [SerializeField] private bool canRaiseMultipleTimes = false; // 何回も水位を上げられるようにするかどうか
+    private bool hasRaised = false;
 
     private Vector3 targetPosition;
     private bool shouldRaise = false;
@@ -19,7 +21,7 @@ public class WaterStorageGimmick : MonoBehaviour
     {
         if (waterObject != null)
         {
-            // 目標の水位位置を計算
+            // 初期位置から目標の水位位置を計算
             targetPosition = waterObject.transform.position + new Vector3(0f, waterRaiseAmount, 0f);
         }
     }
@@ -37,28 +39,20 @@ public class WaterStorageGimmick : MonoBehaviour
         }
     }
 
-    private void OnCollisionStay2D(Collision2D collision)
+    /// <summary>
+    /// 水の弾（Projectile）などの攻撃が当たったときにのみ呼ばれる
+    /// </summary>
+    public void OnInteract(ElementType element)
     {
-        if (isActivated) return;
+        if (!canRaiseMultipleTimes && hasRaised) return;
 
-        PlayerController player = collision.gameObject.GetComponent<PlayerController>();
-        if (player != null)
+        // 水の攻撃（ElementType.Ice）が当たった場合のみ起動する
+        if (element == ElementType.Ice)
         {
-            // 水キャラクター（Ice または Water）のみが触れることができる
-            if (player.Element == ElementType.Ice)
-            {
-                ActivateWaterStorage(player);
-            }
+            hasRaised = true;
+            shouldRaise = true;
+
+            Debug.Log("水に攻撃が当たったため、水位が上昇します！");
         }
-    }
-
-    private void ActivateWaterStorage(PlayerController player)
-    {
-        isActivated = true;
-        shouldRaise = true;
-
-        Debug.Log($"{player.playerNumber}P（水キャラ）が貯水ギミックに触れました。水位が上昇します。");
-
-        // オンライン対戦などで他のプレイヤーにも状態を同期させたい場合はここでネットワーク送信処理を記述できます
     }
 }
