@@ -14,6 +14,9 @@ public class PushableBox : MonoBehaviour
     private Rigidbody2D rb;
     private AudioSource audioSource;
 
+    [SerializeField] GameObject fireEffect;
+    private bool hasExecuted = false;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -26,6 +29,11 @@ public class PushableBox : MonoBehaviour
     private void Update()
     {
         HandlePushSound();
+        if (Input.GetKey(KeyCode.L) && !hasExecuted)
+        {
+            FireBox();
+            hasExecuted = true;
+        }
     }
 
     /// <summary>
@@ -55,5 +63,13 @@ public class PushableBox : MonoBehaviour
                 audioSource.Stop();
             }
         }
+    }
+
+    private void FireBox()
+    {
+       
+            Instantiate(fireEffect, transform.position, fireEffect.transform.rotation);
+        
+        
     }
 }
