@@ -103,6 +103,7 @@ public class Projectile : MonoBehaviour
         PlayerController hitPlayer = other.GetComponent<PlayerController>();
         if (hitPlayer != null)
         {
+            // 状態異常（濡れる・燃えるなど）のみ適用
             if (projectileType == ElementType.Fire)
             {
                 hitPlayer.ApplyStatus(StatusCondition.Burning);
@@ -112,7 +113,7 @@ public class Projectile : MonoBehaviour
                 hitPlayer.ApplyStatus(StatusCondition.Wet);
             }
 
-            hitPlayer.TakeDamage(1);
+            // ダメージ処理（TakeDamage）を排除したため、プレイヤーは死にません
             Destroy(gameObject);
             return;
         }
