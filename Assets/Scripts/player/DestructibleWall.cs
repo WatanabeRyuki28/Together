@@ -7,8 +7,8 @@ public class DestructibleWall : MonoBehaviour, IInteractable
 {
     public enum WallType
     {
-        BurningWall, // 10: 燃えている壁（水キャラ・水属性でのみ破壊可能）[cite: 3]
-        GrassWall    // 11: 草の壁（炎キャラ・炎属性でのみ破壊可能）[cite: 3]
+        BurningWall, // 燃えている壁（水の球でのみ破壊可能・直接接触は不可）
+        GrassWall    // 草の壁（炎キャラの直接接触・炎の球で破壊可能）
     }
 
     // --- マジックナンバー排除用の定数定義 ---
@@ -44,22 +44,69 @@ public class DestructibleWall : MonoBehaviour, IInteractable
     }
 
     /// <summary>
-    /// インタラクト時の判定（弾や攻撃が当たった時に呼ばれる）
+    /// インタラクト時の判定（球/弾などの攻撃が当たった時に呼ばれる）
     /// </summary>
     public void OnInteract(ElementType type)
+    {
+        // 弾（球）が当たった場合はどちらの壁も属性チェックして破壊を試みる
+        TryBreakWall(type, isDirectContact: false);
+    }
+
+    /// <summary>
+    /// プレイヤー本体が物理衝突（通常のコライダー）で触れた時の処理
+    /// </summary>
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        CheckPlayerCollision(collision.gameObject);
+    }
+
+    /// <summary>
+    /// プレイヤー本体がトリガーコライダーで触れた時の処理
+    /// </summary>
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        CheckPlayerCollision(other.gameObject);
+    }
+
+    /// <summary>
+    /// 接触したオブジェクトがプレイヤーか判定し、対応する属性なら壁を壊す
+    /// </summary>
+    private void CheckPlayerCollision(GameObject targetObj)
+    {
+        if (isBreaking) return;
+
+        PlayerController player = targetObj.GetComponent<PlayerController>();
+        if (player != null)
+        {
+            // プレイヤー本体の直接接触として処理
+            TryBreakWall(player.Element, isDirectContact: true);
+        }
+    }
+
+    /// <summary>
+    /// 属性と接触方法に応じて壁を破壊するか判定し、実行する
+    /// </summary>
+    private void TryBreakWall(ElementType type, bool isDirectContact)
     {
         if (isBreaking) return;
 
         bool canBreak = false;
 
-        // 壁の種類に応じて破壊できる属性を判定
-        if (wallType == WallType.BurningWall && type == ElementType.Ice)
+        if (wallType == WallType.BurningWall)
         {
-            canBreak = true; // 燃えている壁は水で壊せる[cite: 3]
+            // 燃えている壁：水属性（Ice）の「球（弾）」が当たった時のみ破壊（直接接触は無効）
+            if (type == ElementType.Ice && !isDirectContact)
+            {
+                canBreak = true;
+            }
         }
-        else if (wallType == WallType.GrassWall && type == ElementType.Fire)
+        else if (wallType == WallType.GrassWall)
         {
-            canBreak = true; // 草の壁は炎で壊せる[cite: 3]
+            // 草の壁：炎属性（Fire）であれば「直接接触」でも「球（弾）」でも破壊可能
+            if (type == ElementType.Fire)
+            {
+                canBreak = true;
+            }
         }
 
         if (canBreak)
@@ -69,9 +116,9 @@ public class DestructibleWall : MonoBehaviour, IInteractable
             // オンライン通信中であれば他プレイヤーへ通知を送信
             SendObjectSyncEvent();
         }
-        else
+        else if (!isDirectContact)
         {
-            // 属性が合わない場合は弾かれる（失敗音）
+            // 弾（球）が当たったが属性が合わなかった場合は失敗音を鳴らす
             PlaySound(failSound);
         }
     }
