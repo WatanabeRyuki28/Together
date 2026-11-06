@@ -5,7 +5,8 @@ using UnityEngine;
 public class JumpPad : MonoBehaviour
 {
     [Header("ジャンプの設定")]
-    [SerializeField] private float jumpForce = 12.0f;
+    [Tooltip("通常ジャンプの倍の高さに合わせるため、必要に応じて数値を調整してください")]
+    [SerializeField] private float jumpForce = 16.0f; // 例: 通常より高い跳躍力
 
     [Header("Audio Settings (効果音)")]
     [SerializeField] private AudioClip launchSound;
@@ -25,10 +26,19 @@ public class JumpPad : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        // プレイヤーがトリガーに侵入したとき
         if (other.TryGetComponent<PlayerController>(out PlayerController player))
         {
-            player.isGrounded = true;
-            LaunchPlayer(other.gameObject, player);
+            // ★【改善】プレイヤーの「足元（コライダーの下端のY座標）」を取得する
+            float playerBottomY = other.bounds.min.y;
+
+            // ★【改善】ジャンプ台の基準位置（または上面のY座標）よりも足元が「上」にいるときだけ発動
+            // これにより、横から歩いてきたときは足元がジャンプ台より下にあるため反応しなくなります
+            if (playerBottomY >= transform.position.y)
+            {
+                player.isGrounded = true;
+                LaunchPlayer(other.gameObject, player);
+            }
         }
     }
 
@@ -36,11 +46,12 @@ public class JumpPad : MonoBehaviour
     {
         if (playerObj.TryGetComponent<Rigidbody2D>(out Rigidbody2D rb))
         {
+            // 上方向への速度をリセットしてから跳躍力を加えることで、落下中でも安定して高く跳ねる
             rb.velocity = new Vector2(rb.velocity.x, 0f);
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             player.isGrounded = false;
 
-            // ★【方法A】PlayerControllerの番号を読み取ってアニメーションを分岐
+            // 1Pと2Pでアニメーションを分岐
             if (playerObj.TryGetComponent<Animator>(out Animator playerAnim))
             {
                 if (player.playerNumber == 1)
