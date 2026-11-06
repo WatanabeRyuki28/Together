@@ -7,48 +7,58 @@ public class ElementHazardArea : MonoBehaviour
 {
     public enum AreaType
     {
-        Magma, // マグマ（炎キャラは安全、水キャラが通ると死亡、箱は燃える）
-        Water  // 水（水キャラは安全、炎キャラが通ると死亡、箱は浮く）
+        Magma, // 3: マグマ（炎キャラは安全、水キャラが通ると死ぬ）[cite: 1]
+        Water  // 4: 水（水キャラは安全、炎キャラが通ると死ぬ）[cite: 2]
     }
 
     [Header("エリアの設定")]
     [SerializeField] private AreaType areaType = AreaType.Magma;
     [SerializeField] private int fatalDamage = 999;              // 即死させるためのダメージ値
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        CheckPlayerSafety(collision.collider);
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        CheckPlayerSafety(collision.collider);
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        HandleHazardInteraction(collision);
+        CheckPlayerSafety(collision);
     }
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        HandleHazardInteraction(collision);
+        CheckPlayerSafety(collision);
     }
 
-    private void HandleHazardInteraction(Collider2D collision)
+    private void CheckPlayerSafety(Collider2D collisionCol)
     {
         // 1. プレイヤーの判定
-        PlayerController player = collision.GetComponent<PlayerController>();
+        PlayerController player = collisionCol.GetComponent<PlayerController>();
         if (player != null)
         {
             bool isDeadly = false;
 
             if (areaType == AreaType.Magma)
             {
-                // マグマ：水キャラ（Ice等）が通ったら死ぬ[cite: 1]
-                if (player.Element != ElementType.Fire)
+                // マグマ：水キャラ（Ice）が通ったら死ぬ[cite: 1]
+                if (player.Element == ElementType.Ice)
                 {
                     isDeadly = true;
-                    Debug.Log($"{player.playerNumber}Pがマグマに触れて死亡しました[cite: 1]。");
+                    Debug.Log($"{player.playerNumber}P（水キャラ）がマグマに触れて死亡しました[cite: 1]。");
                 }
             }
             else if (areaType == AreaType.Water)
             {
                 // 水：炎キャラ（Fire）が通ったら死ぬ[cite: 2]
-                if (player.Element != ElementType.Ice)
+                if (player.Element == ElementType.Fire)
                 {
                     isDeadly = true;
-                    Debug.Log($"{player.playerNumber}Pが水に入って死亡しました[cite: 2]。");
+                    Debug.Log($"{player.playerNumber}P（炎キャラ）が水に入って死亡しました[cite: 2]。");
                 }
             }
 
@@ -61,17 +71,17 @@ public class ElementHazardArea : MonoBehaviour
         }
 
         // 2. 箱（PushableBox）の判定
-        PushableBox box = collision.GetComponent<PushableBox>();
+        PushableBox box = collisionCol.GetComponent<PushableBox>();
         if (box != null)
         {
             if (areaType == AreaType.Magma)
             {
-                // マグマの上に乗ると燃える（移動させることができない）[cite: 1]
+                // マグマの上に乗ると燃える[cite: 1]
                 box.SetStatus(StatusCondition.Burning);
             }
             else if (areaType == AreaType.Water)
             {
-                // 水の上で浮く（水面を活用して上に乗せられる）[cite: 2]
+                // 水の上で浮く[cite: 2]
                 box.SetStatus(StatusCondition.Wet);
             }
         }
