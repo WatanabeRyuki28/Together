@@ -130,6 +130,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41ef92f66ac011c4abc15cf6f094ed41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentStatus: 0
   pushSound: {fileID: 8300000, guid: f2eaf613d95133743898a8771160cb92, type: 3}
   fireEffect: {fileID: 0}
 --- !u!212 &3328662985868542169
