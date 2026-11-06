@@ -19,5 +19,7 @@ public class EffectShrink : MonoBehaviour
 
         // ŠÔŒo‰ß‚Æ‚Æ‚à‚É­‚µ‚¸‚Âƒ[ƒ‚ÉŒü‚©‚Á‚Äk¬‚³‚¹‚é
         transform.localScale = Vector3.Lerp(startScale, Vector3.zero, t);
+
+        if(transform.localScale.x <= 0.0f && transform.localScale.y <= 0.0f) Destroy(gameObject);
     }
 }
