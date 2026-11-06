@@ -28,11 +28,17 @@ public class DestructibleWall : MonoBehaviour, IInteractable
     private AudioSource audioSource;
     private NetworkIdentity2D networkIdentity;
 
-    private bool isBreaking = false;
+    public bool isBreaking = false;
+
+   
+    public BoxCollider2D box;
 
     private void Awake()
     {
         networkIdentity = GetComponent<NetworkIdentity2D>();
+
+        
+        box = GetComponent<BoxCollider2D>();
 
         // AudioSourceのキャッシュ
         audioSource = GetComponent<AudioSource>();
@@ -43,6 +49,15 @@ public class DestructibleWall : MonoBehaviour, IInteractable
         audioSource.spatialBlend = SpatialBlend2D;
     }
 
+    void Update()
+    {
+        if (isBreaking)
+        {
+            if (transform.localScale.x >= 0.0f) { transform.localScale -= Vector3.right * 0.005f; }
+            if (transform.localScale.y >= 0.0f) { transform.localScale -= Vector3.up * 0.005f; }
+
+        }
+    }
     /// <summary>
     /// インタラクト時の判定（球/弾などの攻撃が当たった時に呼ばれる）
     /// </summary>
@@ -143,8 +158,12 @@ public class DestructibleWall : MonoBehaviour, IInteractable
 
         SpawnBreakEffect();
 
+
+       box.isTrigger = true;
+
+
         // 復活処理を行わず、即座にオブジェクトを完全に削除
-        Destroy(gameObject);
+        Destroy(gameObject,2.0f);
     }
 
     /// <summary>
@@ -185,6 +204,15 @@ public class DestructibleWall : MonoBehaviour, IInteractable
             transform.position,
             Quaternion.identity
         );
+
+       /* Vector2 pos = transform.position;
+        Instantiate(
+            breakEffectPrefab,
+            new Vector2(pos.x,pos.y + 2),
+            Quaternion.identity
+        ) ;*/
+
+     
     }
 
     private void PlaySound(AudioClip clip)
