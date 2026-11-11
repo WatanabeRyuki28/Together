@@ -126,12 +126,12 @@ TextureImporter:
       name: fire_slime_die_0
       rect:
         serializedVersion: 2
-        x: 5
-        y: 7
-        width: 20
-        height: 16
+        x: 0
+        y: 0
+        width: 32
+        height: 32
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -147,12 +147,12 @@ TextureImporter:
       name: fire_slime_die_1
       rect:
         serializedVersion: 2
-        x: 35
-        y: 7
-        width: 25
-        height: 13
+        x: 32
+        y: 0
+        width: 32
+        height: 32
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -168,12 +168,12 @@ TextureImporter:
       name: fire_slime_die_2
       rect:
         serializedVersion: 2
-        x: 66
-        y: 7
-        width: 27
-        height: 8
+        x: 64
+        y: 0
+        width: 32
+        height: 32
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -189,12 +189,12 @@ TextureImporter:
       name: fire_slime_die_3
       rect:
         serializedVersion: 2
-        x: 97
-        y: 7
-        width: 61
-        height: 5
+        x: 96
+        y: 0
+        width: 32
+        height: 32
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -202,6 +202,27 @@ TextureImporter:
       bones: []
       spriteID: 8f8348eaab1f1dd409b060710135057b
       internalID: -434386894
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: fire_slime_die_4
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8dd796cdb041a8a448d9de8faa50e705
+      internalID: 2130276125
       vertices: []
       indices: 
       edges: []
@@ -221,6 +242,7 @@ TextureImporter:
       fire_slime_die_1: 1783692344
       fire_slime_die_2: 1377858311
       fire_slime_die_3: -434386894
+      fire_slime_die_4: 2130276125
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
