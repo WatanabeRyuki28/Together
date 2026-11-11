@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1976445450303555131}
+  - component: {fileID: 4552662255723147857}
   - component: {fileID: 5663036236063106178}
   - component: {fileID: 1646785639905354798}
   - component: {fileID: 616687591275208575}
@@ -34,6 +35,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4552662255723147857
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8128188639238059366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4731a0de18c8e3c4ab4d60fcd89170e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  areaType: 2
+  fatalDamage: 999
+  WaterBlock: {fileID: 0}
+  WaterBlock2: {fileID: 0}
+  speed: 5
+  maxRaiseHeight: 3
 --- !u!212 &5663036236063106178
 SpriteRenderer:
   m_ObjectHideFlags: 0

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using static UnityEditor.PlayerSettings;
+using static UnityEditor.Rendering.FilterWindow;
 
 public class WaterUp : MonoBehaviour
 {
@@ -15,6 +16,15 @@ public class WaterUp : MonoBehaviour
 
     private float targetY;
 
+
+    [Header("§ŒÀÝ’è")]
+    [SerializeField] private bool canRaiseMultipleTimes = false; // ‰½‰ñ‚à…ˆÊ‚ðã‚°‚ç‚ê‚é‚æ‚¤‚É‚·‚é‚©‚Ç‚¤‚©
+   
+
+    public ElementType Element => projectileType;
+
+
+    private ElementType projectileType;
     void Start()
     {
         
@@ -29,10 +39,8 @@ public class WaterUp : MonoBehaviour
         if (WaterBlock == null) return;
 
     
-        if (Input.GetKeyDown(KeyCode.J))
-        {
             targetY = WaterBlock.transform.position.y + 1f;
-        }
+        
 
 
         Vector2 currentPos = WaterBlock.transform.position;
@@ -57,4 +65,7 @@ public class WaterUp : MonoBehaviour
         }
 
     }
+
+
+   
 }
