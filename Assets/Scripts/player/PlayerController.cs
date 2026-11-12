@@ -2,6 +2,9 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Threading.Tasks;
 using NativeWebSocket;
+using UnityEngine.UI;
+using System.Collections;
+
 
 // 状態の定義（燃えている、濡れている、通常）
 public enum StatusCondition
@@ -41,7 +44,7 @@ public class PlayerController : MonoBehaviour
     [Header("ステータス設定（HP・死亡）")]
     [SerializeField] private int maxHp = 1;
     private int currentHp;
-    private bool isDead = false;
+    public bool isDead = false;
     public bool IsDead => isDead;
 
     [Header("現在の状態異常")]
@@ -93,12 +96,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private int projectilePrefabIndex;
     private CommunicationUI controls;
 
+    private StageMenuManager stageMenuManager;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         audioSource = GetComponent<AudioSource>();
+        stageMenuManager = FindFirstObjectByType<StageMenuManager>();
 
         if (audioSource != null)
         {
@@ -403,8 +409,24 @@ public class PlayerController : MonoBehaviour
         rb.velocity = Vector2.zero;
 
         if (anim != null)
+        { 
+            anim.SetBool("isDead", true);
+           
+        }
+
+        if (stageMenuManager != null)
         {
-            anim.SetTrigger("Die");
+
+
+            stageMenuManager.isExitingScene = true;
+            StageMenuManager.isRetry = true;
+            stageMenuManager.Mask.SetActive(true);
+
+            stageMenuManager.StartCoroutine(stageMenuManager.RetrySequenceRoutine(true));
+        }
+        else
+        {
+            Debug.LogWarning("[PlayerController] stageMenuManager が取得できていません。");
         }
 
         if (audioSource != null && audioSource.isPlaying)

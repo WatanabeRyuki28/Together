@@ -1,26 +1,54 @@
 using UnityEngine;
 
-/// <summary>
-/// 属性によって通行できたり、入ると死亡したり、箱の状態が変化したりするエリア（マグマ / 水）
-/// </summary>
-public class ElementHazardArea : MonoBehaviour
+public class ElementHazardArea : MonoBehaviour, IInteractable
 {
     public enum AreaType
     {
-        Magma, // 3: マグマ（炎キャラは安全、水キャラが通ると死ぬ）[cite: 1]
-        Water  // 4: 水（水キャラは安全、炎キャラが通ると死ぬ）[cite: 2]
+        Magma,
+        Water,
+        Spike
     }
 
     [Header("エリアの設定")]
     [SerializeField] private AreaType areaType = AreaType.Magma;
-    [SerializeField] private int fatalDamage = 999;              // 即死させるためのダメージ値
+    [SerializeField] private int fatalDamage = 999;
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    [Header("上昇設定")]
+    [SerializeField] GameObject WaterBlock;
+    [SerializeField] GameObject WaterBlock2;
+    [SerializeField] private float speed = 5.0f;
+
+    [Tooltip("初期位置からどれくらい上まで上昇できるか")]
+    [SerializeField] private float maxRaiseHeight = 3.0f; // 
+
+    private bool shouldRaise = false;
+    private float time = 0;
+    private float waitTime = 0.5f;
+
+    private float initialY;   // ゲーム開始時のY座標
+    private float targetY;    // 現在の目標Y座標
+
+    private void Start()
     {
-        CheckPlayerSafety(collision.collider);
+        if (WaterBlock != null)
+        {
+            initialY = WaterBlock.transform.position.y;
+            targetY = initialY;
+        }
     }
 
-    private void OnCollisionStay2D(Collision2D collision)
+    // --- 弾（Projectile）が当たったとき ---
+    public void OnInteract(ElementType element)
+    {
+        Debug.Log($"[OnInteract] 属性: {element}, エリア: {areaType}");
+
+        if (areaType == AreaType.Water && element == ElementType.Ice)
+        {
+            TryRaiseBlock();
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         CheckPlayerSafety(collision.collider);
     }
@@ -30,14 +58,8 @@ public class ElementHazardArea : MonoBehaviour
         CheckPlayerSafety(collision);
     }
 
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        CheckPlayerSafety(collision);
-    }
-
     private void CheckPlayerSafety(Collider2D collisionCol)
     {
-        // 1. プレイヤーの判定
         PlayerController player = collisionCol.GetComponent<PlayerController>();
         if (player != null)
         {
@@ -45,45 +67,104 @@ public class ElementHazardArea : MonoBehaviour
 
             if (areaType == AreaType.Magma)
             {
-                // マグマ：水キャラ（Ice）が通ったら死ぬ[cite: 1]
-                if (player.Element == ElementType.Ice)
-                {
-                    isDeadly = true;
-                    Debug.Log($"{player.playerNumber}P（水キャラ）がマグマに触れて死亡しました[cite: 1]。");
-                }
+                if (player.Element == ElementType.Ice) isDeadly = true;
             }
             else if (areaType == AreaType.Water)
             {
-                // 水：炎キャラ（Fire）が通ったら死ぬ[cite: 2]
-                if (player.Element == ElementType.Fire)
+                if (player.Element == ElementType.Fire) isDeadly = true;
+
+                // プレイヤー（Iceキャラ）が直接触れたときも動かしたい場合
+                if (player.Element == ElementType.Ice)
                 {
-                    isDeadly = true;
-                    Debug.Log($"{player.playerNumber}P（炎キャラ）が水に入って死亡しました[cite: 2]。");
+                    TryRaiseBlock();
                 }
             }
+            else if(areaType == AreaType.Spike)
+            {
+                if (player.Element == ElementType.Ice) isDeadly = true;
+                if (player.Element == ElementType.Fire) isDeadly = true;
+            }
 
-            // 死亡条件を満たしている場合はダメージ（即死）を与える
             if (isDeadly)
             {
                 player.TakeDamage(fatalDamage);
             }
+        }
+    }
+
+    // ブロックを上げる共通処理
+    private void TryRaiseBlock()
+    {
+        if (WaterBlock == null) return;
+
+        // 現在地、または現在の目標位置がすでに上限に達しているかチェック
+        float currentBaseY = shouldRaise ? targetY : WaterBlock.transform.position.y;
+        float absoluteMaxY = initialY + maxRaiseHeight;
+
+        // すでに上限に達している場合は何もしない
+        if (currentBaseY >= absoluteMaxY)
+        {
+            Debug.Log("[TryRaiseBlock] これ以上上に上がれません（上限に達しています）。");
             return;
         }
 
-        // 2. 箱（PushableBox）の判定
-        PushableBox box = collisionCol.GetComponent<PushableBox>();
-        if (box != null)
+        // 次の目標位置を計算
+        targetY = currentBaseY + 1f;
+
+        // もし次の目標が上限を超える場合は、上限ピッタリに丸める
+        if (targetY > absoluteMaxY)
         {
-            if (areaType == AreaType.Magma)
+            targetY = absoluteMaxY;
+        }
+
+        shouldRaise = true;
+        Debug.Log($"[TryRaiseBlock] 目標Y座標を {targetY} に設定しました（上限: {absoluteMaxY}）。");
+    }
+
+    void Update()
+    {
+        if (WaterBlock == null) return;
+
+        // 上昇中の処理
+        if (shouldRaise)
+        {
+          
+            Vector3 pos1 = WaterBlock.transform.position;
+            pos1.y = Mathf.MoveTowards(pos1.y, targetY, speed * Time.deltaTime);
+            WaterBlock.transform.position = pos1;
+
+      
+           
+                Vector3 pos2 = WaterBlock2.transform.position;
+                pos2.y = Mathf.MoveTowards(pos2.y, targetY, speed * Time.deltaTime);
+                WaterBlock2.transform.position = pos2;
+            
+
+            // 目標の高さに到達したかチェック
+            if (Mathf.Approximately(WaterBlock.transform.position.y, targetY))
             {
-                // マグマの上に乗ると燃える[cite: 1]
-                box.SetStatus(StatusCondition.Burning);
+                WaterBlock.transform.position = new Vector3(pos1.x, targetY, pos1.z);
+                if (WaterBlock2 != null)
+                {
+                    Vector3 finalPos2 = WaterBlock2.transform.position;
+                    WaterBlock2.transform.position = new Vector3(finalPos2.x, targetY, finalPos2.z);
+                }
+
+                shouldRaise = false;
+                Debug.Log("[Update] 目標の高さに到達しました。");
             }
-            else if (areaType == AreaType.Water)
+        }
+
+        // WaterBlock2 の点滅処理
+        time += Time.deltaTime;
+        if (time >= waitTime)
+        {
+            if (WaterBlock2 != null)
             {
-                // 水の上で浮く[cite: 2]
-                box.SetStatus(StatusCondition.Wet);
+                bool isActive = WaterBlock2.activeSelf;
+                WaterBlock2.SetActive(!isActive);
             }
+            time = 0f;
         }
     }
 }

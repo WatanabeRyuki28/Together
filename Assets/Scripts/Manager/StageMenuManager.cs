@@ -79,7 +79,7 @@ public class StageMenuManager : MonoBehaviour
     [Header("退出同期用の変数（追記）")]
     private bool myExitVote = false;      // 自分が「はい」を押したか
     private bool remoteExitVote = false;  // 相手が「はい」を押したか
-    private bool isExitingScene = false;   // 二重遷移防止フラグ
+    public bool isExitingScene = false;   // 二重遷移防止フラグ
 
     [SerializeField] private Text exitStatusText;
 
@@ -89,9 +89,9 @@ public class StageMenuManager : MonoBehaviour
     private bool remoteRetryVote = false;  // 相手がリトライを押したか
 
     [SerializeField] private Text retryButtonText;
-    private static bool isRetry = false;
+    public static bool isRetry = false;
 
-    [SerializeField] private GameObject Mask;
+    [SerializeField] public GameObject Mask;
 
 
 
@@ -99,6 +99,7 @@ public class StageMenuManager : MonoBehaviour
     [SerializeField] private float waitAfterClose = 0.5f; // 円が閉じた後に少し待つ時間（秒）
     public bool isIntroPlaying { get; private set; } = true;
 
+    private PlayerController playerController;
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -128,6 +129,7 @@ public class StageMenuManager : MonoBehaviour
 
     private void Start()
     {
+
         if (firstmenuPanel != null) firstmenuPanel.SetActive(false);
         if (confirmationPanel != null) confirmationPanel.SetActive(false);
 
@@ -140,6 +142,7 @@ public class StageMenuManager : MonoBehaviour
 
         if (isRetry)
         {
+            Debug.Log("リトライ");
             StartCoroutine(OpenRetryCircleRoutine());
         }
 
@@ -529,13 +532,16 @@ public class StageMenuManager : MonoBehaviour
             isRetry = true;
             if (Mask != null) Mask.SetActive(true);
 
-            StartCoroutine(RetrySequenceRoutine());
+            StartCoroutine(RetrySequenceRoutine(false));
         }
     }
 
-    private IEnumerator RetrySequenceRoutine()
+    public IEnumerator RetrySequenceRoutine(bool isFromDeath)
     {
         Time.timeScale = 1f;
+        if(isFromDeath)yield return new WaitForSecondsRealtime(waitAfterClose);
+
+        
 
         if (SaveManager.Instance != null)
         {
