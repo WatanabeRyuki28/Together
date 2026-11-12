@@ -34,6 +34,7 @@ public class NetworkManager : MonoBehaviour
     public event Action<NetMessage> OnCharacterSelected;
     public event Action<NetMessage> OnStageSelected;
     public event Action<NetMessage> OnPlayerPosReceived;
+    public event Action<NetMessage> OnObjectPosReceived;
     public event Action<NetMessage> OnSpawnProjectile;
     public event Action<NetMessage> OnMenuToggleReceived;
     public event Action<NetMessage> OnMenuRetryReceived;
@@ -135,6 +136,10 @@ public class NetworkManager : MonoBehaviour
         {
             OnPlayerPosReceived?.Invoke(msg);
         }
+        else if (msg.dataType == "object") 
+        {
+            OnObjectPosReceived?.Invoke(msg);
+        }
         else if (msg.dataType == "spawn_projectile")
         {
             OnSpawnProjectile?.Invoke(msg);
@@ -228,7 +233,7 @@ public class NetworkManager : MonoBehaviour
 
     // プレイヤーの位置・移動データを送る時
 
-    public async void SendPlayerPosition(int charIndex, float x, float y, bool isGrounded, bool isFlipX)
+    public async void SendPlayerPosition(int charIndex, float x, float y, bool isGrounded, bool isFlipX, bool isDead)
     {
         var data = new NetMessage
         {
@@ -240,7 +245,8 @@ public class NetworkManager : MonoBehaviour
             position_x = x,
             position_y = y,
             IsGrounded = isGrounded,
-            is_flip_x = isFlipX
+            is_flip_x = isFlipX,
+            is_dead = isDead
         };
         await SendJsonAsync(data);
     }

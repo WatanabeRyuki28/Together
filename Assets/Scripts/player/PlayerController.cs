@@ -98,6 +98,8 @@ public class PlayerController : MonoBehaviour
 
     private StageMenuManager stageMenuManager;
 
+    private bool remoteIsDead = false;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -121,6 +123,12 @@ public class PlayerController : MonoBehaviour
         {
             controls.Player.Enable();
         }
+
+        // ネットワークからのプレイヤーデータ受信イベントに登録
+        if (NetworkManager.Instance != null)
+        {
+            NetworkManager.Instance.OnPlayerPosReceived += HandlePlayerPosReceived;
+        }
     }
 
     void OnDisable()
@@ -128,6 +136,12 @@ public class PlayerController : MonoBehaviour
         if (controls != null)
         {
             controls.Player.Disable();
+        }
+
+        // イベントの解除
+        if (NetworkManager.Instance != null)
+        {
+            NetworkManager.Instance.OnPlayerPosReceived -= HandlePlayerPosReceived;
         }
     }
 
@@ -168,10 +182,22 @@ public class PlayerController : MonoBehaviour
             if (rb != null) rb.velocity = Vector2.zero;
 
             Vector3 previousPosition = transform.position;
-            transform.position = Vector3.Lerp(transform.position, TargetPosition, RemoteLerpFactor);
+
+            float distanceToTarget = Vector2.Distance(transform.position, TargetPosition);
+            if (distanceToTarget > 2.0f)
+            {
+                // ズレが大きすぎる場合は一気にワープ（スナップ）
+                transform.position = TargetPosition;
+            }
+            else
+            {
+                // フレームレートに依存しない滑らかな補間（Lerp）
+                transform.position = Vector3.Lerp(transform.position, TargetPosition, 15f * Time.deltaTime);
+            }
 
             Vector2 simulatedVelocity = (transform.position - previousPosition) / Time.deltaTime;
-            UpdateAnimationParametersForRemote(simulatedVelocity, this.isGrounded);
+
+            UpdateAnimationParametersForRemote(simulatedVelocity, this.isGrounded, remoteIsDead);
 
             if (audioSource != null && audioSource.isPlaying && audioSource.clip == walkSound)
             {
@@ -402,32 +428,29 @@ public class PlayerController : MonoBehaviour
     /// <summary>
     /// 死亡処理
     /// </summary>
+    
+
     private void Die()
     {
+        if (isDead) return; // すでに死んでいたら二重実行を防ぐ
+
         isDead = true;
         CanMove = false;
-        rb.velocity = Vector2.zero;
+        if (rb != null) rb.velocity = Vector2.zero;
 
         if (anim != null)
-        { 
+        {
             anim.SetBool("isDead", true);
-           
         }
 
-        if (stageMenuManager != null)
+        // 自分の死んだ状態をネットワークへ確実に送信
+        if (IsLocalPlayer)
         {
-
-
-            stageMenuManager.isExitingScene = true;
-            StageMenuManager.isRetry = true;
-            stageMenuManager.Mask.SetActive(true);
-
-            stageMenuManager.StartCoroutine(stageMenuManager.RetrySequenceRoutine(true));
+            SendPlayerData(transform.position, isGrounded);
         }
-        else
-        {
-            Debug.LogWarning("[PlayerController] stageMenuManager が取得できていません。");
-        }
+
+        // 自分が死んだので、リトライ演出を流す
+        TriggerRetrySequence();
 
         if (audioSource != null && audioSource.isPlaying)
         {
@@ -436,7 +459,48 @@ public class PlayerController : MonoBehaviour
 
         Debug.Log($"{playerNumber}P が死亡しました。");
     }
+    // ネットワークから位置や状態データを受け取るメソッド
+    public void ApplyNetworkData(Vector3 targetPos, bool grounded, bool flipX, bool dead)
+    {
+        TargetPosition = targetPos;
+        isGrounded = grounded;
 
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.flipX = flipX;
+        }
+
+        // もしネットワーク上で相手が死んでいて、まだ自分も死んでいない扱いなら
+        if (dead && !isDead)
+        {
+            isDead = true;
+            CanMove = false;
+            if (rb != null) rb.velocity = Vector2.zero;
+
+            if (anim != null)
+            {
+                anim.SetBool("isDead", true);
+            }
+
+            // 相手が死んだので、自分の画面でも一緒にリトライ演出を流す！
+            TriggerRetrySequence();
+        }
+    }
+
+    private void TriggerRetrySequence()
+    {
+        if (stageMenuManager != null && !stageMenuManager.isExitingScene)
+        {
+            stageMenuManager.isExitingScene = true;
+            StageMenuManager.isRetry = true;
+            if (stageMenuManager.Mask != null)
+            {
+                stageMenuManager.Mask.SetActive(true);
+            }
+
+            stageMenuManager.StartCoroutine(stageMenuManager.RetrySequenceRoutine(true));
+        }
+    }
     private void CheckContact(Collision2D collision, bool state)
     {
         int layer = collision.gameObject.layer;
@@ -500,11 +564,29 @@ public class PlayerController : MonoBehaviour
             pos.x,
             pos.y,
             groundedStatus,
-            spriteRenderer != null && spriteRenderer.flipX
+            spriteRenderer != null && spriteRenderer.flipX,
+            isDead
         );
 
     }
+    private void HandlePlayerPosReceived(NetMessage msg)
+    {
+        // 自分が操作しているプレイヤー（LocalPlayer）なら、自分のデータを他人が動かす必要はないので無視
+        if (IsLocalPlayer) return;
 
+        // メッセージの index や char_index が、このプレイヤーのものと一致するか判定する
+        // （※プロジェクトの仕様に合わせて msg.index や msg.char_index を比較してください）
+        if (msg.index == this.playerNumber - 1)
+        {
+            // 受信したデータを元に位置・接地状態・向き・死亡状態を更新
+            ApplyNetworkData(
+                new Vector3(msg.position_x, msg.position_y, transform.position.z),
+                msg.IsGrounded,
+                msg.is_flip_x,
+                msg.is_dead // ここで死亡フラグが確実に渡されます
+            );
+        }
+    }
 
     private async void SendSpawnProjectileEvent(Vector3 pos, float dir, int bulletIndex)
     {
@@ -521,9 +603,10 @@ public class PlayerController : MonoBehaviour
         anim.SetFloat("Speed", currentHorizontalSpeed);
         anim.SetBool("isGround", isGrounded);
         anim.SetFloat("yVelocity", velocity.y);
+      
     }
 
-    private void UpdateAnimationParametersForRemote(Vector2 simulatedVelocity, bool remoteIsGrounded)
+    private void UpdateAnimationParametersForRemote(Vector2 simulatedVelocity, bool remoteIsGrounded, bool isRemoteDead)
     {
         if (anim == null) return;
 
@@ -533,5 +616,8 @@ public class PlayerController : MonoBehaviour
         anim.SetFloat("Speed", currentHorizontalSpeed);
         anim.SetBool("isGround", remoteIsGrounded);
         anim.SetFloat("yVelocity", simulatedVelocity.y);
+
+        
+        anim.SetBool("isDead", isRemoteDead);
     }
 }
