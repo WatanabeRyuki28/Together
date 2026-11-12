@@ -97,12 +97,15 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Vector3 hitPoint = other.ClosestPoint(transform.position);
-        SpawnHitEffect(hitPoint);
+        
 
         PlayerController hitPlayer = other.GetComponent<PlayerController>();
         if (hitPlayer != null)
         {
+
+            Vector3 hitPoint = other.ClosestPoint(transform.position);
+            SpawnHitEffect(hitPoint);
+
             // 状態異常（濡れる・燃えるなど）のみ適用
             if (projectileType == ElementType.Fire)
             {
@@ -121,6 +124,9 @@ public class Projectile : MonoBehaviour
         IInteractable target = other.GetComponent<IInteractable>();
         if (target != null)
         {
+
+            Vector3 hitPoint = other.ClosestPoint(transform.position);
+            SpawnHitEffect(hitPoint);
             target.OnInteract(projectileType);
             Destroy(gameObject);
             return;
@@ -128,6 +134,8 @@ public class Projectile : MonoBehaviour
 
         if (((1 << other.gameObject.layer) & collisionLayers) != 0)
         {
+            Vector3 hitPoint = other.ClosestPoint(transform.position);
+            SpawnHitEffect(hitPoint);
             Destroy(gameObject);
         }
     }
