@@ -20,6 +20,7 @@ public class ElementHazardArea : MonoBehaviour, IInteractable
 
     [Tooltip("‰ŠúˆÊ’u‚©‚ç‚Ç‚ê‚­‚ç‚¢ã‚Ü‚Åã¸‚Å‚«‚é‚©")]
     [SerializeField] private float maxRaiseHeight = 3.0f;
+    [SerializeField] private float upWater;
 
     private bool shouldRaise = false;
     private float time = 0;
@@ -123,7 +124,7 @@ public class ElementHazardArea : MonoBehaviour, IInteractable
             return;
         }
 
-        targetY = currentBaseY + 1f;
+        targetY = currentBaseY + upWater;
 
         if (targetY > absoluteMaxY)
         {
