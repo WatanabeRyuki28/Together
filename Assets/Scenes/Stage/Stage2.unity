@@ -2949,7 +2949,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectId: 0
-  isOwnedByLocal: 0
+  isOwnedByLocal: 1
 --- !u!1 &512202246
 GameObject:
   m_ObjectHideFlags: 0
@@ -15426,6 +15426,7 @@ MonoBehaviour:
   Image: {fileID: 1887758381}
   stageNameText: {fileID: 2010951262}
   LoadText: {fileID: 1423251968}
+  isExitingScene: 0
   exitStatusText: {fileID: 96941799}
   yesButton: {fileID: 0}
   retryButtonText: {fileID: 1515381164}
