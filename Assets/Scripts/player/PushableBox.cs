@@ -11,15 +11,28 @@ public class PushableBox : MonoBehaviour
     [SerializeField] private StatusCondition currentStatus = StatusCondition.Normal;
     public StatusCondition CurrentStatus => currentStatus;
 
+    [Header("水面ぷかぷか設定")]
+    [Tooltip("ぷかぷか揺れる上下の幅（高さ）")]
+    [SerializeField] private float floatAmplitude = 0.1f;
+    [Tooltip("ぷかぷか揺れる速さ（周期）")]
+    [SerializeField] private float floatFrequency = 3.0f;
+
+    [Header("リスポーン設定")]
+    [SerializeField] private Vector3 respawnPosition;       // リスポーン地点（初期位置を自動記憶）
+    [SerializeField] private float respawnDelay = 1.5f;     // 燃えてからリスポーンするまでの時間
+
     [Header("効果音設定")]
     [SerializeField] private AudioClip pushSound;
 
     [Header("エフェクト設定")]
-    [SerializeField] private GameObject fireEffect; // マグマで燃えるときのエフェクト
+    [SerializeField] private GameObject fireEffect;         // マグマで燃えるときのエフェクト
 
     private Rigidbody2D rb;
     private AudioSource audioSource;
-    private float defaultGravityScale; // 水に浮く処理用のデフォルト重力
+    private float defaultGravityScale;                      // デフォルトの重力
+
+    // ぷかぷか浮遊用の基準Y座標を記憶する変数
+    private float buoyantBaseY;
 
     private void Awake()
     {
@@ -32,9 +45,21 @@ public class PushableBox : MonoBehaviour
         defaultGravityScale = rb.gravityScale;
     }
 
+    private void Start()
+    {
+        // ゲーム開始時の位置を初期リスポーン地点として自動記憶
+        respawnPosition = transform.position;
+    }
+
     private void Update()
     {
         HandlePushSound();
+
+        // 水に濡れている（Wet）状態のときはぷかぷかさせる
+        if (currentStatus == StatusCondition.Wet)
+        {
+            ApplyFloatingMotion();
+        }
 
         // デバッグ用（Lキーで強制的に燃やすテストなど）
         if (Input.GetKey(KeyCode.L) && currentStatus != StatusCondition.Burning)
@@ -75,6 +100,13 @@ public class PushableBox : MonoBehaviour
     public void SetStatus(StatusCondition newStatus)
     {
         if (currentStatus == newStatus) return;
+
+        // Wet状態に入る瞬間の高さを基準位置として記録する
+        if (newStatus == StatusCondition.Wet)
+        {
+            buoyantBaseY = transform.position.y;
+        }
+
         currentStatus = newStatus;
 
         switch (currentStatus)
@@ -84,12 +116,10 @@ public class PushableBox : MonoBehaviour
                 break;
 
             case StatusCondition.Burning:
-                // マグマの上に乗ると燃える仕様
                 BurnBox();
                 break;
 
             case StatusCondition.Wet:
-                // 水の上で浮く仕様（重力を軽減または反転させて浮力を表現）
                 ApplyBuoyancy();
                 break;
         }
@@ -103,16 +133,53 @@ public class PushableBox : MonoBehaviour
         }
         Debug.Log("箱がマグマで燃え上がりました[cite: 1]。");
 
-        // 例: 燃え尽きて消滅させる場合
-        // Destroy(gameObject, 1.5f);
+        // 燃えている間は物理挙動を一時停止
+        rb.velocity = Vector2.zero;
+        rb.simulated = false;
+
+        // 指定秒数後にリスポーン処理を実行
+        Invoke(nameof(RespawnBox), respawnDelay);
+    }
+
+    private void RespawnBox()
+    {
+        // 位置を初期位置（または設定されたリスポーン地点）に戻す
+        transform.position = respawnPosition;
+
+        // 状態を Normal（通常）に戻す
+        currentStatus = StatusCondition.Normal;
+        rb.gravityScale = defaultGravityScale;
+
+        // 物理挙動を再開
+        rb.simulated = true;
+
+        Debug.Log("箱がリスポーンしました。");
     }
 
     private void ApplyBuoyancy()
     {
         Debug.Log("箱が水に濡れ、水面で浮いています。");
-        // 水に浮く表現として重力を小さくする（例: デフォルトの1/4程度にする、または0にする）
-        rb.gravityScale = defaultGravityScale * 0.1f;
+        // 重力を完全にオフにして沈まないようにする
+        rb.gravityScale = 0f;
+        rb.velocity = new Vector2(rb.velocity.x, 0f);
 
-        // 落下速度に制限をかけるなどすると、ぷかぷか浮くような挙動が作りやすくなります
+        // 水に触れた瞬間の高さを基準にする
+        buoyantBaseY = transform.position.y;
+    }
+
+    /// <summary>
+    /// 水面で上下にふんわりと揺れる（ぷかぷかさせる）処理（めり込み防止版）
+    /// </summary>
+    private void ApplyFloatingMotion()
+    {
+        // サイン波を使って目指すべきY座標を計算
+        float targetY = buoyantBaseY + Mathf.Sin(Time.time * floatFrequency) * floatAmplitude;
+        
+        // Rigidbody2DのMovePositionを使って移動させることで、壁へのめり込みや引っかかりを防ぐ
+        float newY = Mathf.MoveTowards(transform.position.y, targetY, Time.deltaTime * 5f);
+        rb.MovePosition(new Vector2(transform.position.x, newY));
+
+        // 浮いている間は縦方向の物理速度をリセット
+        rb.velocity = new Vector2(rb.velocity.x, 0f);
     }
 }
