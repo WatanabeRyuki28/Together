@@ -25,6 +25,7 @@ public class NetMessage
     public float position_y;
     public bool is_flip_x;
     public bool IsGrounded;
+    public bool is_dead;
 
     // クリア選択用
     public int select_index;

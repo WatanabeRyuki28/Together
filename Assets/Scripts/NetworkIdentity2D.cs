@@ -2,16 +2,46 @@ using UnityEngine;
 
 public class NetworkIdentity2D : MonoBehaviour
 {
-    [Header("オブジェクト固有のID（被らない数値を手動設定）")]
+    [Header("オブジェクト固有のID")]
     public int objectId;
 
-    // 自分が動かす権利を持っているか
+    [Header("自分が動かす権利を持っているか")]
     public bool isOwnedByLocal = false;
 
     private Rigidbody2D rb;
     private Vector2 lastPosition;
     private float sendInterval = 0.05f;
     private float nextSendTime;
+
+    // ネットワークから最後に受け取った目標座標（補間用）
+    private Vector3 targetPosition;
+    private bool isReceivingNetworkData = false;
+
+    void OnEnable()
+    {
+        if (NetworkManager.Instance != null)
+        {
+            NetworkManager.Instance.OnObjectPosReceived += HandleObjectPosReceived;
+        }
+    }
+
+    void OnDisable()
+    {
+        if (NetworkManager.Instance != null)
+        {
+            NetworkManager.Instance.OnObjectPosReceived -= HandleObjectPosReceived;
+        }
+    }
+
+    // サーバーから何かしらのオブジェクト位置が届いたとき、自分のIDと一致していれば更新
+    private void HandleObjectPosReceived(NetMessage msg)
+    {
+        // 届いたメッセージの id が、このオブジェクトの objectId と一致するか？
+        if (msg.id == objectId)
+        {
+            UpdatePositionFromNetwork(new Vector3(msg.position_x, msg.position_y, 0f));
+        }
+    }
 
     void Awake()
     {
@@ -21,93 +51,101 @@ public class NetworkIdentity2D : MonoBehaviour
     void Start()
     {
         lastPosition = transform.position;
+        targetPosition = transform.position;
 
-        // もし弾（1000以上のID）で、かつ生成時にすでに local 権限が与えられている場合は処理をスキップ
-        if (objectId >= 1000 && isOwnedByLocal)
-        {
-            return;
-        }
+        // 弾などの特殊オブジェクト
+        if (objectId >= 1000 && isOwnedByLocal) return;
 
-        // 最初からステージにある箱などは、一律で「ホスト（赤・0番）」が初期管理権を持つ
+        // 初期状態の所有権（デフォルトはホスト：char == 0）
         if (NetworkManager.Instance != null)
         {
             isOwnedByLocal = (NetworkManager.Instance.myRealSelectedChar == 0);
         }
 
-        // もし自分が権利を持っていない（ゲスト）なら、初期状態では物理演算を完全に止めておく
-        if (!isOwnedByLocal && rb != null)
-        {
-            rb.bodyType = RigidbodyType2D.Kinematic;
-            rb.velocity = Vector2.zero;
-        }
+        UpdateRigidbodyState();
     }
 
     void Update()
     {
-        // 自分が動かす権利を持っていないなら、位置情報の送信はしない
-        if (!isOwnedByLocal) return;
-
-        if (objectId >= 1000) return;
-
-        // 自分が権利を持っている時は、動いたら通信を送る
-        if (Time.time >= nextSendTime && Vector2.Distance(transform.position, lastPosition) > 0.01f)
+        // 自分が権利を持っている場合：自分の位置をネットワークに送信
+        if (isOwnedByLocal)
         {
-            SendPositionToNetwork();
-            lastPosition = transform.position;
-            nextSendTime = Time.time + sendInterval;
+            if (objectId >= 1000) return;
+
+            if (Time.time >= nextSendTime && Vector2.Distance(transform.position, lastPosition) > 0.005f)
+            {
+                SendPositionToNetwork();
+                lastPosition = transform.position;
+                nextSendTime = Time.time + sendInterval;
+            }
+        }
+        //  権利を持っていない場合：受け取った目標座標へ滑らかに近づける（カクつき防止）
+        else if (isReceivingNetworkData)
+        {
+            transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * 15f);
         }
     }
 
-    // プレイヤーが箱にぶつかった（押した）瞬間に呼び出される判定
-    private void OnCollisionEnter2D(Collision2D collision)
+    // プレイヤーが箱に触れている間、権利を維持・あるいは奪い取る
+    private void OnCollisionStay2D(Collision2D collision)
     {
-        // ぶつかってきたのが「自分が操作しているローカルプレイヤー」だった場合
         var player = collision.gameObject.GetComponent<PlayerController>();
         if (player != null && player.IsLocalPlayer)
         {
-            // もし自分がまだ権利を持っていなかったら、権利を自分に切り替える！
+            // 自分がまだ権利を持っていなければ、権利を奪取する通信をサーバーに送る等が必要
             if (!isOwnedByLocal)
             {
-                isOwnedByLocal = true;
-
-                // 物理演算を通常（Dynamic）に戻して、自分が押して動かせるようにする
-                if (rb != null)
-                {
-                    rb.bodyType = RigidbodyType2D.Dynamic;
-                }
-                Debug.Log($"[権利獲得] オブジェクト {objectId} の操作権が自分に移りました！");
+                ClaimOwnership();
             }
         }
     }
 
-    // 相手（通信）から座標が届いた時に呼び出されるメソッド
-    public void UpdatePositionFromNetwork(Vector3 targetPos)
+    // 権利を自分に書き換えるメソッド
+    public void ClaimOwnership()
     {
-        // もし相手が動かしているデータが届いたら、自分の操作権は自動でオフにする（権利を譲る）
-        if (isOwnedByLocal)
-        {
-            isOwnedByLocal = false;
+        isOwnedByLocal = true;
+        isReceivingNetworkData = false;
+        UpdateRigidbodyState();
 
-            // 相手が動かすので、自分側の物理演算は邪魔しないように止める
-            if (rb != null)
+        Debug.Log($"[権利獲得] オブジェクト {objectId} の操作権が自分に移りました！");
+    }
+
+    // 物理演算の状態を切り替える
+    private void UpdateRigidbodyState()
+    {
+        if (rb != null)
+        {
+            if (isOwnedByLocal)
             {
+                rb.bodyType = RigidbodyType2D.Dynamic;
+            }
+            else
+            {
+                // 非権利者は物理演算を切る（またはKinematicにして位置の受信に専念させる）
                 rb.bodyType = RigidbodyType2D.Kinematic;
                 rb.velocity = Vector2.zero;
             }
         }
-
-        // 届いた座標に移動させる
-        transform.position = targetPos;
     }
 
-    /// <summary>
-    /// NetworkManager を経由して現在の位置とIDをサーバーに送信する
-    /// </summary>
+    // ネットワークから座標が届いたとき
+    public void UpdatePositionFromNetwork(Vector3 newPos)
+    {
+        // もし自分が「権利者」としてバリバリ動かしている最中に、
+        // 古いネットワークデータが届いて自分の動きが邪魔されないようにガードする
+        if (isOwnedByLocal)
+        {
+            return;
+        }
+
+        targetPosition = newPos;
+        isReceivingNetworkData = true;
+    }
+
     private void SendPositionToNetwork()
     {
         if (NetworkManager.Instance != null)
         {
-            // NetworkManager に追加した専用メソッドを呼び出す
             NetworkManager.Instance.SendObjectPosition(objectId, transform.position.x, transform.position.y);
         }
     }
