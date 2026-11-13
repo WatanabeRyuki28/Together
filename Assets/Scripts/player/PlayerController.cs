@@ -5,7 +5,6 @@ using NativeWebSocket;
 using UnityEngine.UI;
 using System.Collections;
 
-
 // 状態の定義（燃えている、濡れている、通常）
 public enum StatusCondition
 {
@@ -306,6 +305,12 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
+        // ジャンプする時は動く足場の子供から外れる（足場から飛び離れるため）
+        if (transform.parent != null)
+        {
+            transform.SetParent(null);
+        }
+
         rb.velocity = new Vector2(rb.velocity.x, 0);
         rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
 
@@ -381,6 +386,15 @@ public class PlayerController : MonoBehaviour
     {
         CheckContact(collision, true);
 
+        // 動く足場（Rigidbody2Dを持つ床）に乗った際、親にして一緒に移動させる
+        if (((1 << collision.gameObject.layer) & groundLayer) != 0)
+        {
+            if (collision.gameObject.GetComponent<Rigidbody2D>() != null)
+            {
+                transform.SetParent(collision.transform);
+            }
+        }
+
         // プレイヤー同士が接触したときの処理（燃やす・濡らす）
         PlayerController otherPlayer = collision.gameObject.GetComponent<PlayerController>();
         if (otherPlayer != null)
@@ -396,7 +410,20 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OnCollisionExit2D(Collision2D collision) => CheckContact(collision, false);
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        CheckContact(collision, false);
+
+        // 足場から離れたら親子関係を解除する
+        if (((1 << collision.gameObject.layer) & groundLayer) != 0)
+        {
+            if (collision.transform == transform.parent)
+            {
+                transform.SetParent(null);
+            }
+        }
+    }
+
     private void OnCollisionStay2D(Collision2D collision) => CheckContact(collision, true);
 
     /// <summary>
@@ -406,7 +433,6 @@ public class PlayerController : MonoBehaviour
     {
         currentStatus = newStatus;
         Debug.Log($"{playerNumber}P の状態が変化: {newStatus}");
-        // 必要に応じてここで色の変化やパーティクル再生を呼び出せます
     }
 
     /// <summary>
@@ -428,8 +454,6 @@ public class PlayerController : MonoBehaviour
     /// <summary>
     /// 死亡処理
     /// </summary>
-    
-
     private void Die()
     {
         if (isDead) return; // すでに死んでいたら二重実行を防ぐ
@@ -437,6 +461,12 @@ public class PlayerController : MonoBehaviour
         isDead = true;
         CanMove = false;
         if (rb != null) rb.velocity = Vector2.zero;
+
+        // 死亡時に足場から離れる
+        if (transform.parent != null)
+        {
+            transform.SetParent(null);
+        }
 
         if (anim != null)
         {
@@ -459,6 +489,7 @@ public class PlayerController : MonoBehaviour
 
         Debug.Log($"{playerNumber}P が死亡しました。");
     }
+
     // ネットワークから位置や状態データを受け取るメソッド
     public void ApplyNetworkData(Vector3 targetPos, bool grounded, bool flipX, bool dead)
     {
@@ -501,6 +532,7 @@ public class PlayerController : MonoBehaviour
             stageMenuManager.StartCoroutine(stageMenuManager.RetrySequenceRoutine(true));
         }
     }
+
     private void CheckContact(Collision2D collision, bool state)
     {
         int layer = collision.gameObject.layer;
@@ -546,8 +578,7 @@ public class PlayerController : MonoBehaviour
         if (isPushableLayer) isPushing = state;
     }
 
-    
-    #region  送信
+    #region 送信
 
     private async void SendPlayerData(Vector3 pos, bool groundedStatus)
     {
@@ -567,23 +598,19 @@ public class PlayerController : MonoBehaviour
             spriteRenderer != null && spriteRenderer.flipX,
             isDead
         );
-
     }
+
     private void HandlePlayerPosReceived(NetMessage msg)
     {
-        // 自分が操作しているプレイヤー（LocalPlayer）なら、自分のデータを他人が動かす必要はないので無視
         if (IsLocalPlayer) return;
 
-        // メッセージの index や char_index が、このプレイヤーのものと一致するか判定する
-        // （※プロジェクトの仕様に合わせて msg.index や msg.char_index を比較してください）
         if (msg.index == this.playerNumber - 1)
         {
-            // 受信したデータを元に位置・接地状態・向き・死亡状態を更新
             ApplyNetworkData(
                 new Vector3(msg.position_x, msg.position_y, transform.position.z),
                 msg.IsGrounded,
                 msg.is_flip_x,
-                msg.is_dead // ここで死亡フラグが確実に渡されます
+                msg.is_dead
             );
         }
     }
@@ -603,7 +630,6 @@ public class PlayerController : MonoBehaviour
         anim.SetFloat("Speed", currentHorizontalSpeed);
         anim.SetBool("isGround", isGrounded);
         anim.SetFloat("yVelocity", velocity.y);
-      
     }
 
     private void UpdateAnimationParametersForRemote(Vector2 simulatedVelocity, bool remoteIsGrounded, bool isRemoteDead)
@@ -616,8 +642,6 @@ public class PlayerController : MonoBehaviour
         anim.SetFloat("Speed", currentHorizontalSpeed);
         anim.SetBool("isGround", remoteIsGrounded);
         anim.SetFloat("yVelocity", simulatedVelocity.y);
-
-        
         anim.SetBool("isDead", isRemoteDead);
     }
 }
