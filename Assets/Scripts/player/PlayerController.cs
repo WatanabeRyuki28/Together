@@ -97,11 +97,12 @@ public class PlayerController : MonoBehaviour
     private CommunicationUI controls;
 
     private StageMenuManager stageMenuManager;
+    private VideoAreaTrigger videoExplanation;
 
     private bool remoteIsDead = false;
 
 
-  
+
 
     void Awake()
     {
@@ -110,6 +111,7 @@ public class PlayerController : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         audioSource = GetComponent<AudioSource>();
         stageMenuManager = FindFirstObjectByType<StageMenuManager>();
+        videoExplanation = FindFirstObjectByType<VideoAreaTrigger>();
 
         if (audioSource != null)
         {
@@ -151,7 +153,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
 
-      
+
 
         currentHp = maxHp; // HPの初期化
 
@@ -267,6 +269,27 @@ public class PlayerController : MonoBehaviour
             SendPlayerData(transform.position, isGrounded);
             lastPosition = transform.position;
         }
+
+        bool gimmick = controls.GimmickExplanation.Submit.triggered;
+
+        if (gimmick)
+        {
+            videoExplanation.guidePanelObject.SetActive(false);
+
+            videoExplanation.hasExplanation = false;
+        }
+
+        if (videoExplanation.hasExplanation)
+        {
+            controls.Player.Disable();
+            controls.GimmickExplanation.Enable();
+        }
+        else
+        {
+            controls.Player.Enable();
+            controls.GimmickExplanation.Disable();
+        }
+
     }
 
     private void Move()
@@ -434,7 +457,7 @@ public class PlayerController : MonoBehaviour
     /// <summary>
     /// 死亡処理
     /// </summary>
-    
+
 
     private void Die()
     {
@@ -552,7 +575,7 @@ public class PlayerController : MonoBehaviour
         if (isPushableLayer) isPushing = state;
     }
 
-    
+
     #region  送信
 
     private async void SendPlayerData(Vector3 pos, bool groundedStatus)
@@ -609,7 +632,7 @@ public class PlayerController : MonoBehaviour
         anim.SetFloat("Speed", currentHorizontalSpeed);
         anim.SetBool("isGround", isGrounded);
         anim.SetFloat("yVelocity", velocity.y);
-      
+
     }
 
     private void UpdateAnimationParametersForRemote(Vector2 simulatedVelocity, bool remoteIsGrounded, bool isRemoteDead)
@@ -623,7 +646,7 @@ public class PlayerController : MonoBehaviour
         anim.SetBool("isGround", remoteIsGrounded);
         anim.SetFloat("yVelocity", simulatedVelocity.y);
 
-        
+
         anim.SetBool("isDead", isRemoteDead);
     }
 }

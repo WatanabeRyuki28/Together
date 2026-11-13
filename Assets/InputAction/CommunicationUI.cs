@@ -808,6 +808,34 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 }
             ]
+        },
+        {
+            ""name"": ""Gimmick Explanation"",
+            ""id"": ""e00fb31c-1867-4a30-82ab-3b941b36073e"",
+            ""actions"": [
+                {
+                    ""name"": ""Submit"",
+                    ""type"": ""Button"",
+                    ""id"": ""9c06fc90-89be-4827-9d2b-94a9ad751dcc"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""067b5677-c157-4a66-8548-2623a2ef9145"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Submit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -858,6 +886,9 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
         m_FinalMenu = asset.FindActionMap("FinalMenu", throwIfNotFound: true);
         m_FinalMenu_Maps = m_FinalMenu.FindAction("Maps", throwIfNotFound: true);
         m_FinalMenu_Submit = m_FinalMenu.FindAction("Submit", throwIfNotFound: true);
+        // Gimmick Explanation
+        m_GimmickExplanation = asset.FindActionMap("Gimmick Explanation", throwIfNotFound: true);
+        m_GimmickExplanation_Submit = m_GimmickExplanation.FindAction("Submit", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1481,6 +1512,52 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
         }
     }
     public FinalMenuActions @FinalMenu => new FinalMenuActions(this);
+
+    // Gimmick Explanation
+    private readonly InputActionMap m_GimmickExplanation;
+    private List<IGimmickExplanationActions> m_GimmickExplanationActionsCallbackInterfaces = new List<IGimmickExplanationActions>();
+    private readonly InputAction m_GimmickExplanation_Submit;
+    public struct GimmickExplanationActions
+    {
+        private @CommunicationUI m_Wrapper;
+        public GimmickExplanationActions(@CommunicationUI wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Submit => m_Wrapper.m_GimmickExplanation_Submit;
+        public InputActionMap Get() { return m_Wrapper.m_GimmickExplanation; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(GimmickExplanationActions set) { return set.Get(); }
+        public void AddCallbacks(IGimmickExplanationActions instance)
+        {
+            if (instance == null || m_Wrapper.m_GimmickExplanationActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_GimmickExplanationActionsCallbackInterfaces.Add(instance);
+            @Submit.started += instance.OnSubmit;
+            @Submit.performed += instance.OnSubmit;
+            @Submit.canceled += instance.OnSubmit;
+        }
+
+        private void UnregisterCallbacks(IGimmickExplanationActions instance)
+        {
+            @Submit.started -= instance.OnSubmit;
+            @Submit.performed -= instance.OnSubmit;
+            @Submit.canceled -= instance.OnSubmit;
+        }
+
+        public void RemoveCallbacks(IGimmickExplanationActions instance)
+        {
+            if (m_Wrapper.m_GimmickExplanationActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IGimmickExplanationActions instance)
+        {
+            foreach (var item in m_Wrapper.m_GimmickExplanationActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_GimmickExplanationActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public GimmickExplanationActions @GimmickExplanation => new GimmickExplanationActions(this);
     public interface IUIActions
     {
         void OnMove(InputAction.CallbackContext context);
@@ -1534,6 +1611,10 @@ public partial class @CommunicationUI: IInputActionCollection2, IDisposable
     public interface IFinalMenuActions
     {
         void OnMaps(InputAction.CallbackContext context);
+        void OnSubmit(InputAction.CallbackContext context);
+    }
+    public interface IGimmickExplanationActions
+    {
         void OnSubmit(InputAction.CallbackContext context);
     }
 }
