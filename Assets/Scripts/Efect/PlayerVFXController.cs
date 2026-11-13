@@ -31,7 +31,7 @@ public class PlayerVFXController : MonoBehaviour
         float yVelocity = rb2d.velocity.y;
 
         // 下方向に落下中（空中）のフラグを立てる
-        if (yVelocity < -0.1f)
+        if (yVelocity < -2f)
         {
             wasInAir = true;
         }
