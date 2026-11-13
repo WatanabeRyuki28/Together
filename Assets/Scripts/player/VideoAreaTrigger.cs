@@ -10,6 +10,11 @@ public class VideoAreaTrigger : MonoBehaviour
 
     private bool hasPlayed = false;
 
+    private string cha ="";
+
+    [SerializeField] private LayerMask targetLayerFire;
+    [SerializeField] private LayerMask targetLayerIce;  
+
     private void Start()
     {
         // 起動時はパネルを非表示
@@ -21,24 +26,56 @@ public class VideoAreaTrigger : MonoBehaviour
     {
 #if UNITY_EDITOR
 
-        if (!isVideo)guidePanelObject.SetActive(false);
-        if (isVideo) guidePanelObject.SetActive(true);
+      /*  if (!isVideo)guidePanelObject.SetActive(false);
+        if (isVideo) guidePanelObject.SetActive(true);*/
 
 
 #endif
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // プレイヤーが触れたか判定
-        var player = other.GetComponent<PlayerController>();
-        if (player == null) return;
 
+        PlayerStatus playerStatus = other.GetComponent<PlayerStatus>();
+        if (playerStatus == null) return; // プレイヤーでなければ何もしない
 
-        // すでに表示済み
-        if (hasPlayed) return;
+       
+        Debug.Log("当たった");
 
-        ShowGuide();
+        bool isCorrectPlayer = false;
 
+        if (playerStatus.char_index == 0)
+        {
+            // 火のキャラの場合、相手のレイヤーが 「Player_Fire」 レイヤーに含まれているか判定
+            if (((1 << other.gameObject.layer) & targetLayerFire) != 0)
+            {
+                isCorrectPlayer = true;
+                Debug.Log("レイヤー判定一致: 炎プレイヤー");
+            }
+        }
+        else
+        {
+            // 氷のキャラの場合、相手のレイヤーが 「Player_Ice」 レイヤーに含まれているか判定
+            if (((1 << other.gameObject.layer) & targetLayerIce) != 0)
+            {
+                isCorrectPlayer = true;
+                Debug.Log("レイヤー判定一致: 氷プレイヤー");
+            }
+        }
+
+        // 正しいプレイヤーであればガイドを表示
+        if (isCorrectPlayer)
+        {
+            // すでに表示済みなら何もしない
+          
+
+            ShowGuide();
+
+            if (hasPlayed) return;
+        }
+        else
+        {
+            Debug.Log($"レイヤー不一致。相手のレイヤー番号: {other.gameObject.layer}");
+        }
 
     }
 

@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 [Serializable]
 public class NetMessage
@@ -30,3 +31,5 @@ public class NetMessage
     // クリア選択用
     public int select_index;
 }
+
+

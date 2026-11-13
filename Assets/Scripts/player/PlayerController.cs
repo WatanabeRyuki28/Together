@@ -99,6 +99,9 @@ public class PlayerController : MonoBehaviour
 
     private bool remoteIsDead = false;
 
+
+  
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -146,6 +149,9 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+
+      
+
         currentHp = maxHp; // HPの初期化
 
         if (NetworkManager.Instance != null)
