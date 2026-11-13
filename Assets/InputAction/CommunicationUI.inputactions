@@ -786,6 +786,34 @@
                     "isPartOfComposite": true
                 }
             ]
+        },
+        {
+            "name": "Gimmick Explanation",
+            "id": "e00fb31c-1867-4a30-82ab-3b941b36073e",
+            "actions": [
+                {
+                    "name": "Submit",
+                    "type": "Button",
+                    "id": "9c06fc90-89be-4827-9d2b-94a9ad751dcc",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "067b5677-c157-4a66-8548-2623a2ef9145",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Submit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []

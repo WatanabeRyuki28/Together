@@ -4636,6 +4636,7 @@ MonoBehaviour:
   WaterBlock2: {fileID: 697318019}
   speed: 5
   maxRaiseHeight: 3
+  upWater: 0
 --- !u!1 &697318019
 GameObject:
   m_ObjectHideFlags: 0
