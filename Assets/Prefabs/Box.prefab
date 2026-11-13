@@ -131,8 +131,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentStatus: 0
+  floatAmplitude: 0.1
+  floatFrequency: 3
+  respawnPosition: {x: 0, y: 0, z: 0}
+  respawnDelay: 1.5
   pushSound: {fileID: 8300000, guid: f2eaf613d95133743898a8771160cb92, type: 3}
-  fireEffect: {fileID: 0}
+  fireEffect: {fileID: 7251879486380165639, guid: c2f6a8962aac3814aa56cb9647c93470, type: 3}
 --- !u!212 &3328662985868542169
 SpriteRenderer:
   m_ObjectHideFlags: 0
