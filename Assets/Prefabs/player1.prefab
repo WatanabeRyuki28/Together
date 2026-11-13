@@ -40,6 +40,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7035981683803161156}
+  - component: {fileID: 5411534774674977621}
   - component: {fileID: 166910167674040465}
   - component: {fileID: 171128431586506315}
   - component: {fileID: 6531576138833918489}
@@ -70,6 +71,19 @@ Transform:
   - {fileID: 32948840311266244}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5411534774674977621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5722955512191438962}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a03208bc4576f8f48abcad986ffb1e70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  char_index: 0
 --- !u!212 &166910167674040465
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -166,6 +180,7 @@ MonoBehaviour:
   playerNumber: 1
   element: 1
   maxHp: 1
+  isDead: 0
   currentStatus: 1
   moveSpeed: 7
   pushSpeedMultiplier: 0.5

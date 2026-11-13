@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
@@ -27,15 +28,18 @@ public class FloorSwitch : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
     private AudioSource audioSource;
+    private Animator anim;
 
     private int currentOverlapCount = 0;
     private float nextSoundTime = 0f; // 音の連続再生を制御するタイマー
 
     
+    
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         audioSource = GetComponent<AudioSource>();
+        anim = GetComponent<Animator>();
 
         audioSource.playOnAwake = false;
         audioSource.spatialBlend = 0f;
@@ -106,6 +110,15 @@ public class FloorSwitch : MonoBehaviour
         {
             spriteRenderer.color = isPressed ? pressedColor : normalColor;
             spriteRenderer.sprite = isPressed ? pressedSprite : normalSprite;
+
+            if (isPressed)
+            {
+                anim.SetBool("Push",isPressed);
+            }
+            else
+            {
+                anim.SetBool("Push", isPressed);
+            }
         }
 
         // スイッチが押された音を鳴らす（クールタイム挟み込みで連打音を防止）

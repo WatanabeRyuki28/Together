@@ -123,6 +123,13 @@ public class WarpDoor : MonoBehaviour
             // 扉が開いている：通り抜け可能にする（Is Trigger を ON にする）
             doorCollider.isTrigger = true;
             Debug.Log($"{gameObject.name} が開いたため、通り抜け可能になりました。");
+
+            // サイズを変更する
+            doorCollider.size = new Vector2(2.16f, 0.8019378f);
+
+            // 中心位置を変更する
+            doorCollider.offset = new Vector2(0.0f, 0.8590311f);
+
         }
         else
         {
@@ -131,8 +138,12 @@ public class WarpDoor : MonoBehaviour
             Debug.Log($"{gameObject.name} が閉じたため、通行不可の壁になりました。");
 
 
+            // サイズを変更する
+            doorCollider.size = new Vector2(2.16f, 2.52f);
 
-            
+            // 中心位置を変更する
+            doorCollider.offset = new Vector2(0.0f, 0.0f);
+
         }
     }
 
