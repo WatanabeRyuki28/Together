@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -43.2149, y: -58.1498, z: 0}
-  m_LocalScale: {x: 0.1297235, y: 0.1554265, z: 1}
+  m_LocalScale: {x: 0.12972355, y: 0.15542646, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -119,7 +119,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.20532036, y: -2.864798}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -130,7 +130,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.64, y: 0.64}
+  m_Size: {x: 19.934376, y: 22.831009}
   m_EdgeRadius: 0
 --- !u!114 &6032497967772770713
 MonoBehaviour:
@@ -150,6 +150,8 @@ MonoBehaviour:
   startPosition: {x: 10.44, y: 4.36, z: 0}
   endPosition: {x: 15.44, y: 4.36, z: 0}
   gaugeSlider: {fileID: 0}
+  boilerAnimator: {fileID: 2676450147473737857}
+  isWorkingParam: IsWorking
 --- !u!95 &2676450147473737857
 Animator:
   serializedVersion: 5
@@ -160,7 +162,7 @@ Animator:
   m_GameObject: {fileID: 8765537557415070224}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 28b83b3c669dde847be76bb8844d007d, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
