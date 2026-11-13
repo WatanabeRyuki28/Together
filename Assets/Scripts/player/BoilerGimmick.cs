@@ -17,16 +17,26 @@ public class BoilerGimmick : MonoBehaviour, IInteractable
     [Header("メーター（UI）の設定")]
     [SerializeField] private Slider gaugeSlider;         // スライダー
 
+    [Header("アニメーションの設定")]
+    [SerializeField] private Animator boilerAnimator;    // ボイラーのアニメーター
+    [SerializeField] private string isWorkingParam = "IsWorking"; // アニメーターのパラメータ名
+
     private float currentCharge = 0f;
     private bool isFireNearby = false;
     private bool isHitByFire = false;
     private float fireHitTimer = 0f;
+    private bool wasZeroBefore = true; // 0になった瞬間を検知するためのフラグ
 
     private void Start()
     {
         if (movingPlatform != null)
         {
             startPosition = movingPlatform.localPosition;
+        }
+
+        if (boilerAnimator == null)
+        {
+            boilerAnimator = GetComponent<Animator>();
         }
     }
 
@@ -43,7 +53,9 @@ public class BoilerGimmick : MonoBehaviour, IInteractable
         }
 
         // チャージ判定：炎キャラが領域内にいる、または攻撃がHit中
-        if (isFireNearby || isHitByFire)
+        bool isActivating = (isFireNearby || isHitByFire);
+
+        if (isActivating)
         {
             currentCharge += chargeRate * Time.deltaTime;
         }
@@ -52,10 +64,27 @@ public class BoilerGimmick : MonoBehaviour, IInteractable
             currentCharge -= decreaseRate * Time.deltaTime;
         }
 
+        // 0から1の間にクランプ
+        float previousCharge = currentCharge;
         currentCharge = Mathf.Clamp01(currentCharge);
+
+        // --- メーターが0になった瞬間、または0から変動したときの処理 ---
+        if (currentCharge <= 0f && !wasZeroBefore)
+        {
+            OnChargeReachedZero();
+        }
+        else if (currentCharge > 0f && wasZeroBefore)
+        {
+            OnChargeStarted();
+        }
+        wasZeroBefore = (currentCharge <= 0f);
+
+        // --- 変更点：チャージが0より上（残っている）の間はアニメーションを稼働状態にする ---
+        bool hasCharge = currentCharge > 0f;
 
         UpdatePlatformPosition();
         UpdateGaugeUI();
+        UpdateAnimatorState(hasCharge);
     }
 
     public void OnInteract(ElementType type)
@@ -67,7 +96,6 @@ public class BoilerGimmick : MonoBehaviour, IInteractable
         }
     }
 
-    // プレイヤーが入った時にフラグをONにする
     private void OnTriggerEnter2D(Collider2D other)
     {
         PlayerController player = other.GetComponent<PlayerController>();
@@ -77,7 +105,6 @@ public class BoilerGimmick : MonoBehaviour, IInteractable
         }
     }
 
-    // プレイヤーが領域内にいる間はONを保持
     private void OnTriggerStay2D(Collider2D other)
     {
         PlayerController player = other.GetComponent<PlayerController>();
@@ -87,7 +114,6 @@ public class BoilerGimmick : MonoBehaviour, IInteractable
         }
     }
 
-    // プレイヤーが出た時にフラグをOFFにする
     private void OnTriggerExit2D(Collider2D other)
     {
         PlayerController player = other.GetComponent<PlayerController>();
@@ -109,5 +135,27 @@ public class BoilerGimmick : MonoBehaviour, IInteractable
         {
             gaugeSlider.value = currentCharge;
         }
+    }
+
+    private void UpdateAnimatorState(bool isWorking)
+    {
+        if (boilerAnimator != null)
+        {
+            boilerAnimator.SetBool(isWorkingParam, isWorking);
+        }
+    }
+
+    // メーターが0になった瞬間に呼ばれるメソッド
+    private void OnChargeReachedZero()
+    {
+        Debug.Log("メーターが0になりました！");
+        // ここでさらに「0になった瞬間のトリガー」を引くこともできます
+        // boilerAnimator.SetTrigger("OnDepleted");
+    }
+
+    // チャージが0から増え始めた瞬間に呼ばれるメソッド
+    private void OnChargeStarted()
+    {
+        Debug.Log("チャージが開始されました！");
     }
 }
