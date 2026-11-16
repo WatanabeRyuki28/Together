@@ -3,31 +3,39 @@ using UnityEngine;
 public class VideoAreaTrigger : MonoBehaviour
 {
     [Header("表示する操作説明パネル")]
-    [SerializeField] private GameObject guidePanelObject;
+    [SerializeField] public GameObject guidePanelObject;
 
     [Header("表示or非表示")]
     [SerializeField] private bool isVideo = false;
 
-    private bool hasPlayed = false;
+    [SerializeField]public bool hasExplanation = false;
 
-    private string cha ="";
+    private string cha = "";
 
     [SerializeField] private LayerMask targetLayerFire;
-    [SerializeField] private LayerMask targetLayerIce;  
+    [SerializeField] private LayerMask targetLayerIce;
+
+    private CommunicationUI controls;
+
+    int count = 0;
 
     private void Start()
     {
         // 起動時はパネルを非表示
         if (guidePanelObject != null) guidePanelObject.SetActive(false);
-    
+
+        controls = new CommunicationUI();
+
+        count = 0;  
+
     }
 
     void Update()
     {
 #if UNITY_EDITOR
 
-      /*  if (!isVideo)guidePanelObject.SetActive(false);
-        if (isVideo) guidePanelObject.SetActive(true);*/
+        /*  if (!isVideo)guidePanelObject.SetActive(false);
+          if (isVideo) guidePanelObject.SetActive(true);*/
 
 
 #endif
@@ -38,7 +46,7 @@ public class VideoAreaTrigger : MonoBehaviour
         PlayerStatus playerStatus = other.GetComponent<PlayerStatus>();
         if (playerStatus == null) return; // プレイヤーでなければ何もしない
 
-       
+
         Debug.Log("当たった");
 
         bool isCorrectPlayer = false;
@@ -66,26 +74,38 @@ public class VideoAreaTrigger : MonoBehaviour
         if (isCorrectPlayer)
         {
             // すでに表示済みなら何もしない
-          
+
 
             ShowGuide();
 
-            if (hasPlayed) return;
+            if (hasExplanation) return;
         }
         else
         {
             Debug.Log($"レイヤー不一致。相手のレイヤー番号: {other.gameObject.layer}");
         }
 
+
     }
 
     private void ShowGuide()
     {
-        hasPlayed = true;
+      
+       if (count == 0)
+       { 
+            hasExplanation = true;
 
-        // パネルを表示
-        if (guidePanelObject != null) guidePanelObject.SetActive(true);
-        
-        
+            // パネルを表示
+            if (guidePanelObject != null) guidePanelObject.SetActive(true);
+        }
+
+
+        count++;
+
     }
+
 }
+
+
+
+

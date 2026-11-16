@@ -96,11 +96,9 @@ public class PlayerController : MonoBehaviour
     private CommunicationUI controls;
 
     private StageMenuManager stageMenuManager;
+    private VideoAreaTrigger videoExplanation;
 
     private bool remoteIsDead = false;
-
-
-  
 
     void Awake()
     {
@@ -109,6 +107,8 @@ public class PlayerController : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         audioSource = GetComponent<AudioSource>();
         stageMenuManager = FindFirstObjectByType<StageMenuManager>();
+        videoExplanation = FindFirstObjectByType<VideoAreaTrigger>();
+
 
         if (audioSource != null)
         {
@@ -149,9 +149,6 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-
-      
-
         currentHp = maxHp; // HPの初期化
 
         if (NetworkManager.Instance != null)
@@ -255,6 +252,25 @@ public class PlayerController : MonoBehaviour
                 {
                     StageMenuManager.Instance.ToggleMenu();
                 }
+            }
+            bool gimmick = controls.GimmickExplanation.Submit.triggered;
+
+            if (gimmick)
+            {
+                videoExplanation.guidePanelObject.SetActive(false);
+
+                videoExplanation.hasExplanation = false;
+            }
+
+            if (videoExplanation.hasExplanation)
+            {
+                controls.Player.Disable();
+                controls.GimmickExplanation.Enable();
+            }
+            else
+            {
+                controls.Player.Enable();
+                controls.GimmickExplanation.Disable();
             }
         }
 
