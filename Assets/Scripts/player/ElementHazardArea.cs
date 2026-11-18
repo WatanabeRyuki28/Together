@@ -38,7 +38,6 @@ public class ElementHazardArea : MonoBehaviour, IInteractable
         }
     }
 
-    // --- 弾（Projectile）が当たったとき ---
     public void OnInteract(ElementType element)
     {
         Debug.Log($"[OnInteract] 属性: {element}, エリア: {areaType}");
@@ -57,6 +56,19 @@ public class ElementHazardArea : MonoBehaviour, IInteractable
     private void OnTriggerEnter2D(Collider2D collision)
     {
         CheckTargetSafety(collision);
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        PushableBox box = collision.GetComponent<PushableBox>();
+        if (box != null)
+        {
+            if (areaType == AreaType.Water)
+            {
+                box.SetStatus(StatusCondition.Normal);
+                Debug.Log("箱が水エリアから出たため、Normal状態に戻しました。");
+            }
+        }
     }
 
     private void CheckTargetSafety(Collider2D collisionCol)
@@ -99,18 +111,15 @@ public class ElementHazardArea : MonoBehaviour, IInteractable
         {
             if (areaType == AreaType.Magma)
             {
-                // マグマに触れたら燃やす（Burning状態にしてリスポーン発動）
                 box.SetStatus(StatusCondition.Burning);
             }
             else if (areaType == AreaType.Water)
             {
-                // 水に触れたら濡らす（Wet状態にしてぷかぷか浮遊発動）
                 box.SetStatus(StatusCondition.Wet);
             }
         }
     }
 
-    // ブロックを上げる共通処理
     private void TryRaiseBlock()
     {
         if (WaterBlock == null) return;
@@ -142,7 +151,11 @@ public class ElementHazardArea : MonoBehaviour, IInteractable
         if (shouldRaise)
         {
             Vector3 pos1 = WaterBlock.transform.position;
+            float previousY = pos1.y; // 移動前のY座標を保存
             pos1.y = Mathf.MoveTowards(pos1.y, targetY, speed * Time.deltaTime);
+
+            float deltaY = pos1.y - previousY; // 今回の移動量を計算
+
             WaterBlock.transform.position = pos1;
 
             if (WaterBlock2 != null)
@@ -150,6 +163,25 @@ public class ElementHazardArea : MonoBehaviour, IInteractable
                 Vector3 pos2 = WaterBlock2.transform.position;
                 pos2.y = Mathf.MoveTowards(pos2.y, targetY, speed * Time.deltaTime);
                 WaterBlock2.transform.position = pos2;
+            }
+
+            // 水エリアが上昇中、中にいる Wet 状態の箱も一緒に持ち上げて基準位置も同期する
+            Collider2D waterCollider = GetComponent<Collider2D>();
+            if (waterCollider != null)
+            {
+                ContactFilter2D filter = new ContactFilter2D().NoFilter();
+                Collider2D[] results = new Collider2D[10];
+                int count = waterCollider.OverlapCollider(filter, results);
+
+                for (int i = 0; i < count; i++)
+                {
+                    PushableBox box = results[i].GetComponent<PushableBox>();
+                    if (box != null && box.CurrentStatus == StatusCondition.Wet)
+                    {
+                        box.transform.position += new Vector3(0, deltaY, 0);
+                        box.AddBuoyantBaseY(deltaY);
+                    }
+                }
             }
 
             if (Mathf.Approximately(WaterBlock.transform.position.y, targetY))

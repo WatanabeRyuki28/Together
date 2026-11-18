@@ -8,6 +8,7 @@ TagManager:
   - FxTemporaire
   - IcePillar
   - Ground
+  - Water
   layers:
   - Default
   - TransparentFX
@@ -30,8 +31,8 @@ TagManager:
   - Button
   - Floor_Ice
   - Shutter
-  - 
-  - 
+  - Star
+  - Jump
   - 
   - 
   - 

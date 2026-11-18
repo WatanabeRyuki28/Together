@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2731383940887893687}
   - component: {fileID: 5437675026064957535}
   - component: {fileID: 6302801896738298200}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Square (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -117,7 +117,7 @@ GameObject:
   - component: {fileID: 2902911023466434479}
   - component: {fileID: 5055999034133500353}
   - component: {fileID: 1091985001949467118}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Square (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -223,7 +223,7 @@ GameObject:
   - component: {fileID: 8786276339106834906}
   - component: {fileID: 337642410124647053}
   - component: {fileID: 3280373150134352556}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Honou
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -325,7 +325,7 @@ GameObject:
   - component: {fileID: 8463160790499086195}
   - component: {fileID: 4541828762236252279}
   - component: {fileID: 5834143125774518709}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Square
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -431,7 +431,7 @@ GameObject:
   - component: {fileID: 7368712505533890866}
   - component: {fileID: 6117746878691715205}
   - component: {fileID: 862639506458602579}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Square (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -536,7 +536,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8369655896101106454}
   - component: {fileID: 7157675766773430297}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: treeTrunk
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -620,7 +620,7 @@ GameObject:
   m_Component:
   - component: {fileID: 56966565237408501}
   - component: {fileID: 6816797193043017697}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: treeTrunk (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
