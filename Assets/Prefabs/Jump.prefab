@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5969549719727665730}
   - component: {fileID: 8502391028843026184}
   - component: {fileID: 4919667903886900547}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: Jump
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -263,7 +263,7 @@ GameObject:
   - component: {fileID: 2891229840007218576}
   - component: {fileID: 3662741052943545092}
   - component: {fileID: 3570078885100108592}
-  m_Layer: 0
+  m_Layer: 22
   m_Name: TopTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}

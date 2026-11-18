@@ -4,7 +4,6 @@ using UnityEngine;
 [RequireComponent(typeof(AudioSource))]
 public class PushableBox : MonoBehaviour
 {
-    // --- 定数定義 ---
     private const float MinMoveSpeedThreshold = 0.2f;
 
     [Header("状態の設定")]
@@ -18,20 +17,18 @@ public class PushableBox : MonoBehaviour
     [SerializeField] private float floatFrequency = 3.0f;
 
     [Header("リスポーン設定")]
-    [SerializeField] private Vector3 respawnPosition;       // リスポーン地点（初期位置を自動記憶）
-    [SerializeField] private float respawnDelay = 1.5f;     // 燃えてからリスポーンするまでの時間
+    [SerializeField] private Vector3 respawnPosition;
+    [SerializeField] private float respawnDelay = 1.5f;
 
     [Header("効果音設定")]
     [SerializeField] private AudioClip pushSound;
 
     [Header("エフェクト設定")]
-    [SerializeField] private GameObject fireEffect;         // マグマで燃えるときのエフェクト
+    [SerializeField] private GameObject fireEffect;
 
     private Rigidbody2D rb;
     private AudioSource audioSource;
-    private float defaultGravityScale;                      // デフォルトの重力
-
-    // ぷかぷか浮遊用の基準Y座標を記憶する変数
+    private float defaultGravityScale;
     private float buoyantBaseY;
 
     private void Awake()
@@ -40,14 +37,13 @@ public class PushableBox : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
 
         audioSource.playOnAwake = false;
-        audioSource.loop = true; // 押している間ループ再生
+        audioSource.loop = true;
 
         defaultGravityScale = rb.gravityScale;
     }
 
     private void Start()
     {
-        // ゲーム開始時の位置を初期リスポーン地点として自動記憶
         respawnPosition = transform.position;
     }
 
@@ -61,20 +57,16 @@ public class PushableBox : MonoBehaviour
             ApplyFloatingMotion();
         }
 
-        // デバッグ用（Lキーで強制的に燃やすテストなど）
+        // デバッグ用（Lキーで強制燃焼）
         if (Input.GetKey(KeyCode.L) && currentStatus != StatusCondition.Burning)
         {
             SetStatus(StatusCondition.Burning);
         }
     }
 
-    /// <summary>
-    /// 箱の移動速度に応じて移動音の再生・停止を制御する
-    /// </summary>
     private void HandlePushSound()
     {
         if (pushSound == null) return;
-
         float currentHorizontalSpeed = Mathf.Abs(rb.velocity.x);
 
         if (currentHorizontalSpeed > MinMoveSpeedThreshold)
@@ -94,14 +86,11 @@ public class PushableBox : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 箱の状態を変更し、それぞれの状態に応じた処理を行う
-    /// </summary>
     public void SetStatus(StatusCondition newStatus)
     {
-        if (currentStatus == newStatus) return;
+        // すでに同じ状態なら処理しない（ただしWetに入る瞬間は高さを再取得するため通す）
+        if (currentStatus == newStatus && newStatus != StatusCondition.Wet) return;
 
-        // Wet状態に入る瞬間の高さを基準位置として記録する
         if (newStatus == StatusCondition.Wet)
         {
             buoyantBaseY = transform.position.y;
@@ -133,24 +122,17 @@ public class PushableBox : MonoBehaviour
         }
         Debug.Log("箱がマグマで燃え上がりました[cite: 1]。");
 
-        // 燃えている間は物理挙動を一時停止
         rb.velocity = Vector2.zero;
         rb.simulated = false;
-
-        // 指定秒数後にリスポーン処理を実行
         Invoke(nameof(RespawnBox), respawnDelay);
     }
 
     private void RespawnBox()
     {
-        // 位置を初期位置（または設定されたリスポーン地点）に戻す
         transform.position = respawnPosition;
-
-        // 状態を Normal（通常）に戻す
         currentStatus = StatusCondition.Normal;
         rb.gravityScale = defaultGravityScale;
-
-        // 物理挙動を再開
+        rb.velocity = Vector2.zero;
         rb.simulated = true;
 
         Debug.Log("箱がリスポーンしました。");
@@ -159,27 +141,38 @@ public class PushableBox : MonoBehaviour
     private void ApplyBuoyancy()
     {
         Debug.Log("箱が水に濡れ、水面で浮いています。");
-        // 重力を完全にオフにして沈まないようにする
         rb.gravityScale = 0f;
         rb.velocity = new Vector2(rb.velocity.x, 0f);
-
-        // 水に触れた瞬間の高さを基準にする
         buoyantBaseY = transform.position.y;
     }
 
-    /// <summary>
-    /// 水面で上下にふんわりと揺れる（ぷかぷかさせる）処理（めり込み防止版）
-    /// </summary>
     private void ApplyFloatingMotion()
     {
-        // サイン波を使って目指すべきY座標を計算
         float targetY = buoyantBaseY + Mathf.Sin(Time.time * floatFrequency) * floatAmplitude;
-        
-        // Rigidbody2DのMovePositionを使って移動させることで、壁へのめり込みや引っかかりを防ぐ
         float newY = Mathf.MoveTowards(transform.position.y, targetY, Time.deltaTime * 5f);
         rb.MovePosition(new Vector2(transform.position.x, newY));
-
-        // 浮いている間は縦方向の物理速度をリセット
         rb.velocity = new Vector2(rb.velocity.x, 0f);
+    }
+
+    /// <summary>
+    /// 水ブロックが上昇した際、浮遊の基準Y座標も一緒に持ち上げる（上昇ギミック連動用）
+    /// </summary>
+    public void AddBuoyantBaseY(float amount)
+    {
+        buoyantBaseY += amount;
+    }
+
+    // 水エリアのトリガーから完全に出たとき
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        ElementHazardArea hazard = collision.GetComponent<ElementHazardArea>();
+        if (hazard != null)
+        {
+            if (currentStatus == StatusCondition.Wet)
+            {
+                SetStatus(StatusCondition.Normal);
+                Debug.Log("水エリアから出たため、Normal状態に戻りました。");
+            }
+        }
     }
 }
