@@ -53,6 +53,11 @@ public class NetworkIdentity2D : MonoBehaviour
         lastPosition = transform.position;
         targetPosition = transform.position;
 
+        if (GetComponent<DestructibleWall>() != null)
+        {
+            return; // 壁は位置同期の対象外にする
+        }
+
         // 弾などの特殊オブジェクト
         if (objectId >= 1000 && isOwnedByLocal) return;
 
@@ -67,6 +72,8 @@ public class NetworkIdentity2D : MonoBehaviour
 
     void Update()
     {
+        if (GetComponent<DestructibleWall>() != null) return;
+
         // 自分が権利を持っている場合：自分の位置をネットワークに送信
         if (isOwnedByLocal)
         {
@@ -115,6 +122,11 @@ public class NetworkIdentity2D : MonoBehaviour
     {
         if (rb != null)
         {
+            if (GetComponent<DestructibleWall>() != null)
+            {
+                return;
+
+            }
             if (isOwnedByLocal)
             {
                 rb.bodyType = RigidbodyType2D.Dynamic;

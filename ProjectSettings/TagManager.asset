@@ -8,6 +8,7 @@ TagManager:
   - FxTemporaire
   - IcePillar
   - Ground
+  - MovingPlatform
   layers:
   - Default
   - TransparentFX

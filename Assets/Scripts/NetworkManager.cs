@@ -136,9 +136,26 @@ public class NetworkManager : MonoBehaviour
         {
             OnPlayerPosReceived?.Invoke(msg);
         }
-        else if (msg.dataType == "object") 
+        else if (msg.dataType == "object")
         {
+            // まずは通常のオブジェクト位置同期イベントを発火しておく
             OnObjectPosReceived?.Invoke(msg);
+
+            // 同時に、シーン内の壁（DestructibleWall）とIDが一致するかチェックして破壊を試みる
+            NetworkIdentity2D[] allIdentities = FindObjectsByType<NetworkIdentity2D>(FindObjectsSortMode.None);
+            foreach (var identity in allIdentities)
+            {
+                if (identity.objectId == msg.id)
+                {
+                    DestructibleWall wall = identity.GetComponent<DestructibleWall>();
+                    if (wall != null && !wall.isBreaking)
+                    {
+                        Debug.Log($"[受信] 壁の破壊同期を受信しました。ID: {msg.id}");
+                        wall.OnBreakFromNetwork();
+                    }
+                    break;
+                }
+            }
         }
         else if (msg.dataType == "spawn_projectile")
         {
@@ -159,6 +176,26 @@ public class NetworkManager : MonoBehaviour
         else if (msg.type == "clear_select")
         {
             OnStageClearSelected?.Invoke(msg);
+        }
+        else if (msg.type == "in_game_move" && msg.dataType == "object")
+        {
+            // シーン内の全 NetworkIdentity2D から、送られてきた id と一致するものを探す
+            NetworkIdentity2D[] allIdentities = FindObjectsByType<NetworkIdentity2D>(FindObjectsSortMode.None);
+            foreach (var identity in allIdentities)
+            {
+                Debug.Log($"[受信] 壁破壊メッセージを受け取りました。ID: {msg.id}");
+                if (identity.objectId == msg.id)
+                {
+                    // 破壊可能な壁であればネットワーク破壊処理を呼ぶ
+                    DestructibleWall wall = identity.GetComponent<DestructibleWall>();
+                    if (wall != null)
+                    {
+                        Debug.Log("壁のネットワーク破壊を受信！ ID: " + msg.id);
+                        wall.OnBreakFromNetwork();
+                    }
+                    break;
+                }
+            }
         }
 
     }

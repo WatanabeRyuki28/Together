@@ -386,7 +386,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8386623883118949803, guid: 855ff7dc2b4225b4381d46b94303ef83, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 1226943869}
   m_SourcePrefab: {fileID: 100100000, guid: 855ff7dc2b4225b4381d46b94303ef83, type: 3}
 --- !u!1001 &87672253
 PrefabInstance:
@@ -4589,6 +4592,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3974107851902208916, guid: 855ff7dc2b4225b4381d46b94303ef83, type: 3}
+      propertyPath: objectId
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7453142735077451794, guid: 855ff7dc2b4225b4381d46b94303ef83, type: 3}
       propertyPath: m_LocalPosition.x
       value: 73.77295
@@ -4638,6 +4645,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 855ff7dc2b4225b4381d46b94303ef83, type: 3}
+--- !u!61 &324654858 stripped
+BoxCollider2D:
+  m_CorrespondingSourceObject: {fileID: 3803061000278200001, guid: 6c583d6300802a14b999fd769f275fdd, type: 3}
+  m_PrefabInstance: {fileID: 1794645792}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &370680094
 GameObject:
   m_ObjectHideFlags: 0
@@ -5340,7 +5352,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 70
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0.19230771, y: 0.19230771, z: 0}
   m_MaxChunkCount: 16
@@ -5732,7 +5744,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 950724903}
+  m_Father: {fileID: 1596382330}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &658698138
 BoxCollider2D:
@@ -5766,7 +5778,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 84.338066, y: -1.6669087}
+  m_Offset: {x: 84.338066, y: -1.520733}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -5793,11 +5805,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   areaType: 1
   fatalDamage: 999
-  WaterBlock: {fileID: 658698133}
-  WaterBlock2: {fileID: 697318019}
-  speed: 5
-  maxRaiseHeight: 1.8
-  upWater: 1
 --- !u!1 &697318019
 GameObject:
   m_ObjectHideFlags: 0
@@ -5807,6 +5814,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 697318022}
+  - component: {fileID: 697318025}
   - component: {fileID: 697318021}
   - component: {fileID: 697318020}
   - component: {fileID: 697318024}
@@ -5857,7 +5865,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 70
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0.19230771, y: 0.19230771, z: 0}
   m_MaxChunkCount: 16
@@ -6249,7 +6257,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 950724903}
+  m_Father: {fileID: 1596382330}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &697318024
 BoxCollider2D:
@@ -6283,7 +6291,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 84.39983, y: -1.5993636}
+  m_Offset: {x: 84.39983, y: -1.520733}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -6296,6 +6304,20 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 6.3808746, y: 6.8550773}
   m_EdgeRadius: 0
+--- !u!114 &697318025
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 697318019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4731a0de18c8e3c4ab4d60fcd89170e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  areaType: 1
+  fatalDamage: 999
 --- !u!114 &724134668 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5826394861652869170, guid: 5be6eb7f2ace38943a9b161fc09025a7, type: 3}
@@ -24670,8 +24692,7 @@ Transform:
   - {fileID: 747283490}
   - {fileID: 235730929}
   - {fileID: 2140951326}
-  - {fileID: 658698136}
-  - {fileID: 697318022}
+  - {fileID: 1596382330}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1018924218
@@ -24744,6 +24765,25 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4302455903331720158, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
   m_PrefabInstance: {fileID: 2118910421}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1226943862 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8386623883118949803, guid: 855ff7dc2b4225b4381d46b94303ef83, type: 3}
+  m_PrefabInstance: {fileID: 27225462}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1226943869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1226943862}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 099cd2f37f138f044907acc8eca9e94a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectId: 3
+  isOwnedByLocal: 0
 --- !u!1001 &1288430243
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25003,6 +25043,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: "\u8DB3\u5834"
       objectReference: {fileID: 0}
+    - target: {fileID: 6499696963601935649, guid: a92fcdba0f052e143914ba6c1fd7494b, type: 3}
+      propertyPath: m_TagString
+      value: MovingPlatform
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -25089,6 +25133,57 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1594863894}
   m_CullTransparentMesh: 1
+--- !u!1 &1596382329
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1596382330}
+  - component: {fileID: 1596382331}
+  m_Layer: 0
+  m_Name: WaterArea
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1596382330
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1596382329}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 658698136}
+  - {fileID: 697318022}
+  m_Father: {fileID: 950724903}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1596382331
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1596382329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40ede692a1d2db94bb58ae7948ed7800, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  WaterBlock: {fileID: 658698133}
+  WaterBlock2: {fileID: 697318019}
+  speed: 5
+  maxRaiseHeight: 3
+  upWater: 1
 --- !u!1001 &1602087501
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25423,6 +25518,14 @@ PrefabInstance:
       propertyPath: m_IsTrigger
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5695248812329992589, guid: 6c583d6300802a14b999fd769f275fdd, type: 3}
+      propertyPath: objectId
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5701936256199021208, guid: 6c583d6300802a14b999fd769f275fdd, type: 3}
+      propertyPath: box
+      value: 
+      objectReference: {fileID: 324654858}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -26717,7 +26820,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 163166687}
   - {fileID: 2118910421}
-  - {fileID: 27225462}
   - {fileID: 404178534}
   - {fileID: 1950047781}
   - {fileID: 2042747322}
@@ -26740,6 +26842,7 @@ SceneRoots:
   - {fileID: 882374319}
   - {fileID: 1602087501}
   - {fileID: 405078185}
+  - {fileID: 27225462}
   - {fileID: 243257335}
   - {fileID: 732773419}
   - {fileID: 1529527451}

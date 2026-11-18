@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 
 /// <summary>
 /// 属性ごとの破壊可能な壁（燃えている壁/草の壁、オンライン同期対応・復活なし）
@@ -11,36 +12,30 @@ public class DestructibleWall : MonoBehaviour, IInteractable
         GrassWall    // 草の壁（炎キャラの直接接触・炎の球で破壊可能）
     }
 
-    // --- マジックナンバー排除用の定数定義 ---
-    private const int UnassignedCharacterIndex = -1; // 未割り当てキャラインデックスのデフォルト値
-    private const float SpatialBlend2D = 0f;          // 2Dサウンド用空間ブレンド値
+    private const int UnassignedCharacterIndex = -1;
+    private const float SpatialBlend2D = 0f;
 
     [Header("Wall Settings (壁の設定)")]
-    [SerializeField] private WallType wallType = WallType.BurningWall; // インスペクターで切り替え
+    [SerializeField] private WallType wallType = WallType.BurningWall;
 
     [Header("Audio Settings (効果音)")]
-    [SerializeField] private AudioClip breakSound; // 破壊時の効果音
-    [SerializeField] private AudioClip failSound;  // 属性が合わずに弾いた時の効果音
+    [SerializeField] private AudioClip breakSound;
+    [SerializeField] private AudioClip failSound;
 
     [Header("Effect Settings (演出)")]
-    [SerializeField] private GameObject breakEffectPrefab; // 破壊時のエフェクトプレハブ
+    [SerializeField] private GameObject breakEffectPrefab;
 
     private AudioSource audioSource;
     private NetworkIdentity2D networkIdentity;
 
     public bool isBreaking = false;
-
-   
     public BoxCollider2D box;
 
     private void Awake()
     {
         networkIdentity = GetComponent<NetworkIdentity2D>();
-
-        
         box = GetComponent<BoxCollider2D>();
 
-        // AudioSourceのキャッシュ
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
         {
@@ -53,49 +48,27 @@ public class DestructibleWall : MonoBehaviour, IInteractable
     {
         if (isBreaking)
         {
-            if (transform.localScale.x >= 0.0f) { transform.localScale -= Vector3.right * 0.005f; }
-            if (transform.localScale.y >= 0.0f) { transform.localScale -= Vector3.up * 0.005f; }
-
+            float shrinkAmount = 0.5f * Time.deltaTime;
+            float newX = Mathf.Max(0f, transform.localScale.x - shrinkAmount);
+            float newY = Mathf.Max(0f, transform.localScale.y - shrinkAmount);
+            transform.localScale = new Vector3(newX, newY, transform.localScale.z);
         }
     }
+
     /// <summary>
-    /// インタラクト時の判定（球/弾などの攻撃が当たった時に呼ばれる）
+    /// 弾（球）などの攻撃が当たった時に呼ばれる
     /// </summary>
     public void OnInteract(ElementType type)
     {
-        // 弾（球）が当たった場合はどちらの壁も属性チェックして破壊を試みる
         TryBreakWall(type, isDirectContact: false);
     }
 
     /// <summary>
-    /// プレイヤー本体が物理衝突（通常のコライダー）で触れた時の処理
+    /// プレイヤーが直接体当たりした時に、PlayerController側から呼ぶメソッド
     /// </summary>
-    private void OnCollisionEnter2D(Collision2D collision)
+    public void OnPlayerDirectTouch(ElementType playerElement)
     {
-        CheckPlayerCollision(collision.gameObject);
-    }
-
-    /// <summary>
-    /// プレイヤー本体がトリガーコライダーで触れた時の処理
-    /// </summary>
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        CheckPlayerCollision(other.gameObject);
-    }
-
-    /// <summary>
-    /// 接触したオブジェクトがプレイヤーか判定し、対応する属性なら壁を壊す
-    /// </summary>
-    private void CheckPlayerCollision(GameObject targetObj)
-    {
-        if (isBreaking) return;
-
-        PlayerController player = targetObj.GetComponent<PlayerController>();
-        if (player != null)
-        {
-            // プレイヤー本体の直接接触として処理
-            TryBreakWall(player.Element, isDirectContact: true);
-        }
+        TryBreakWall(playerElement, isDirectContact: true);
     }
 
     /// <summary>
@@ -109,7 +82,7 @@ public class DestructibleWall : MonoBehaviour, IInteractable
 
         if (wallType == WallType.BurningWall)
         {
-            // 燃えている壁：水属性（Ice）の「球（弾）」が当たった時のみ破壊（直接接触は無効）
+            // 燃えている壁：水属性（Ice）の「球（弾）」のみ（直接接触無効）
             if (type == ElementType.Ice && !isDirectContact)
             {
                 canBreak = true;
@@ -117,7 +90,7 @@ public class DestructibleWall : MonoBehaviour, IInteractable
         }
         else if (wallType == WallType.GrassWall)
         {
-            // 草の壁：炎属性（Fire）であれば「直接接触」でも「球（弾）」でも破壊可能
+            // 草の壁：炎属性（Fire）なら直接接触でも球でもOK
             if (type == ElementType.Fire)
             {
                 canBreak = true;
@@ -128,21 +101,21 @@ public class DestructibleWall : MonoBehaviour, IInteractable
         {
             StartBreakSequence();
 
-            // オンライン通信中であれば他プレイヤーへ通知を送信
+            // 自分が壊した（あるいはローカルで検知した）とき、相手へネットワーク通知を送る
             SendObjectSyncEvent();
         }
         else if (!isDirectContact)
         {
-            // 弾（球）が当たったが属性が合わなかった場合は失敗音を鳴らす
             PlaySound(failSound);
         }
     }
 
     /// <summary>
-    /// 外部（他プレイヤー）からネットワーク経由で破壊イベントを受け取った際に呼ばれる
+    /// ネットワーク経由で他プレイヤーから破壊イベントを受け取った時
     /// </summary>
     public void OnBreakFromNetwork()
     {
+
         if (isBreaking) return;
         StartBreakSequence();
     }
@@ -151,6 +124,12 @@ public class DestructibleWall : MonoBehaviour, IInteractable
     {
         isBreaking = true;
 
+        PlayerController[] attachedPlayers = GetComponentsInChildren<PlayerController>();
+        foreach (PlayerController player in attachedPlayers)
+        {
+            player.transform.SetParent(null);
+        }
+
         if (breakSound != null)
         {
             AudioSource.PlayClipAtPoint(breakSound, transform.position);
@@ -158,20 +137,19 @@ public class DestructibleWall : MonoBehaviour, IInteractable
 
         SpawnBreakEffect();
 
+        if (box != null)
+        {
+            box.isTrigger = true;
+        }
 
-       box.isTrigger = true;
-
-
-        // 復活処理を行わず、即座にオブジェクトを完全に削除
-        Destroy(gameObject,2.0f);
+        Destroy(gameObject, 2.0f);
     }
 
-    /// <summary>
-    /// オブジェクトの破壊・同期データをサーバー/対戦相手へ送信する
-    /// </summary>
     private async void SendObjectSyncEvent()
     {
         if (NetworkManager.Instance == null || networkIdentity == null) return;
+
+        Debug.Log($"[送信] 壁の破壊イベントを送信します。ID: {networkIdentity.objectId}");
 
         int myRealColor = NetworkManager.Instance.myRealSelectedChar;
         if (myRealColor == UnassignedCharacterIndex)
@@ -185,13 +163,12 @@ public class DestructibleWall : MonoBehaviour, IInteractable
             dataType = "object",
             room_id = NetworkManager.Instance.myRoomID,
             char_index = myRealColor,
-            id = networkIdentity.objectId, // オブジェクト固有のID
+            id = networkIdentity.objectId,
             position_x = transform.position.x,
             position_y = transform.position.y
         };
 
         string json = JsonUtility.ToJson(moveData);
-
         await NetworkManager.Instance.SendMessageAsync(json);
     }
 
@@ -204,15 +181,6 @@ public class DestructibleWall : MonoBehaviour, IInteractable
             transform.position,
             Quaternion.identity
         );
-
-       /* Vector2 pos = transform.position;
-        Instantiate(
-            breakEffectPrefab,
-            new Vector2(pos.x,pos.y + 2),
-            Quaternion.identity
-        ) ;*/
-
-     
     }
 
     private void PlaySound(AudioClip clip)

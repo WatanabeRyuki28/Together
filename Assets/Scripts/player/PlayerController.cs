@@ -404,14 +404,31 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        DestructibleWall wall = other.GetComponent<DestructibleWall>();
+        if (wall != null)
+        {
+            wall.OnPlayerDirectTouch(this.Element);
+        }
+
+    }
     private void OnCollisionEnter2D(Collision2D collision)
     {
         CheckContact(collision, true);
 
+        DestructibleWall wall = collision.gameObject.GetComponent<DestructibleWall>();
+        if (wall != null)
+        {
+            // 自分の属性（Element）を渡して壁に直接接触したことを伝える
+            wall.OnPlayerDirectTouch(this.Element);
+        }
+
+
         // 動く足場（Rigidbody2Dを持つ床）に乗った際、親にして一緒に移動させる
         if (((1 << collision.gameObject.layer) & groundLayer) != 0)
         {
-            if (collision.gameObject.GetComponent<Rigidbody2D>() != null)
+            if (collision.gameObject.CompareTag("MovingPlatform"))
             {
                 transform.SetParent(collision.transform);
             }
@@ -432,10 +449,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+
     private void OnCollisionExit2D(Collision2D collision)
     {
         CheckContact(collision, false);
 
+        if (transform.parent == null || !collision.gameObject.activeInHierarchy)
+        {
+            return;
+
+        }
         // 足場から離れたら親子関係を解除する
         if (((1 << collision.gameObject.layer) & groundLayer) != 0)
         {
@@ -495,6 +518,7 @@ public class PlayerController : MonoBehaviour
             anim.SetBool("isDead", true);
         }
 
+       
         // 自分の死んだ状態をネットワークへ確実に送信
         if (IsLocalPlayer)
         {
@@ -502,15 +526,20 @@ public class PlayerController : MonoBehaviour
         }
 
         // 自分が死んだので、リトライ演出を流す
-        TriggerRetrySequence();
-
+       
         if (audioSource != null && audioSource.isPlaying)
         {
             audioSource.Stop();
         }
 
+        StartCoroutine(WaitDeathAnimationAndRetry());
+
         Debug.Log($"{playerNumber}P が死亡しました。");
     }
+
+   
+
+ 
 
     // ネットワークから位置や状態データを受け取るメソッド
     public void ApplyNetworkData(Vector3 targetPos, bool grounded, bool flipX, bool dead)
@@ -536,8 +565,34 @@ public class PlayerController : MonoBehaviour
             }
 
             // 相手が死んだので、自分の画面でも一緒にリトライ演出を流す！
-            TriggerRetrySequence();
+            StartCoroutine(WaitDeathAnimationAndRetry());
         }
+    }
+    private IEnumerator WaitDeathAnimationAndRetry()
+    {
+        // 方法A: Animator Controllerから「isDead」に対応するアニメーションクリップの長さを自動取得する
+        float waitTime = 1f; // デフォルトの予備時間
+        if (anim != null)
+        {
+            RuntimeAnimatorController ac = anim.runtimeAnimatorController;
+            if (ac != null)
+            {
+                foreach (var clip in ac.animationClips)
+                {
+                    // アニメーション名に "Death" や "Dead" が含まれているクリップを探す（プロジェクトに合わせて変更してください）
+                    if (clip.name.Contains("Death") || clip.name.Contains("Dead"))
+                    {
+                        waitTime = clip.length;
+                        break;
+                    }
+                }
+            }
+        }
+        // アニメーションの長さ分だけ待機（または Animator.GetCurrentAnimatorStateInfo を使うことも可能）
+        yield return new WaitForSeconds(waitTime);
+
+        // アニメーション終了後にリトライ演出を実行
+        TriggerRetrySequence();
     }
 
     private void TriggerRetrySequence()

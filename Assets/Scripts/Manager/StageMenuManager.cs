@@ -538,9 +538,9 @@ public class StageMenuManager : MonoBehaviour
 
     public IEnumerator RetrySequenceRoutine(bool isFromDeath)
     {
-        Time.timeScale = 1f;
+       /* Time.timeScale = 1f;
         if(isFromDeath)yield return new WaitForSecondsRealtime(waitAfterClose);
-
+*/
         
 
         if (SaveManager.Instance != null)
