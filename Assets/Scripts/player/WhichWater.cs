@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using static ElementHazardArea;
 
 public class WhichWater : MonoBehaviour
@@ -10,6 +11,8 @@ public class WhichWater : MonoBehaviour
     [SerializeField] private GameObject WaterBlock;
     [SerializeField] private GameObject WaterBlock2;
 
+    [SerializeField] private TilemapRenderer WaterRenderer;
+    [SerializeField] private TilemapRenderer WaterRenderer2;
 
 
     [SerializeField] private float speed = 5.0f;
@@ -25,6 +28,7 @@ public class WhichWater : MonoBehaviour
     private float initialY;   // ゲーム開始時のY座標
 
     private float targetY;    // 現在の目標Y座標
+    bool isFirstWaterActive = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -81,9 +85,10 @@ public class WhichWater : MonoBehaviour
             time += Time.deltaTime;
             if (time >= waitTime)
             {
-                bool nextState = !WaterBlock.activeSelf;
-                WaterBlock.SetActive(nextState);
-                WaterBlock2.SetActive(!nextState);
+                isFirstWaterActive = !isFirstWaterActive;
+                WaterRenderer.enabled = isFirstWaterActive;
+                WaterRenderer2.enabled = !isFirstWaterActive;
+
 
                 time = 0f;
             }

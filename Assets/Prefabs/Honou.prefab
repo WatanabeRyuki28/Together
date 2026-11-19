@@ -311,7 +311,7 @@ MonoBehaviour:
   wallType: 0
   breakSound: {fileID: 0}
   failSound: {fileID: 0}
-  breakEffectPrefab: {fileID: 7251879486380165639, guid: c2f6a8962aac3814aa56cb9647c93470, type: 3}
+  breakEffectPrefab: {fileID: 4380918445339287248, guid: 4b38b1b3e38ed7e499c047067beb6122, type: 3}
   isBreaking: 0
   box: {fileID: 0}
 --- !u!1 &4961063207252628230
