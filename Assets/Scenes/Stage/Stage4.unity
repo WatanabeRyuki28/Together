@@ -5286,11 +5286,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   areaType: 1
   fatalDamage: 999
-  WaterBlock: {fileID: 403133818}
-  WaterBlock2: {fileID: 582633550}
+  WaterBlock: {fileID: 0}
+  WaterBlock2: {fileID: 0}
   speed: 5
-  maxRaiseHeight: 0
-  upWater: 1.2
+  maxRaiseHeight: 3
+  upWater: 0
 --- !u!1001 &404178534
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -28220,11 +28220,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   areaType: 1
   fatalDamage: 999
-  WaterBlock: {fileID: 1215632384}
-  WaterBlock2: {fileID: 812069691}
+  WaterBlock: {fileID: 0}
+  WaterBlock2: {fileID: 0}
   speed: 5
-  maxRaiseHeight: 0
-  upWater: 1.2
+  maxRaiseHeight: 3
+  upWater: 0
 --- !u!212 &1257551573 stripped
 SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: 8200077787780953917, guid: 65f9f62d891cb2248b56d7d9ae4f3aec, type: 3}

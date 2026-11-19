@@ -12,30 +12,19 @@ public class ElementHazardArea : MonoBehaviour, IInteractable
     [Header("エリアの設定")]
     [SerializeField] private AreaType areaType = AreaType.Magma;
     [SerializeField] private int fatalDamage = 999;
+  
 
-    [Header("上昇設定")]
-    [SerializeField] private GameObject WaterBlock;
-    [SerializeField] private GameObject WaterBlock2;
-    [SerializeField] private float speed = 5.0f;
+    private WhichWater whichWater;
 
-    [Tooltip("初期位置からどれくらい上まで上昇できるか")]
-    [SerializeField] private float maxRaiseHeight = 3.0f;
-    [SerializeField] private float upWater;
 
-    private bool shouldRaise = false;
-    private float time = 0;
-    private float waitTime = 0.5f;
-
-    private float initialY;   // ゲーム開始時のY座標
-    private float targetY;    // 現在の目標Y座標
-
-    private void Start()
+    void Start()
     {
-        if (WaterBlock != null)
-        {
-            initialY = WaterBlock.transform.position.y;
-            targetY = initialY;
-        }
+        whichWater = FindFirstObjectByType<WhichWater>();
+    }
+
+    void Update()
+    {
+
     }
 
     public void OnInteract(ElementType element)
@@ -44,7 +33,7 @@ public class ElementHazardArea : MonoBehaviour, IInteractable
 
         if (areaType == AreaType.Water && element == ElementType.Ice)
         {
-            TryRaiseBlock();
+            whichWater.TryRaiseBlock();
         }
     }
 
@@ -87,10 +76,7 @@ public class ElementHazardArea : MonoBehaviour, IInteractable
             {
                 if (player.Element == ElementType.Fire) isDeadly = true;
 
-                if (player.Element == ElementType.Ice)
-                {
-                    TryRaiseBlock();
-                }
+
             }
             else if (areaType == AreaType.Spike)
             {
@@ -120,7 +106,8 @@ public class ElementHazardArea : MonoBehaviour, IInteractable
         }
     }
 
-    private void TryRaiseBlock()
+
+    /*private void TryRaiseBlock()
     {
         if (WaterBlock == null) return;
 
@@ -143,7 +130,8 @@ public class ElementHazardArea : MonoBehaviour, IInteractable
         shouldRaise = true;
         Debug.Log($"[TryRaiseBlock] 目標Y座標を {targetY} に設定しました（上限: {absoluteMaxY}）。");
     }
-
+*/
+    /*
     void Update()
     {
         if (WaterBlock == null) return;
@@ -208,5 +196,6 @@ public class ElementHazardArea : MonoBehaviour, IInteractable
             }
             time = 0f;
         }
-    }
+
+    }*/
 }
