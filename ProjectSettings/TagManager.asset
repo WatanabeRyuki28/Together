@@ -9,6 +9,7 @@ TagManager:
   - IcePillar
   - Ground
   - Water
+  - MovingPlatform
   layers:
   - Default
   - TransparentFX
