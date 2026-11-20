@@ -85,6 +85,7 @@ public class PlayerController : MonoBehaviour
     public bool isGrounded { get; set; }
     private bool isOnSlipperyFloor;
     private bool isPushing;
+    private PushableBox standingBox;
 
     public bool IsLocalPlayer { get; set; } = true;
     private NetworkManager networkManager;
@@ -108,7 +109,6 @@ public class PlayerController : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         stageMenuManager = FindFirstObjectByType<StageMenuManager>();
         videoExplanation = FindFirstObjectByType<VideoAreaTrigger>();
-
 
         if (audioSource != null)
         {
@@ -197,7 +197,9 @@ public class PlayerController : MonoBehaviour
                 transform.position = Vector3.Lerp(transform.position, TargetPosition, 15f * Time.deltaTime);
             }
 
-            Vector2 simulatedVelocity = (transform.position - previousPosition) / Time.deltaTime;
+            Vector2 simulatedVelocity = Time.deltaTime > 0f
+                ? (Vector2)((transform.position - previousPosition) / Time.deltaTime)
+                : Vector2.zero;
 
             UpdateAnimationParametersForRemote(simulatedVelocity, this.isGrounded, remoteIsDead);
 
@@ -210,8 +212,13 @@ public class PlayerController : MonoBehaviour
 
         if (StageMenuManager.Instance != null && (StageMenuManager.Instance.isIntroPlaying || StageMenuManager.Instance.isMenuOpen))
         {
-            rb.velocity = new Vector2(0f, rb.velocity.y);
-            UpdateAnimationParameters(rb.velocity);
+            Vector2 currentVel = rb != null ? rb.velocity : Vector2.zero;
+            if (rb != null)
+            {
+                float platformVx = standingBox != null ? standingBox.CurrentVelocity.x : 0f;
+                rb.velocity = new Vector2(platformVx, rb.velocity.y);
+            }
+            UpdateAnimationParameters(new Vector2(0f, currentVel.y));
 
             if (audioSource != null && audioSource.isPlaying && audioSource.clip == walkSound)
             {
@@ -253,29 +260,42 @@ public class PlayerController : MonoBehaviour
                     StageMenuManager.Instance.ToggleMenu();
                 }
             }
-            bool gimmick = controls.GimmickExplanation.Submit.triggered;
 
-            if (gimmick)
+            if (videoExplanation != null)
             {
-                videoExplanation.guidePanelObject.SetActive(false);
+                bool gimmick = controls != null && controls.GimmickExplanation.Submit.triggered;
 
-                videoExplanation.hasExplanation = false;
-            }
+                if (gimmick)
+                {
+                    if (videoExplanation.guidePanelObject != null)
+                    {
+                        videoExplanation.guidePanelObject.SetActive(false);
+                    }
+                    videoExplanation.hasExplanation = false;
+                }
 
-            if (videoExplanation.hasExplanation)
-            {
-                controls.Player.Disable();
-                controls.GimmickExplanation.Enable();
-            }
-            else
-            {
-                controls.Player.Enable();
-                controls.GimmickExplanation.Disable();
+                if (videoExplanation.hasExplanation)
+                {
+                    if (controls != null)
+                    {
+                        controls.Player.Disable();
+                        controls.GimmickExplanation.Enable();
+                    }
+                }
+                else
+                {
+                    if (controls != null)
+                    {
+                        controls.Player.Enable();
+                        controls.GimmickExplanation.Disable();
+                    }
+                }
             }
         }
 
-        UpdateAnimationParameters(rb.velocity);
-        HandleWalkSound();
+        Vector2 velForAnimAndSound = rb != null ? rb.velocity : Vector2.zero;
+        UpdateAnimationParameters(velForAnimAndSound);
+        HandleWalkSound(velForAnimAndSound);
 
         if (Vector2.Distance(transform.position, lastPosition) > PositionSyncThreshold)
         {
@@ -286,6 +306,8 @@ public class PlayerController : MonoBehaviour
 
     private void Move()
     {
+        if (rb == null) return;
+
         float moveInput = 0f;
 
         if (useKeyboard)
@@ -303,19 +325,27 @@ public class PlayerController : MonoBehaviour
 
         moveInput = Mathf.Clamp(moveInput, -1f, 1f);
 
+        float platformVx = (standingBox != null) ? standingBox.CurrentVelocity.x : 0f;
+
         if (Mathf.Abs(moveInput) < MinMoveInputThreshold)
         {
-            if (!isOnSlipperyFloor) rb.velocity = new Vector2(0f, rb.velocity.y);
+            if (!isOnSlipperyFloor)
+            {
+                rb.velocity = new Vector2(platformVx, rb.velocity.y);
+            }
         }
         else
         {
             bool isActuallyPushing = isPushing && IsInputtingTowardsBox(moveInput);
             float currentSpeed = isActuallyPushing ? moveSpeed * pushSpeedMultiplier : moveSpeed;
-            rb.velocity = new Vector2(moveInput * currentSpeed, rb.velocity.y);
+            rb.velocity = new Vector2((moveInput * currentSpeed) + platformVx, rb.velocity.y);
         }
 
-        if (moveInput > MinFlipInputThreshold) spriteRenderer.flipX = false;
-        else if (moveInput < -MinFlipInputThreshold) spriteRenderer.flipX = true;
+        if (spriteRenderer != null)
+        {
+            if (moveInput > MinFlipInputThreshold) spriteRenderer.flipX = false;
+            else if (moveInput < -MinFlipInputThreshold) spriteRenderer.flipX = true;
+        }
     }
 
     private bool IsInputtingTowardsBox(float moveInput)
@@ -327,11 +357,14 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        // ジャンプする時は動く足場の子供から外れる（足場から飛び離れるため）
+        if (rb == null) return;
+
+        // ジャンプする時は動く足場の子供や箱から外れる
         if (transform.parent != null)
         {
             transform.SetParent(null);
         }
+        standingBox = null;
 
         rb.velocity = new Vector2(rb.velocity.x, 0);
         rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
@@ -360,7 +393,8 @@ public class PlayerController : MonoBehaviour
             moveInput += controls.Player.Move.ReadValue<float>();
         }
 
-        float direction = (moveInput < -MinFlipInputThreshold) ? -1f : (moveInput > MinFlipInputThreshold ? 1f : (spriteRenderer.flipX ? -1f : 1f));
+        bool facingLeft = spriteRenderer != null && spriteRenderer.flipX;
+        float direction = (moveInput < -MinFlipInputThreshold) ? -1f : (moveInput > MinFlipInputThreshold ? 1f : (facingLeft ? -1f : 1f));
 
         Quaternion spawnRotation = (direction == -1f) ? Quaternion.identity : Quaternion.Euler(0, 0, 180f);
         GameObject projectileObj = Instantiate(projectilePrefab, firePoint.position, spawnRotation);
@@ -382,11 +416,13 @@ public class PlayerController : MonoBehaviour
         nextFireTime = Time.time + fireRate;
     }
 
-    private void HandleWalkSound()
+    private void HandleWalkSound(Vector2 currentVelocity)
     {
         if (walkSound == null || audioSource == null) return;
 
-        if (isGrounded && Mathf.Abs(rb.velocity.x) > RemoteSpeedThreshold)
+        float relativeHorizontalSpeed = Mathf.Abs(currentVelocity.x - (standingBox != null ? standingBox.CurrentVelocity.x : 0f));
+
+        if (isGrounded && relativeHorizontalSpeed > RemoteSpeedThreshold)
         {
             if (!audioSource.isPlaying || audioSource.clip != walkSound)
             {
@@ -411,8 +447,8 @@ public class PlayerController : MonoBehaviour
         {
             wall.OnPlayerDirectTouch(this.Element);
         }
-
     }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         CheckContact(collision, true);
@@ -423,7 +459,6 @@ public class PlayerController : MonoBehaviour
             // 自分の属性（Element）を渡して壁に直接接触したことを伝える
             wall.OnPlayerDirectTouch(this.Element);
         }
-
 
         // 動く足場（Rigidbody2Dを持つ床）に乗った際、親にして一緒に移動させる
         if (((1 << collision.gameObject.layer) & groundLayer) != 0)
@@ -449,16 +484,21 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
     private void OnCollisionExit2D(Collision2D collision)
     {
         CheckContact(collision, false);
 
+        PushableBox box = collision.gameObject.GetComponent<PushableBox>();
+        if (box != null && box == standingBox)
+        {
+            standingBox = null;
+        }
+
         if (transform.parent == null || !collision.gameObject.activeInHierarchy)
         {
             return;
-
         }
+
         // 足場から離れたら親子関係を解除する
         if (((1 << collision.gameObject.layer) & groundLayer) != 0)
         {
@@ -469,7 +509,25 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OnCollisionStay2D(Collision2D collision) => CheckContact(collision, true);
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        CheckContact(collision, true);
+
+        PushableBox box = collision.gameObject.GetComponent<PushableBox>();
+        if (box != null)
+        {
+            foreach (ContactPoint2D contact in collision.contacts)
+            {
+                // プレイヤーの足元が箱の上面に触れている場合
+                if (contact.normal.y >= MinGroundAngleY)
+                {
+                    standingBox = box;
+                    isGrounded = true;
+                    return;
+                }
+            }
+        }
+    }
 
     /// <summary>
     /// 外部や接触から状態異常（燃焼・濡れ）を付与される
@@ -507,18 +565,18 @@ public class PlayerController : MonoBehaviour
         CanMove = false;
         if (rb != null) rb.velocity = Vector2.zero;
 
-        // 死亡時に足場から離れる
+        // 死亡時に足場や箱から離れる
         if (transform.parent != null)
         {
             transform.SetParent(null);
         }
+        standingBox = null;
 
         if (anim != null)
         {
             anim.SetBool("isDead", true);
         }
 
-       
         // 自分の死んだ状態をネットワークへ確実に送信
         if (IsLocalPlayer)
         {
@@ -526,7 +584,6 @@ public class PlayerController : MonoBehaviour
         }
 
         // 自分が死んだので、リトライ演出を流す
-       
         if (audioSource != null && audioSource.isPlaying)
         {
             audioSource.Stop();
@@ -536,10 +593,6 @@ public class PlayerController : MonoBehaviour
 
         Debug.Log($"{playerNumber}P が死亡しました。");
     }
-
-   
-
- 
 
     // ネットワークから位置や状態データを受け取るメソッド
     public void ApplyNetworkData(Vector3 targetPos, bool grounded, bool flipX, bool dead)
@@ -568,6 +621,7 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(WaitDeathAnimationAndRetry());
         }
     }
+
     private IEnumerator WaitDeathAnimationAndRetry()
     {
         // 方法A: Animator Controllerから「isDead」に対応するアニメーションクリップの長さを自動取得する
@@ -694,6 +748,7 @@ public class PlayerController : MonoBehaviour
 
     private async void SendSpawnProjectileEvent(Vector3 pos, float dir, int bulletIndex)
     {
+        if (NetworkManager.Instance == null) return;
         NetworkManager.Instance.SendSpawnProjectile(pos, dir, bulletIndex);
     }
 
@@ -703,7 +758,8 @@ public class PlayerController : MonoBehaviour
     {
         if (anim == null) return;
 
-        float currentHorizontalSpeed = Mathf.Abs(velocity.x);
+        float relativeVx = velocity.x - (standingBox != null ? standingBox.CurrentVelocity.x : 0f);
+        float currentHorizontalSpeed = Mathf.Abs(relativeVx);
         anim.SetFloat("Speed", currentHorizontalSpeed);
         anim.SetBool("isGround", isGrounded);
         anim.SetFloat("yVelocity", velocity.y);
