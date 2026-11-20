@@ -5,6 +5,7 @@ using UnityEngine;
 public class PushableBox : MonoBehaviour
 {
     private const float MinMoveSpeedThreshold = 0.2f;
+    private const float FloatMoveSpeed = 5.0f;
 
     [Header("状態の設定")]
     [SerializeField] private StatusCondition currentStatus = StatusCondition.Normal;
@@ -30,6 +31,9 @@ public class PushableBox : MonoBehaviour
     private AudioSource audioSource;
     private float defaultGravityScale;
     private float buoyantBaseY;
+    private Vector2 previousPosition;
+
+    public Vector2 CurrentVelocity { get; private set; }
 
     private void Awake()
     {
@@ -45,23 +49,47 @@ public class PushableBox : MonoBehaviour
     private void Start()
     {
         respawnPosition = transform.position;
+        previousPosition = rb.position;
+        CurrentVelocity = Vector2.zero;
     }
 
     private void Update()
     {
         HandlePushSound();
 
-        // 水に濡れている（Wet）状態のときはぷかぷかさせる
-        if (currentStatus == StatusCondition.Wet)
-        {
-            ApplyFloatingMotion();
-        }
-
         // デバッグ用（Lキーで強制燃焼）
         if (Input.GetKey(KeyCode.L) && currentStatus != StatusCondition.Burning)
         {
             SetStatus(StatusCondition.Burning);
         }
+    }
+
+    private void FixedUpdate()
+    {
+        if (!rb.simulated)
+        {
+            CurrentVelocity = Vector2.zero;
+            previousPosition = rb.position;
+            return;
+        }
+
+        // 水に濡れている（Wet）状態のときは物理更新に合わせてぷかぷかさせる
+        if (currentStatus == StatusCondition.Wet)
+        {
+            ApplyFloatingMotion();
+        }
+
+        Vector2 currentPosition = rb.position;
+        if (Time.fixedDeltaTime > 0f)
+        {
+            CurrentVelocity = (currentPosition - previousPosition) / Time.fixedDeltaTime;
+        }
+        else
+        {
+            CurrentVelocity = Vector2.zero;
+        }
+
+        previousPosition = currentPosition;
     }
 
     private void HandlePushSound()
@@ -120,20 +148,28 @@ public class PushableBox : MonoBehaviour
         {
             Instantiate(fireEffect, transform.position, fireEffect.transform.rotation);
         }
-        Debug.Log("箱がマグマで燃え上がりました[cite: 1]。");
+        Debug.Log("箱がマグマで燃え上がりました。");
 
         rb.velocity = Vector2.zero;
         rb.simulated = false;
+        CurrentVelocity = Vector2.zero;
+        previousPosition = rb.position;
+
         Invoke(nameof(RespawnBox), respawnDelay);
     }
 
     private void RespawnBox()
     {
+        CancelInvoke(nameof(RespawnBox));
+
         transform.position = respawnPosition;
         currentStatus = StatusCondition.Normal;
         rb.gravityScale = defaultGravityScale;
-        rb.velocity = Vector2.zero;
         rb.simulated = true;
+        rb.velocity = Vector2.zero;
+
+        previousPosition = rb.position;
+        CurrentVelocity = Vector2.zero;
 
         Debug.Log("箱がリスポーンしました。");
     }
@@ -149,7 +185,7 @@ public class PushableBox : MonoBehaviour
     private void ApplyFloatingMotion()
     {
         float targetY = buoyantBaseY + Mathf.Sin(Time.time * floatFrequency) * floatAmplitude;
-        float newY = Mathf.MoveTowards(transform.position.y, targetY, Time.deltaTime * 5f);
+        float newY = Mathf.MoveTowards(transform.position.y, targetY, Time.fixedDeltaTime * FloatMoveSpeed);
         rb.MovePosition(new Vector2(transform.position.x, newY));
         rb.velocity = new Vector2(rb.velocity.x, 0f);
     }
