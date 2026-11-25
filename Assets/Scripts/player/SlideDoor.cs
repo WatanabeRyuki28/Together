@@ -36,6 +36,9 @@ public class WarpDoor : MonoBehaviour
     // エフェクト
     [SerializeField] DustCloudCheck dust1;
     [SerializeField] DustCloudCheck dust2;
+
+    [SerializeField] GameObject shutterDie;
+
     private Coroutine dustCoroutine;
 
     private void Awake()
@@ -43,6 +46,7 @@ public class WarpDoor : MonoBehaviour
         animator = GetComponent<Animator>();
         doorCollider = GetComponent<BoxCollider2D>();
         audioSource = GetComponent<AudioSource>();
+    
 
         // AudioSourceの初期設定
         audioSource.playOnAwake = false;
@@ -57,6 +61,7 @@ public class WarpDoor : MonoBehaviour
         // ゲーム開始時の初期化（最初は閉じているので壁にする）
         UpdateColliderState();
 
+     
     }
 
     // スッチから呼ばれる、扉の開閉状態を設定するメソッド
@@ -118,6 +123,8 @@ public class WarpDoor : MonoBehaviour
     {
         if (doorCollider == null) return;
 
+        Vector2 pos = shutterDie.transform.position;
+
         if (isOpen)
         {
             // 扉が開いている：通り抜け可能にする（Is Trigger を ON にする）
@@ -130,6 +137,8 @@ public class WarpDoor : MonoBehaviour
             // 中心位置を変更する
             doorCollider.offset = new Vector2(0.0f, 0.8590311f);
 
+
+            shutterDie.transform.localPosition = new Vector2(0.0f, 0.5533f);
         }
         else
         {
@@ -144,6 +153,7 @@ public class WarpDoor : MonoBehaviour
             // 中心位置を変更する
             doorCollider.offset = new Vector2(0.0f, 0.0f);
 
+            shutterDie.transform.localPosition= new Vector2(0.0f, -1.14f);
         }
     }
 
