@@ -86,8 +86,8 @@ public class ElementHazardArea : MonoBehaviour, IInteractable
             }
             else if (areaType == AreaType.Shutter) 
             {
-                if (player.Element == ElementType.Ice) isDeadly = true;
-                if (player.Element == ElementType.Fire) isDeadly = true;
+               /* if (player.Element == ElementType.Ice) isDeadly = true;
+                if (player.Element == ElementType.Fire) isDeadly = true;*/
             }
 
 

@@ -37,9 +37,19 @@ public class WarpDoor : MonoBehaviour
     [SerializeField] DustCloudCheck dust1;
     [SerializeField] DustCloudCheck dust2;
 
-    [SerializeField] GameObject shutterDie;
+    [SerializeField] private GameObject shutterDie;
+    [SerializeField] private float shutterMoveDuration = 0.25f;
+    [SerializeField] private float dustDelay = 0.5f;
+
+
+    
 
     private Coroutine dustCoroutine;
+    private Coroutine shutterMoveCoroutine;
+    private static readonly Vector2 OpenShutterLocalPos = new Vector2(0.0f, 0.5533f);
+    private static readonly Vector2 ClosedShutterLocalPos = new Vector2(0.0f, -1.14f);
+
+    private bool isClosingSequence = false;
 
     private void Awake()
     {
@@ -59,7 +69,7 @@ public class WarpDoor : MonoBehaviour
 
 
         // ゲーム開始時の初期化（最初は閉じているので壁にする）
-        UpdateColliderState();
+        UpdateColliderState(instant: true);
 
      
     }
@@ -76,7 +86,7 @@ public class WarpDoor : MonoBehaviour
         animator.SetBool(IsOpenParam, open);
 
         // 扉の状態に合わせて、当たり判定の性質（壁か、通り抜け可能か）を切り替える
-        UpdateColliderState();
+        UpdateColliderState(instant: false);
 
         // ★開閉音の再生
         if (isOpen)
@@ -85,9 +95,43 @@ public class WarpDoor : MonoBehaviour
         }
         else
         {
-            //PlaySound(closeSound);
-          
+            StartCoroutine(CloseDoorRoutine());
+
         }
+
+    }
+
+       
+
+    // SetDoorState(false) の中で呼ぶ想定の例
+    private IEnumerator CloseDoorRoutine()
+    {
+        isClosingSequence = true;
+
+        // 1. 閉まる最中は押し出さないよう Trigger にする
+        doorCollider.isTrigger = true;
+        Vector2 checkSize = doorCollider.size * 1.2f;
+        doorCollider.offset = Vector2.zero;
+
+        // 2. シャッターを閉じる位置まで移動
+        yield return StartCoroutine(MoveShutterDieCoroutine(ClosedShutterLocalPos, shutterMoveDuration));
+
+        // 3. 閉まりきった瞬間に範囲内のキャラをチェックして即死させる
+        Vector2 checkCenter = (Vector2)transform.position + doorCollider.offset;
+        Collider2D[] hits = Physics2D.OverlapBoxAll(checkCenter, doorCollider.size, 0f);
+        foreach (Collider2D hit in hits)
+        {
+            if (hit.TryGetComponent<PlayerController>(out PlayerController player))
+            {
+                // ここにキャラの死亡処理を書く（例: player.Die();）
+                Debug.Log($"{player.name} がシャ ッターに挟まれて即死しました！");
+                player.Die();
+            }
+        }
+
+        // 4. 通常の壁コライダーに戻す
+        doorCollider.isTrigger = false;
+        isClosingSequence = false;
     }
 
     public void DustCloudCheck(bool isClose)
@@ -119,15 +163,15 @@ public class WarpDoor : MonoBehaviour
     }
 
     // 扉の開閉状態に応じてコライダーの性質を切り替える処理
-    private void UpdateColliderState()
+    private void UpdateColliderState(bool instant)
     {
         if (doorCollider == null) return;
 
-        Vector2 pos = shutterDie.transform.position;
+        Vector2 targetShutterLocalPos;
 
         if (isOpen)
         {
-            // 扉が開いている：通り抜け可能にする（Is Trigger を ON にする）
+            // 扉が開いている
             doorCollider.isTrigger = true;
             Debug.Log($"{gameObject.name} が開いたため、通り抜け可能になりました。");
 
@@ -137,15 +181,13 @@ public class WarpDoor : MonoBehaviour
             // 中心位置を変更する
             doorCollider.offset = new Vector2(0.0f, 0.8590311f);
 
-
-            shutterDie.transform.localPosition = new Vector2(0.0f, 0.5533f);
+            targetShutterLocalPos = OpenShutterLocalPos;
         }
         else
         {
-            // 扉が閉じている：物理的な壁にする（Is Trigger を OFF にする）
+            // 扉が閉じている
             doorCollider.isTrigger = false;
             Debug.Log($"{gameObject.name} が閉じたため、通行不可の壁になりました。");
-
 
             // サイズを変更する
             doorCollider.size = new Vector2(2.16f, 2.52f);
@@ -153,8 +195,46 @@ public class WarpDoor : MonoBehaviour
             // 中心位置を変更する
             doorCollider.offset = new Vector2(0.0f, 0.0f);
 
-            shutterDie.transform.localPosition= new Vector2(0.0f, -1.14f);
+            targetShutterLocalPos = ClosedShutterLocalPos;
         }
+
+        if (shutterDie == null) return;
+
+        if (shutterMoveCoroutine != null)
+        {
+            StopCoroutine(shutterMoveCoroutine);
+            shutterMoveCoroutine = null;
+        }
+
+        if (instant || shutterMoveDuration <= 0f)
+        {
+            shutterDie.transform.localPosition = targetShutterLocalPos;
+        }
+        else
+        {
+            shutterMoveCoroutine = StartCoroutine(MoveShutterDieCoroutine(targetShutterLocalPos, shutterMoveDuration));
+        }
+    }
+
+    private IEnumerator MoveShutterDieCoroutine(Vector2 targetLocalPos, float duration)
+    {
+        Vector2 startLocalPos = shutterDie.transform.localPosition;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+
+            // 最初と最後がなめらかになるイージング（等速にしたい場合は t のままにする）
+            float smoothT = Mathf.SmoothStep(0f, 1f, t);
+
+            shutterDie.transform.localPosition = Vector2.Lerp(startLocalPos, targetLocalPos, smoothT);
+            yield return null;
+        }
+
+        shutterDie.transform.localPosition = targetLocalPos;
+        shutterMoveCoroutine = null;
     }
 
     // 効果音を鳴らす共通メソッド
