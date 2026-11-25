@@ -563,7 +563,7 @@ public class PlayerController : MonoBehaviour
     /// <summary>
     /// 死亡処理
     /// </summary>
-    private void Die()
+    public void Die()
     {
         if (isDead) return; // すでに死んでいたら二重実行を防ぐ
 
