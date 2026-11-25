@@ -57,11 +57,11 @@ public class PushableBox : MonoBehaviour
     {
         HandlePushSound();
 
-        // デバッグ用（Lキーで強制燃焼）
-        if (Input.GetKey(KeyCode.L) && currentStatus != StatusCondition.Burning)
-        {
-            SetStatus(StatusCondition.Burning);
-        }
+        //// デバッグ用（Lキーで強制燃焼）
+        //if (Input.GetKey(KeyCode.L) && currentStatus != StatusCondition.Burning)
+        //{
+        //    SetStatus(StatusCondition.Burning);
+        //}
     }
 
     private void FixedUpdate()
