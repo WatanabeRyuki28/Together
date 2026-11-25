@@ -101,6 +101,8 @@ public class PlayerController : MonoBehaviour
 
     private bool remoteIsDead = false;
 
+    [SerializeField] int Char = 1;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -310,12 +312,16 @@ public class PlayerController : MonoBehaviour
 
         float moveInput = 0f;
 
-        if (useKeyboard)
+        if (useKeyboard&&Char == 0)
         {
             if (Input.GetKey(leftKey)) moveInput -= 1f;
             if (Input.GetKey(rightKey)) moveInput += 1f;
         }
-
+        if (useKeyboard && Char == 1)
+        {
+            if (Input.GetKey(KeyCode.J)) moveInput -= 1f;
+            if (Input.GetKey(KeyCode.L)) moveInput += 1f;
+        }
         if (useGamepad && controls != null)
         {
             float gamepadInput = controls.Player.Move.ReadValue<float>();

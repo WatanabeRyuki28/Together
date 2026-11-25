@@ -6,7 +6,8 @@ public class ElementHazardArea : MonoBehaviour, IInteractable
     {
         Magma,
         Water,
-        Spike
+        Spike,
+        Shutter
     }
 
     [Header("ÉGÉäÉAÇÃê›íË")]
@@ -83,6 +84,12 @@ public class ElementHazardArea : MonoBehaviour, IInteractable
                 if (player.Element == ElementType.Ice) isDeadly = true;
                 if (player.Element == ElementType.Fire) isDeadly = true;
             }
+            else if (areaType == AreaType.Shutter) 
+            {
+                if (player.Element == ElementType.Ice) isDeadly = true;
+                if (player.Element == ElementType.Fire) isDeadly = true;
+            }
+
 
             if (isDeadly)
             {
