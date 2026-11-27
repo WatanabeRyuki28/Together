@@ -198,6 +198,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   projectilePrefabIndex: 0
+  Char: 0
 --- !u!95 &5989466459067099210
 Animator:
   serializedVersion: 5

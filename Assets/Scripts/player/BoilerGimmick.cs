@@ -13,6 +13,8 @@ public class BoilerGimmick : MonoBehaviour, IInteractable
     [SerializeField] private Transform movingPlatform;
     [SerializeField] private Vector3 startPosition;
     [SerializeField] private Vector3 endPosition;
+    [Tooltip("1秒あたりの床の移動速度")]
+    [SerializeField] private float moveSpeed = 3f;
 
     [Header("メーター（UI）の設定")]
     [SerializeField] private Slider gaugeSlider;         // スライダー
@@ -65,7 +67,6 @@ public class BoilerGimmick : MonoBehaviour, IInteractable
         }
 
         // 0から1の間にクランプ
-        float previousCharge = currentCharge;
         currentCharge = Mathf.Clamp01(currentCharge);
 
         // --- メーターが0になった瞬間、または0から変動したときの処理 ---
@@ -79,10 +80,10 @@ public class BoilerGimmick : MonoBehaviour, IInteractable
         }
         wasZeroBefore = (currentCharge <= 0f);
 
-        // --- 変更点：チャージが0より上（残っている）の間はアニメーションを稼働状態にする ---
+        // --- チャージが0より上（残っている）の間はアニメーションを稼働状態にする ---
         bool hasCharge = currentCharge > 0f;
 
-        UpdatePlatformPosition();
+        UpdatePlatformPosition(hasCharge);
         UpdateGaugeUI();
         UpdateAnimatorState(hasCharge);
     }
@@ -108,9 +109,9 @@ public class BoilerGimmick : MonoBehaviour, IInteractable
     private void OnTriggerStay2D(Collider2D other)
     {
         PlayerController player = other.GetComponent<PlayerController>();
-        if (player != null && player.Element == ElementType.Fire)
+        if (player != null)
         {
-            isFireNearby = true;
+            isFireNearby = (player.Element == ElementType.Fire);
         }
     }
 
@@ -123,10 +124,17 @@ public class BoilerGimmick : MonoBehaviour, IInteractable
         }
     }
 
-    private void UpdatePlatformPosition()
+    private void UpdatePlatformPosition(bool hasCharge)
     {
         if (movingPlatform == null) return;
-        movingPlatform.localPosition = Vector3.Lerp(startPosition, endPosition, currentCharge);
+
+        // チャージが残っていれば endPosition へ、0なら startPosition へ一定速度で移動
+        Vector3 targetPosition = hasCharge ? endPosition : startPosition;
+        movingPlatform.localPosition = Vector3.MoveTowards(
+            movingPlatform.localPosition,
+            targetPosition,
+            moveSpeed * Time.deltaTime
+        );
     }
 
     private void UpdateGaugeUI()
