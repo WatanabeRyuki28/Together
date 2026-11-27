@@ -97,16 +97,18 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        
+        // まず collisionLayers に含まれるか確認する
+        if (((1 << other.gameObject.layer) & collisionLayers) == 0)
+        {
+            return;
+        }
 
         PlayerController hitPlayer = other.GetComponent<PlayerController>();
         if (hitPlayer != null)
         {
-
             Vector3 hitPoint = other.ClosestPoint(transform.position);
             SpawnHitEffect(hitPoint);
 
-            // 状態異常（濡れる・燃えるなど）のみ適用
             if (projectileType == ElementType.Fire)
             {
                 hitPlayer.ApplyStatus(StatusCondition.Burning);
@@ -116,7 +118,6 @@ public class Projectile : MonoBehaviour
                 hitPlayer.ApplyStatus(StatusCondition.Wet);
             }
 
-            // ダメージ処理（TakeDamage）を排除したため、プレイヤーは死にません
             Destroy(gameObject);
             return;
         }
@@ -124,7 +125,6 @@ public class Projectile : MonoBehaviour
         IInteractable target = other.GetComponent<IInteractable>();
         if (target != null)
         {
-
             Vector3 hitPoint = other.ClosestPoint(transform.position);
             SpawnHitEffect(hitPoint);
             target.OnInteract(projectileType);
@@ -132,12 +132,9 @@ public class Projectile : MonoBehaviour
             return;
         }
 
-        if (((1 << other.gameObject.layer) & collisionLayers) != 0)
-        {
-            Vector3 hitPoint = other.ClosestPoint(transform.position);
-            SpawnHitEffect(hitPoint);
-            Destroy(gameObject);
-        }
+        Vector3 fallbackHitPoint = other.ClosestPoint(transform.position);
+        SpawnHitEffect(fallbackHitPoint);
+        Destroy(gameObject);
     }
 
     private void SpawnHitEffect(Vector3 position)
