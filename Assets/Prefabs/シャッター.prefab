@@ -159,7 +159,7 @@ GameObject:
   - component: {fileID: 4988522586009863504}
   - component: {fileID: -1137588960314788477}
   - component: {fileID: 7138431650641959195}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: "\u30B7\u30E3\u30C3\u30BF\u30FC"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -414,6 +414,8 @@ MonoBehaviour:
   dust1: {fileID: 0}
   dust2: {fileID: 0}
   shutterDie: {fileID: 0}
+  shutterMoveDuration: 0.25
+  dustDelay: 0.5
 --- !u!1 &4167098596528986640
 GameObject:
   m_ObjectHideFlags: 0
@@ -424,7 +426,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7190306312819222411}
   - component: {fileID: 6403675697630731692}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: GameObject (1)
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
@@ -469,7 +471,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3395373512378509071}
   - component: {fileID: 9020066794859043239}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
