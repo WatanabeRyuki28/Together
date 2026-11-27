@@ -411,9 +411,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   openSound: {fileID: 8300000, guid: 6a4df46e6eadb1f44be09bcdad1a7e7a, type: 3}
-  dust1: {fileID: 0}
-  dust2: {fileID: 0}
-  shutterDie: {fileID: 0}
+  dust1: {fileID: 9020066794859043239}
+  dust2: {fileID: 6403675697630731692}
+  shutterDie: {fileID: 398784499534484264}
+  shutterMoveDuration: 0.25
+  dustDelay: 0.5
 --- !u!1 &4167098596528986640
 GameObject:
   m_ObjectHideFlags: 0

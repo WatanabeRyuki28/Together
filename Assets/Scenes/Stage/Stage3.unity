@@ -295,6 +295,17 @@ MonoBehaviour:
   maxX: 62.5
   minY: 2
   maxY: 30
+--- !u!114 &184341548 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9020066794859043239, guid: e3db2ec7c2302db4289af537d3fb4c54, type: 3}
+  m_PrefabInstance: {fileID: 1942894324}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ff990364ac56634790fa9ab8cb9355d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &204118980
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -32595,6 +32606,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7138431650641959195, guid: e3db2ec7c2302db4289af537d3fb4c54, type: 3}
+      propertyPath: dust1
+      value: 
+      objectReference: {fileID: 184341548}
+    - target: {fileID: 7138431650641959195, guid: e3db2ec7c2302db4289af537d3fb4c54, type: 3}
+      propertyPath: dust2
+      value: 
+      objectReference: {fileID: 2140089107}
+    - target: {fileID: 7138431650641959195, guid: e3db2ec7c2302db4289af537d3fb4c54, type: 3}
+      propertyPath: shutterDie
+      value: 
+      objectReference: {fileID: 2001567039}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -32609,6 +32632,11 @@ RectTransform:
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4302455903331720158, guid: 02f56202f48676340bdf0aa9ae318a60, type: 3}
   m_PrefabInstance: {fileID: 1746665922}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2001567039 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 398784499534484264, guid: e3db2ec7c2302db4289af537d3fb4c54, type: 3}
+  m_PrefabInstance: {fileID: 1942894324}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &2102460629
 GameObject:
@@ -32698,6 +32726,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7979d5a1207fc4c4aab8f1ee8a5ce408, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2140089107 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6403675697630731692, guid: e3db2ec7c2302db4289af537d3fb4c54, type: 3}
+  m_PrefabInstance: {fileID: 1942894324}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ff990364ac56634790fa9ab8cb9355d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &2140951325
