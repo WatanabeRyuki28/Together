@@ -3675,6 +3675,14 @@ PrefabInstance:
       propertyPath: targetDoorA
       value: 
       objectReference: {fileID: 11719797}
+    - target: {fileID: 5720097538492363652, guid: f4f6aa65bc670724782700be9957acf3, type: 3}
+      propertyPath: targetDoors.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5720097538492363652, guid: f4f6aa65bc670724782700be9957acf3, type: 3}
+      propertyPath: targetDoors.Array.data[0]
+      value: 
+      objectReference: {fileID: 11719797}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -14816,7 +14824,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &788606203
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15902,6 +15910,10 @@ PrefabInstance:
     - target: {fileID: 6214193718065814466, guid: bf8ebb0bd5ff5484bbc23140c9bda89b, type: 3}
       propertyPath: m_Name
       value: VideoTrigger
+      objectReference: {fileID: 0}
+    - target: {fileID: 6214193718065814466, guid: bf8ebb0bd5ff5484bbc23140c9bda89b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
