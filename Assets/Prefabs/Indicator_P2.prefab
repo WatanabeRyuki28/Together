@@ -16,7 +16,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6889655507543713752
 Transform:
   m_ObjectHideFlags: 0
@@ -44,10 +44,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de7a6d7b8b560244eb644204a14df229, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetPlayer: {fileID: 0}
-  indicatorSprite: {fileID: 0}
+  targetPlayer: {fileID: 5717610557424801763, guid: eac79c4a988ed454b9a679259ee86c58, type: 3}
+  indicatorSprite: {fileID: 8200077787780953917, guid: 65f9f62d891cb2248b56d7d9ae4f3aec, type: 3}
+  indicatorSprites:
+  - {fileID: 1694325009, guid: 27ec43d2211f8224292ebd8e8f400c1c, type: 3}
+  - {fileID: -1767292558, guid: 7cdce1df22cf5604d8ee9c43b54edc4d, type: 3}
   margin: 1
   offsetY: -2
+  offsetBuffer: 0.1
   rotateIcon: 0
   rotationOffset: -90
   flipXOnLeft: 1
+  showDebugLog: 1
