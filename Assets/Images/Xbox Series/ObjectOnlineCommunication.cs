@@ -76,11 +76,15 @@ public class ObjectOnlineCommunication : MonoBehaviour
                 if (currentSceneName == "Stage1"
                         || currentSceneName == "Stage2"
                         || currentSceneName == "Stage3"
-                        || currentSceneName == "Stage4"
                         || currentSceneName == "Stage5")
                 {
                     myStartPos = new Vector3(-12f, -1.5f, 0f);
                     opponentStartPos = new Vector3(-7f, -1.5f, 0f);
+                }
+                else if (currentSceneName == "Stage4")
+                {
+                    myStartPos = new Vector3(-11.41f, -1.5f, 0f);
+                    opponentStartPos = new Vector3(-11.41f, 3.47f, 0f);
                 }
                 else if (currentSceneName == "Stage6")
                 {
@@ -98,6 +102,11 @@ public class ObjectOnlineCommunication : MonoBehaviour
                 {
                     myStartPos = new Vector3(-7f, -1.5f, 0f);
                     opponentStartPos = new Vector3(-12f, -1.5f, 0f);
+                }
+                else if (currentSceneName == "Stage4")
+                {
+                    myStartPos = new Vector3(-11.41f,3.47f, 0f);
+                    opponentStartPos = new Vector3(-11.41f, -1.5f, 0f);
                 }
                 else if (currentSceneName == "Stage6")
                 {
