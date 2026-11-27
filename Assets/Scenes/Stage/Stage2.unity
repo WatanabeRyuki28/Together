@@ -3675,6 +3675,14 @@ PrefabInstance:
       propertyPath: targetDoorA
       value: 
       objectReference: {fileID: 11719797}
+    - target: {fileID: 5720097538492363652, guid: f4f6aa65bc670724782700be9957acf3, type: 3}
+      propertyPath: targetDoors.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5720097538492363652, guid: f4f6aa65bc670724782700be9957acf3, type: 3}
+      propertyPath: targetDoors.Array.data[0]
+      value: 
+      objectReference: {fileID: 11719797}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
